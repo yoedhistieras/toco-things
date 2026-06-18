@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toco 6.7 — Paid Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --yellow:#FFD400;--yellow-deep:#F2C200;--ink:#0A0A0A;--paper:#FAFAF6;
+    --line:#E4E0D4;--muted:#6B6658;--green:#1d7a4d;--soft:#FCFBF4;--maxw:980px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+
+  .hero{background:var(--yellow);border-bottom:5px solid var(--ink);padding:32px 0 24px}
+  .wordmark{font-family:'Archivo';font-weight:900;font-size:27px;letter-spacing:-1.4px}
+  .eyebrow{font-family:'Archivo';font-weight:700;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-top:14px}
+  .htitle{font-family:'Archivo';font-weight:900;font-size:clamp(30px,5.4vw,50px);letter-spacing:-1.6px;line-height:.98;margin-top:6px}
+
+  section{padding:38px 0;border-bottom:1px solid var(--line)}
+  .sec-label{font-family:'Archivo';font-weight:700;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+  h2{font-family:'Archivo';font-weight:900;font-size:clamp(22px,3.6vw,30px);letter-spacing:-.8px;line-height:1.05;margin-bottom:12px}
+
+  /* THE PLAN */
+  .plan{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:4px}
+  .plan .p{border:1px solid var(--line);background:#fff;padding:18px}
+  .plan .pk{font-family:'Archivo';font-weight:700;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+  .plan .pv{font-size:14.5px;color:#2a261c}
+  .plan .pv b{font-weight:600}
+
+  /* BUDGET */
+  table{width:100%;border-collapse:collapse;margin-top:4px;font-size:14px}
+  th,td{text-align:left;padding:11px 13px;border-bottom:1px solid var(--line)}
+  th{font-family:'Archivo';font-weight:700;font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);background:var(--soft)}
+  td.num,th.num{text-align:right;font-family:'Space Mono',monospace}
+  tr.total td{font-weight:700;border-top:2px solid var(--ink);background:var(--soft)}
+  .rowlbl{font-weight:600}
+
+  /* WHAT YOU GET */
+  .get{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:4px}
+  .gcell{border:1px solid var(--line);background:#fff;padding:18px}
+  .gcell.hl{background:var(--ink);color:var(--paper)}
+  .gcell .gl{font-family:'Archivo';font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+  .gcell.hl .gl{color:var(--yellow)}
+  .gcell .gv{font-family:'Archivo';font-weight:900;font-size:clamp(22px,3vw,30px);letter-spacing:-1px;margin-top:6px;line-height:1}
+  .gcell .gn{font-size:12px;color:var(--muted);margin-top:5px}
+  .gcell.hl .gn{color:#b7b3a6}
+
+  /* CALCULATOR */
+  .calc{border:3px solid var(--ink);background:#fff;margin-top:6px}
+  .calc-top{background:var(--ink);color:var(--paper);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .calc-top .t{font-family:'Archivo';font-weight:900;font-size:15px;letter-spacing:.3px}
+  .calc-top .presets{display:flex;gap:8px}
+  .pbtn{font-family:'Archivo';font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:6px 12px;border:1px solid var(--paper);background:transparent;color:var(--paper);cursor:pointer;border-radius:3px}
+  .pbtn:hover{background:var(--paper);color:var(--ink)}
+  .pbtn.active{background:var(--yellow);color:var(--ink);border-color:var(--yellow)}
+  .calc-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .controls{padding:22px;border-right:1px solid var(--line)}
+  .ctrl{margin-bottom:20px}
+  .ctrl:last-child{margin-bottom:0}
+  .ctrl .crow{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+  .ctrl label{font-family:'Archivo';font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+  .ctrl .cval{font-family:'Space Mono',monospace;font-weight:700;font-size:14px}
+  input[type=range]{width:100%;accent-color:var(--ink);height:6px;cursor:pointer}
+  .cvr-row{display:flex;gap:14px}
+  .cvr-row .cvr{flex:1}
+  .cvr-row input[type=number]{width:100%;font-family:'Space Mono',monospace;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:3px}
+  .cvr-row .cvk{font-family:'Archivo';font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block}
+
+  .results{padding:22px;background:var(--soft)}
+  .rbig{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+  .rb{background:#fff;border:1px solid var(--line);padding:16px}
+  .rb.dark{background:var(--ink);color:var(--paper)}
+  .rb .rl{font-family:'Archivo';font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+  .rb.dark .rl{color:var(--yellow)}
+  .rb .rv{font-family:'Archivo';font-weight:900;font-size:clamp(22px,3.4vw,32px);letter-spacing:-1px;margin-top:5px;line-height:1}
+  .rsmall{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .rs{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .rs .rsv{font-family:'Space Mono',monospace;font-weight:700}
+  .rsplit{font-size:12.5px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+  .rsplit b{color:var(--ink);font-weight:600;font-family:'Space Mono',monospace}
+
+  .note{font-size:12.5px;color:var(--muted);margin-top:14px;padding:12px 14px;background:var(--soft);border-left:3px solid var(--yellow-deep)}
+  .note b{color:var(--ink);font-weight:600}
+
+  /* ASK */
+  .ask{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:4px}
+  .ai .ak{font-family:'Archivo';font-weight:700;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .ai .av{font-size:13.5px;color:#2a261c}
+
+  footer{background:var(--ink);color:var(--paper);padding:32px 0}
+  footer .wordmark{color:var(--yellow)}
+  footer p{font-size:12.5px;color:#b7b3a6;margin-top:9px;max-width:680px}
+
+  @media(max-width:720px){
+    .plan,.get,.ask{grid-template-columns:1fr 1fr}
+    .calc-body{grid-template-columns:1fr}
+    .controls{border-right:none;border-bottom:1px solid var(--line)}
+  }
+  @media(max-width:460px){.plan,.get,.ask,.rbig,.rsmall{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="wordmark">toco</div>
+    <div class="eyebrow">6.7 Campaign · Paid Plan · For Management</div>
+    <div class="htitle">6.7 Paid Plan</div>
+  </div>
+</header>
+
+<!-- THE PLAN -->
+<section>
+  <div class="wrap">
+    <div class="sec-label">Here's the plan</div>
+    <h2>Run Meta and Google for 3 days, capture new buyers during the 7.7 peak</h2>
+    <div class="plan">
+      <div class="p"><div class="pk">What</div><div class="pv">A 3-day paid push on <b>Meta + Google</b>, built around the 6.7 hook the day before 7.7 peaks.</div></div>
+      <div class="p"><div class="pk">When</div><div class="pv"><b>6 to 8 July 2026.</b> Inside the marketplace 7.7 window, so auction costs run at peak.</div></div>
+      <div class="p"><div class="pk">Goal</div><div class="pv"><b>New buyers and brand presence.</b> Judged on cost per acquisition, not same-day ROAS.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- THE BUDGET -->
+<section>
+  <div class="wrap">
+    <div class="sec-label">The budget</div>
+    <h2>Rp 3,000,000, Meta-led</h2>
+    <table>
+      <thead><tr><th>Channel</th><th>Role</th><th class="num">Share</th><th class="num">Budget</th><th class="num">Per day</th></tr></thead>
+      <tbody>
+        <tr><td class="rowlbl">Meta / Instagram</td><td>Reach + new-buyer prospecting</td><td class="num">80%</td><td class="num">Rp 2,400,000</td><td class="num">Rp 800,000</td></tr>
+        <tr><td class="rowlbl">Google (branded Search)</td><td>High-intent capture</td><td class="num">20%</td><td class="num">Rp 600,000</td><td class="num">Rp 200,000</td></tr>
+        <tr class="total"><td>Total</td><td></td><td class="num">100%</td><td class="num">Rp 3,000,000</td><td class="num">Rp 1,000,000</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- WHAT YOU GET -->
+<section>
+  <div class="wrap">
+    <div class="sec-label">What you get (plan, base case)</div>
+    <h2>At Rp 3jt: about 61 orders</h2>
+    <div class="get">
+      <div class="gcell hl"><div class="gl">Orders</div><div class="gv">~61</div><div class="gn">upside to ~122</div></div>
+      <div class="gcell"><div class="gl">GMV</div><div class="gv">~Rp 21jt</div><div class="gn">at Rp 350k AOV</div></div>
+      <div class="gcell"><div class="gl">ROAS</div><div class="gv">7.1x</div><div class="gn">upside to 16x</div></div>
+      <div class="gcell"><div class="gl">CAC</div><div class="gv">Rp 49k</div><div class="gn">cost per order</div></div>
+    </div>
+    <div class="note"><b>Base case is the number to plan against.</b> It uses a 5% Meta and 2% Google conversion rate, with Google anchored to its verified account rate. The upside case assumes conversion higher still, so treat it as a ceiling, not a forecast. Use the calculator below to flex any input live.</div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section>
+  <div class="wrap">
+    <div class="sec-label">Calculator</div>
+    <h2>Move the budget, see what changes</h2>
+    <div class="calc">
+      <div class="calc-top">
+        <div class="t">Spend → Result</div>
+        <div class="presets">
+          <button class="pbtn active" id="pBase">Base case</button>
+          <button class="pbtn" id="pUpside">Upside</button>
+        </div>
+      </div>
+      <div class="calc-body">
+        <div class="controls">
+          <div class="ctrl">
+            <div class="crow"><label>Total budget</label><span class="cval" id="vBudget">Rp 3,000,000</span></div>
+            <input type="range" id="budget" min="1000000" max="10000000" step="250000" value="3000000">
+          </div>
+          <div class="ctrl">
+            <div class="crow"><label>Meta share</label><span class="cval" id="vSplit">80% / 20%</span></div>
+            <input type="range" id="split" min="50" max="100" step="5" value="80">
+          </div>
+          <div class="ctrl">
+            <div class="crow"><label>Average order value</label><span class="cval" id="vAov">Rp 350,000</span></div>
+            <input type="range" id="aov" min="200000" max="500000" step="25000" value="350000">
+          </div>
+          <div class="ctrl">
+            <div class="cvr-row">
+              <div class="cvr"><span class="cvk">Meta CVR %</span><input type="number" id="metaCvr" value="5" min="0" max="100" step="0.5"></div>
+              <div class="cvr"><span class="cvk">Google CVR %</span><input type="number" id="googleCvr" value="2" min="0" max="100" step="0.5"></div>
+            </div>
+          </div>
+        </div>
+        <div class="results">
+          <div class="rbig">
+            <div class="rb dark"><div class="rl">Orders</div><div class="rv" id="rOrders">61</div></div>
+            <div class="rb"><div class="rl">GMV</div><div class="rv" id="rGmv">Rp 21.3jt</div></div>
+          </div>
+          <div class="rsmall">
+            <div class="rs"><span>ROAS</span><span class="rsv" id="rRoas">7.1x</span></div>
+            <div class="rs"><span>CAC</span><span class="rsv" id="rCac">Rp 49k</span></div>
+            <div class="rs"><span>Reach</span><span class="rsv" id="rReach">140k</span></div>
+            <div class="rs"><span>Clicks</span><span class="rsv" id="rClicks">1,580</span></div>
+          </div>
+          <div class="rsplit">Split: Meta <b id="rMetaO">49</b> orders · Google <b id="rGoogleO">12</b> orders</div>
+        </div>
+      </div>
+    </div>
+    <div class="note"><b>Rate assumptions (peak 7.7 window):</b> Meta CPM Rp 11,400, Meta CPC Rp 2,450, frequency 1.5. Google branded-Search CPC Rp 1,000. Orders = clicks × conversion rate. These are fixed in the model; change budget, split, AOV, and CVR to test scenarios.</div>
+  </div>
+</section>
+
+<!-- THE ASK -->
+<section>
+  <div class="wrap">
+    <div class="sec-label">The ask</div>
+    <div class="ask">
+      <div class="ai"><div class="ak">Approve</div><div class="av">Rp 3,000,000 for a single 3-day Meta and Google flight, 6 to 8 July 2026.</div></div>
+      <div class="ai"><div class="ak">Measured on</div><div class="av">New buyers acquired and cost per acquisition. This is an acquisition test, not a volume play.</div></div>
+      <div class="ai"><div class="ak">Maximum exposure</div><div class="av">Rp 3,000,000, fully capped. One flight, no recurring commitment. Spend ends after 8 July.</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="wordmark">toco</div>
+    <p>6.7 Paid Plan · Internal · For approval. Projections use Toco's June 2026 account benchmarks with a peak-window cost buffer. Conversion rate is the primary variable; the base case is the figure to plan against, the upside is a ceiling.</p>
+  </div>
+</footer>
+
+<script>
+  var R = {
+    metaCPM: 11400, metaCPC: 2450, freq: 1.5, googleCPC: 1000
+  };
+  var el = function(id){ return document.getElementById(id); };
+  function rpFull(n){ return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+  function jt(n){
+    if(n >= 1000000) return 'Rp ' + (n/1000000).toFixed(n%1000000===0?0:1) + 'jt';
+    if(n >= 1000) return 'Rp ' + Math.round(n/1000) + 'k';
+    return 'Rp ' + Math.round(n);
+  }
+  function kfmt(n){
+    if(n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+    if(n >= 1000) return Math.round(n/1000) + 'k';
+    return Math.round(n).toString();
+  }
+
+  function calc(){
+    var budget = +el('budget').value;
+    var metaShare = +el('split').value;
+    var aov = +el('aov').value;
+    var metaCvr = (+el('metaCvr').value || 0) / 100;
+    var googleCvr = (+el('googleCvr').value || 0) / 100;
+
+    var metaBudget = budget * metaShare / 100;
+    var googleBudget = budget - metaBudget;
+
+    var metaImpr = metaBudget / R.metaCPM * 1000;
+    var metaReach = metaImpr / R.freq;
+    var metaClicks = metaBudget / R.metaCPC;
+    var googleClicks = googleBudget / R.googleCPC;
+
+    var metaOrders = metaClicks * metaCvr;
+    var googleOrders = googleClicks * googleCvr;
+    var orders = metaOrders + googleOrders;
+
+    var gmv = orders * aov;
+    var roas = budget > 0 ? gmv / budget : 0;
+    var cac = orders > 0 ? budget / orders : 0;
+    var clicks = metaClicks + googleClicks;
+
+    // control labels
+    el('vBudget').textContent = rpFull(budget);
+    el('vSplit').textContent = metaShare + '% / ' + (100 - metaShare) + '%';
+    el('vAov').textContent = rpFull(aov);
+
+    // results
+    el('rOrders').textContent = Math.round(orders).toLocaleString('id-ID');
+    el('rGmv').textContent = jt(gmv);
+    el('rRoas').textContent = roas.toFixed(1) + 'x';
+    el('rCac').textContent = orders > 0 ? jt(cac) : '—';
+    el('rReach').textContent = kfmt(metaReach);
+    el('rClicks').textContent = Math.round(clicks).toLocaleString('id-ID');
+    el('rMetaO').textContent = Math.round(metaOrders).toLocaleString('id-ID');
+    el('rGoogleO').textContent = Math.round(googleOrders).toLocaleString('id-ID');
+  }
+
+  function setPreset(meta, google, btn){
+    el('metaCvr').value = meta;
+    el('googleCvr').value = google;
+    el('pBase').classList.toggle('active', btn === 'base');
+    el('pUpside').classList.toggle('active', btn === 'upside');
+    calc();
+  }
+
+  ['budget','split','aov','metaCvr','googleCvr'].forEach(function(id){
+    el(id).addEventListener('input', function(){
+      // editing CVR by hand clears the preset highlight
+      if(id === 'metaCvr' || id === 'googleCvr'){
+        el('pBase').classList.remove('active');
+        el('pUpside').classList.remove('active');
+      }
+      calc();
+    });
+  });
+  el('pBase').addEventListener('click', function(){ setPreset(5, 2, 'base'); });
+  el('pUpside').addEventListener('click', function(){ setPreset(10, 4, 'upside'); });
+
+  calc();
+</script>
+
+</body>
+</html>
