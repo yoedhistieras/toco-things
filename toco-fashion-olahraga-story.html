@@ -1,0 +1,276 @@
+<title>Toco Growth Story - Fashion & Olahraga (Q2 2026)</title>
+<style>
+  :root{
+    --bg:#fffdf5; --panel:#ffffff; --panel2:#fffbea; --ink:#1b1916; --muted:#6f6a62; --faint:#a8a29a;
+    --line:#ece7d8; --brand:#ffd400; --brand-deep:#a67f06; --brand-soft:#fff3bf;
+    --good:#177a4a; --good-bg:#e4f4ea; --bad:#c22b1c; --bad-bg:#fbe7e4; --warn:#b45309; --warn-bg:#fcefda;
+    --track:#efe9d8;
+    --font:"Mulish","Nunito Sans","Nunito",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#191714; --panel:#241f1b; --panel2:#2c2620; --ink:#fdf7e3; --muted:#a8a29a; --faint:#7c766c;
+    --line:#38322b; --brand:#ffd400; --brand-deep:#ffd400; --brand-soft:#40350f;
+    --good:#5fd394; --good-bg:#16311d; --bad:#f79485; --bad-bg:#391d19; --warn:#f0b45f; --warn-bg:#372914; --track:#38322b;}}
+  :root[data-theme="dark"]{--bg:#191714; --panel:#241f1b; --panel2:#2c2620; --ink:#fdf7e3; --muted:#a8a29a; --faint:#7c766c;
+    --line:#38322b; --brand:#ffd400; --brand-deep:#ffd400; --brand-soft:#40350f;
+    --good:#5fd394; --good-bg:#16311d; --bad:#f79485; --bad-bg:#391d19; --warn:#f0b45f; --warn-bg:#372914; --track:#38322b;}
+  :root[data-theme="light"]{--bg:#fffdf5; --panel:#ffffff; --panel2:#fffbea; --ink:#1b1916; --muted:#6f6a62; --faint:#a8a29a;
+    --line:#ece7d8; --brand:#ffd400; --brand-deep:#a67f06; --brand-soft:#fff3bf;
+    --good:#177a4a; --good-bg:#e4f4ea; --bad:#c22b1c; --bad-bg:#fbe7e4; --warn:#b45309; --warn-bg:#fcefda; --track:#efe9d8;}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16.5px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px 100px}
+  p{margin:0 0 15px}
+
+  .hero{background:var(--brand);color:#1b1916;border-radius:0 0 30px 30px;padding:42px 34px 34px;margin-bottom:8px;position:relative;overflow:hidden}
+  .hero::after{content:"🛍️";position:absolute;right:-10px;top:-20px;font-size:150px;opacity:.14;transform:rotate(-8deg)}
+  .brandrow{display:flex;align-items:center;gap:10px;font-weight:900;font-size:19px;letter-spacing:-.02em}
+  .brandrow .dot{background:#1b1916;color:var(--brand);border-radius:9px;padding:2px 10px}
+  .hero h1{font-size:37px;line-height:1.08;margin:18px 0 14px;font-weight:900;letter-spacing:-.03em;max-width:15ch}
+  .hero .pre{font-size:17px;max-width:56ch;color:#33301f;font-weight:600;margin:0}
+  .hero .tags{margin-top:20px;display:flex;gap:7px;flex-wrap:wrap}
+  .hero .tags span{background:rgba(27,25,22,.09);border:1px solid rgba(27,25,22,.15);border-radius:999px;padding:3px 11px;font-size:11.5px;font-weight:700}
+
+  .chap{margin-top:58px}
+  .chap .eyebrow{font-size:12.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-deep);display:flex;align-items:center;gap:9px}
+  :root[data-theme="dark"] .chap .eyebrow{color:var(--brand)} @media (prefers-color-scheme:dark){.chap .eyebrow{color:var(--brand)}}
+  .chap .eyebrow .no{background:#1b1916;color:var(--brand);width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px}
+  :root[data-theme="dark"] .chap .eyebrow .no{background:var(--brand);color:#1b1916} @media (prefers-color-scheme:dark){.chap .eyebrow .no{background:var(--brand);color:#1b1916}}
+  .chap h2{font-size:29px;line-height:1.16;margin:12px 0 8px;font-weight:900;letter-spacing:-.025em}
+  .chap .stand{font-size:18px;color:var(--muted);margin:0 0 20px;font-weight:600}
+  .body p{font-size:16.5px}
+
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}
+  @media(max-width:600px){.kpis{grid-template-columns:1fr 1fr}}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+  .kpi .v{font-size:27px;font-weight:900;letter-spacing:-.03em;line-height:1}
+  .kpi .l{font-size:12.5px;color:var(--muted);margin-top:6px;font-weight:600}
+  .kpi .d{font-size:12px;font-weight:800;margin-top:7px;display:inline-block;padding:2px 8px;border-radius:6px;color:var(--good);background:var(--good-bg)}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin:20px 0}
+  .panel.soft{background:var(--panel2)}
+  .panel h3{margin:0 0 14px;font-size:15px;font-weight:800}
+
+  .brow{display:grid;grid-template-columns:130px 1fr 62px;gap:12px;align-items:center;margin:9px 0;font-size:14px}
+  .brow .lbl{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .brow .val{text-align:right;font-weight:900;font-variant-numeric:tabular-nums}
+  .track{height:15px;border-radius:8px;background:var(--track);overflow:hidden;position:relative}
+  .track>span{position:absolute;inset:0 auto 0 0;background:var(--brand);border-radius:8px}
+  .track>span.ink{background:#1b1916} :root[data-theme="dark"] .track>span.ink{background:#c9c2b4} @media (prefers-color-scheme:dark){.track>span.ink{background:#c9c2b4}}
+  .track>span.good{background:var(--good)} .track>span.mut{background:#d9d2c0}
+  :root[data-theme="dark"] .track>span.mut{background:#4d463c} @media (prefers-color-scheme:dark){.track>span.mut{background:#4d463c}}
+
+  .callout{border-radius:14px;padding:15px 18px;margin:20px 0;font-size:15px;font-weight:600;background:var(--brand-soft);border-left:4px solid var(--brand)}
+  .callout.warn{background:var(--warn-bg);border-color:var(--warn)}
+  .callout .h{display:block;font-size:11.5px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;color:var(--brand-deep)}
+  :root[data-theme="dark"] .callout .h{color:var(--brand)} @media (prefers-color-scheme:dark){.callout .h{color:var(--brand)}}
+  .callout.warn .h{color:var(--warn)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:600px){.grid2{grid-template-columns:1fr}}
+  .mini{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:16px 17px}
+  .mini .role{font-size:11px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:var(--brand-deep)}
+  :root[data-theme="dark"] .mini .role{color:var(--brand)} @media (prefers-color-scheme:dark){.mini .role{color:var(--brand)}}
+  .mini h4{margin:3px 0 10px;font-size:16px;font-weight:800}
+  .mini p{font-size:13.5px;color:var(--muted);margin:9px 0 0}
+  .mini ul{margin:8px 0 0}
+
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--panel);margin:18px 0}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:440px}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:800;background:var(--panel2)}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  td .role{font-weight:800;font-size:12.5px}
+  tbody tr.tgt td{background:var(--brand-soft)} tbody tr.tgt td b{color:var(--ink)}
+
+  ul.tick{list-style:none;padding:0;margin:8px 0}
+  ul.tick li{position:relative;padding:5px 0 5px 22px;font-size:15px}
+  ul.tick li::before{content:"";position:absolute;left:3px;top:12px;width:8px;height:8px;border-radius:3px;background:var(--brand)}
+  b.hot{color:var(--brand-deep)} :root[data-theme="dark"] b.hot{color:var(--brand)} @media (prefers-color-scheme:dark){b.hot{color:var(--brand)}}
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin:2px 0 12px;align-items:center}
+  .foot{margin-top:52px;padding:18px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-size:12px;line-height:1.6}
+  code{background:var(--panel2);border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:12.5px}
+</style>
+
+<div class="wrap">
+
+<div class="hero">
+  <div class="brandrow"><span class="dot">toco</span> · Growth Story</div>
+  <h1>Kenapa Fashion &amp; Olahraga, dan cara menumbuhkannya</h1>
+  <p class="pre">Toco lagi naik cepat. Tapi yang belanja masih orang yang itu-itu saja. Kalau mau tumbuh lebih besar dan lebih awet, kita butuh kolam pembeli yang lebih luas. Fashion dan Olahraga itu kolamnya.</p>
+  <div class="tags">
+    <span>Data: Metabase (backend Toco)</span>
+    <span>Periode: April sampai Juni 2026</span>
+    <span>Order valid: status &gt; 105</span>
+  </div>
+</div>
+
+<!-- BAB 1 -->
+<div class="chap">
+  <div class="eyebrow"><span class="no">1</span> Situasi</div>
+  <h2>Growth-nya kencang, tapi kolamnya sempit</h2>
+  <p class="stand">Tiga bulan terakhir Toco naik terus. Cuma, yang naik itu kategori yang pemainnya sudah ramai.</p>
+  <div class="body">
+    <p>Dari April ke Juni, order valid lompat dari 20 ribu ke 32 ribu, dan GMV lebih dari dua kali lipat. Mesin akuisisinya hidup, tidak ada yang salah di situ.</p>
+    <p>Yang perlu diperhatikan itu siapa yang beli. Hampir semuanya audiens yang sama: pria, penggemar hobi, pembeli gadget. Fashion dan Olahraga malah kalah cepat. Porsinya turun dari 8% ke 6,7%, bukan karena penjualannya jelek, tapi karena kategori lain lari lebih kencang.</p>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="v">32.145</div><div class="l">Order valid, Juni</div><div class="d">naik 57% dari April</div></div>
+    <div class="kpi"><div class="v">Rp30,8 M</div><div class="l">GMV Juni</div><div class="d">naik 116% dari April</div></div>
+    <div class="kpi"><div class="v">17.660</div><div class="l">Buyer aktif, Juni</div><div class="d">naik 56% dari April</div></div>
+  </div>
+  <div class="panel soft">
+    <h3>Order valid per bulan (semua kategori)</h3>
+    <div class="brow"><span class="lbl">April</span><div class="track"><span style="width:64%"></span></div><span class="val">20.450</span></div>
+    <div class="brow"><span class="lbl">Mei</span><div class="track"><span style="width:83%"></span></div><span class="val">26.542</span></div>
+    <div class="brow"><span class="lbl">Juni</span><div class="track"><span style="width:100%"></span></div><span class="val">32.145</span></div>
+    <h3 style="margin-top:20px">Porsi Fashion &amp; Olahraga justru menyusut</h3>
+    <div class="brow"><span class="lbl">April</span><div class="track"><span class="ink" style="width:80%"></span></div><span class="val">8,0%</span></div>
+    <div class="brow"><span class="lbl">Mei</span><div class="track"><span class="ink" style="width:69%"></span></div><span class="val">6,9%</span></div>
+    <div class="brow"><span class="lbl">Juni</span><div class="track"><span class="ink" style="width:67%"></span></div><span class="val">6,7%</span></div>
+  </div>
+  <p>Bukan berarti gadget dan hobi jelek. Tapi kalau semua telur ditaruh di satu keranjang audiens, pertumbuhannya gampang melambat. Fashion dan Olahraga menawarkan keranjang yang jauh lebih besar. Jadi kenapa sekarang, dan kenapa dua kategori ini? Jawabannya ada di bab berikut.</p>
+</div>
+
+<!-- BAB 2 -->
+<div class="chap">
+  <div class="eyebrow"><span class="no">2</span> Kenapa dua kategori ini</div>
+  <h2>Di sini minat besar ketemu pembeli sedikit</h2>
+  <p class="stand">Kita dorong Fashion &amp; Olahraga bukan karena lagi ramai. Justru karena belum. Di situ peluangnya.</p>
+  <div class="body">
+    <p>Coba lihat berapa banyak orang yang melihat-lihat produk di kategori ini, lalu bandingkan dengan yang benar-benar beli. Jaraknya lebar, dan itu kabar bagus buat iklan.</p>
+  </div>
+  <div class="tablewrap">
+   <table>
+    <thead><tr><th>Kategori</th><th class="n">Dilihat (kumulatif)</th><th class="n">Yang beli (6 bln)</th><th>Peran</th></tr></thead>
+    <tbody>
+      <tr><td>Fashion Pria</td><td class="n">2,7 jt</td><td class="n">2.164</td><td><span class="role" style="color:var(--good)">Mesin utama</span></td></tr>
+      <tr><td>Olahraga</td><td class="n">3,0 jt</td><td class="n">2.095</td><td><span class="role" style="color:var(--good)">Momentum naik</span></td></tr>
+      <tr><td>Fashion Wanita</td><td class="n">2,5 jt</td><td class="n">336</td><td><span class="role hot">Pintu ke perempuan</span></td></tr>
+      <tr><td>Fashion Anak</td><td class="n">0,66 jt</td><td class="n">332</td><td><span class="role hot">Belanja berulang</span></td></tr>
+    </tbody>
+   </table>
+  </div>
+  <p>Fashion Wanita yang paling mencolok. Dilihat jutaan kali, tapi cuma 336 orang yang beli dalam enam bulan. Stok bukan masalah, listing-nya ratusan ribu. Yang kurang cuma satu: dorongan untuk sampai ke checkout. Dan itu justru pekerjaan yang paling bisa dibantu iklan yang tepat sasaran.</p>
+  <p>Ada alasan kedua yang lebih strategis. Fashion, terutama Fashion Wanita dan Anak, adalah satu-satunya pintu Toco ke audiens yang selama ini hampir tidak tersentuh: perempuan dan keluarga. Selama pemain lain berebut di kategori pria, kita bisa buka pasar baru.</p>
+  <div class="callout"><span class="h">Yang bikin ini menarik</span>Minat sudah ada, stok sudah ada, dan audiensnya baru. Yang kita tambahkan cuma dorongan beli dan jangkauan yang lebih tepat. Sebelum ke sana, kita perlu kenal dulu siapa yang mau diketuk pintunya.</div>
+</div>
+
+<!-- BAB 3 -->
+<div class="chap">
+  <div class="eyebrow"><span class="no">3</span> Siapa yang kita ketuk</div>
+  <h2>Kenali dulu calon pembelinya</h2>
+  <p class="stand">Empat kategori, empat peran. Semuanya penting, tapi dengan pekerjaan yang berbeda.</p>
+  <div class="grid2">
+    <div class="mini"><div class="role">Mesin utama</div><h4>Fashion Pria</h4>
+      <p style="color:var(--ink)">Paling besar dan sudah terbukti. 2.164 pembeli, mayoritas pria usia sekitar 34, tinggal di Jawa. Aman didorong pakai lookalike dari pembeli yang sudah ada.</p></div>
+    <div class="mini"><div class="role">Momentum naik</div><h4>Olahraga</h4>
+      <p style="color:var(--ink)">Konsisten naik tiap bulan. 2.095 pembeli, profil mirip Fashion Pria. Banyak barang mahal (sepeda, tenis), jadi orang riset dulu sebelum beli.</p></div>
+    <div class="mini"><div class="role">Pintu ke perempuan</div><h4>Fashion Wanita</h4>
+      <p style="color:var(--ink)">Masih kecil (336 pembeli), tapi di sinilah porsi pembeli perempuan paling tinggi. Ini titik masuk paling masuk akal untuk menjangkau audiens baru.</p></div>
+    <div class="mini"><div class="role">Belanja berulang</div><h4>Fashion Anak</h4>
+      <p style="color:var(--ink)">Kecil (332 pembeli), tapi di antara empat kategori ini, pembeli Fashion Anak yang paling banyak balik belanja (29% beli lagi). Wajar, baju anak cepat kekecilan.</p></div>
+  </div>
+
+  <div class="panel">
+    <h3>Porsi pembeli perempuan per kategori</h3>
+    <div class="legend"><span>Dari pembeli yang mengisi gender (sekitar separuh mengisi)</span></div>
+    <div class="brow"><span class="lbl">Fashion Wanita</span><div class="track"><span style="width:100%"></span></div><span class="val">32%</span></div>
+    <div class="brow"><span class="lbl">Fashion Anak</span><div class="track"><span style="width:56%"></span></div><span class="val">18%</span></div>
+    <div class="brow"><span class="lbl">Fashion Pria</span><div class="track"><span class="mut" style="width:28%"></span></div><span class="val">9%</span></div>
+    <div class="brow"><span class="lbl">Olahraga</span><div class="track"><span class="mut" style="width:13%"></span></div><span class="val">4%</span></div>
+  </div>
+  <p>Ini yang perlu diluruskan. Di seluruh Toco, pembeli memang didominasi pria. Tapi di Fashion Wanita, porsi perempuan jauh lebih tinggi dari kategori mana pun: 32%, lawan cuma 4% sampai 9% di Olahraga dan Fashion Pria. Artinya perempuan paling banyak hadir di sini. Basenya masih kecil, jadi ke depan kita bangun audiens perempuan baru dari minat dan gaya hidup, bukan meniru pembeli lama.</p>
+  <div class="panel soft">
+    <h3>Yang berlaku untuk semua kategori</h3>
+    <ul class="tick">
+      <li>Sekitar 84% pembeli ada di Pulau Jawa: Jabar, Jateng, Jatim, DKI, Banten. Di luar Jawa, yang paling menonjol Sulawesi Selatan (Makassar dan sekitarnya).</li>
+      <li>Hampir semua pakai Android (login Google 63%, Apple cuma 2%), dan umurnya 25 sampai 44 tahun.</li>
+    </ul>
+  </div>
+  <p>Kita sudah tahu siapa. Sekarang bagian yang lebih seru: jualan apa, dan bagaimana caranya mereka balik lagi.</p>
+</div>
+
+<!-- BAB 4 -->
+<div class="chap">
+  <div class="eyebrow"><span class="no">4</span> Produk &amp; retensi</div>
+  <h2>Apa yang dijual, dan cara bikin balik lagi</h2>
+  <p class="stand">Dua pekerjaan: menarik orang masuk, lalu memberi alasan untuk belanja lagi.</p>
+  <div class="grid2">
+    <div class="mini"><div class="role">Untuk menarik masuk</div><h4>Produk pemikat</h4>
+      <ul class="tick" style="margin-top:2px">
+        <li>Fashion Pria: Atasan, Sepatu, Tas</li>
+        <li>Olahraga: Sepeda, Aksesoris Olahraga, Tenis</li>
+        <li>Fashion Wanita: Atasan, Tas, Dress</li>
+        <li>Fashion Anak: Baju &amp; Sepatu Bayi</li>
+      </ul></div>
+    <div class="mini"><div class="role">Untuk bikin balik lagi</div><h4>Sisi kebutuhan</h4>
+      <ul class="tick" style="margin-top:2px">
+        <li>Basic apparel yang rutin dibeli ulang</li>
+        <li>Baju anak yang cepat kekecilan</li>
+        <li>Perlengkapan olahraga yang habis pakai</li>
+        <li>Tawarkan Suplemen setelah pembelian pertama</li>
+      </ul></div>
+  </div>
+  <p>Soal balik lagi, datanya kasih petunjuk yang berguna. Kategori yang sifatnya kebutuhan dan cepat habis paling sering dibeli ulang: Suplemen Kesehatan <b class="hot">46%</b> pembelinya balik lagi, Makanan 32%. Fashion dan Olahraga sekarang masih di kisaran 18% sampai 29%.</p>
+  <p>Jadi caranya jelas. Selain jualan produk pemikat, dorong sisi kebutuhan sehari-hari dari kategori ini, dan setelah orang beli, arahkan mereka ke Suplemen Kesehatan, kategori yang paling terbukti bikin orang balik. Pembeli yang belanja dua kali nilainya jauh lebih besar daripada yang sekali lalu hilang.</p>
+</div>
+
+<!-- BAB 5 -->
+<div class="chap">
+  <div class="eyebrow"><span class="no">5</span> Rencana</div>
+  <h2>Struktur kampanye di Meta &amp; Google</h2>
+  <p class="stand">Fokusnya ke struktur kampanye, bukan micro-targeting. Audiensnya sengaja dibiarkan broad, yang penting isinya benar-benar orang baru.</p>
+  <p>Karena tujuannya cari pembeli baru, kita tidak perlu targeting yang rumit. Biarkan broad, algoritma yang cari. Yang kita kunci cuma satu: keluarkan semua orang yang sudah pernah beli, pernah mampir ke situs, atau sudah install aplikasi Toco. Sisanya murni audiens baru.</p>
+  <div class="grid2">
+    <div class="mini"><h4>Meta</h4>
+      <ul class="tick" style="margin-top:2px">
+        <li><b>Catalog Campaign</b>: fokus Fashion, Olahraga, dan Suplemen Kesehatan (vitamin dll), mengarah ke direct buy dari katalog</li>
+        <li><b>Sales Campaign</b>: beberapa iklan yang mengarah ke halaman campaign kategori. Orang bisa langsung beli, atau minimal terbangun niat beli di kategori itu</li>
+      </ul></div>
+    <div class="mini"><h4>Google</h4>
+      <ul class="tick" style="margin-top:2px">
+        <li><b>PMax Category Campaign</b>: iklan curated per kategori</li>
+        <li><b>PMax Catalog Campaign</b>: katalog curated Fashion, Olahraga, Suplemen</li>
+        <li><b>App Install</b>: datangkan pembeli baru. Yang install tapi belum beli atau jadi dormant bisa di-retarget belakangan</li>
+      </ul></div>
+  </div>
+  <div class="callout"><span class="h">Kunci audiens murni baru</span>Keluarkan siapa pun yang sudah pernah beli, mampir ke situs atau app, atau sudah install. Dengan begitu budget benar-benar mencari orang baru, bukan membayar ulang yang sudah kenal Toco.</div>
+  <div class="callout"><span class="h">Jangan berhenti di pembelian pertama</span>Setelah orang beli Fashion atau Olahraga, susul dengan retargeting produk basic dan Suplemen Kesehatan. Ini yang mengubah pembeli sekali jadi pembeli tetap.</div>
+  <div class="callout warn"><span class="h">Satu jebakan yang harus dihindari</span>Jangan bikin kampanye purchase-optimized terpisah khusus Wanita atau Anak. Volumenya masih kecil (sekitar 20 sampai 27 order per minggu) dan algoritmanya kekurangan data untuk belajar. Gabungkan ke kampanye Fashion atau Olahraga yang lebih besar.</div>
+</div>
+
+<!-- BAB 6 -->
+<div class="chap">
+  <div class="eyebrow"><span class="no">6</span> Target &amp; cara ukur</div>
+  <h2>Seperti apa berhasilnya</h2>
+  <p class="stand">Tujuannya konkret: perbesar porsi Fashion dan Olahraga, sekaligus pastikan pembeli barunya balik lagi.</p>
+  <p>Dua-duanya harus jalan bareng. Kalau cuma menambah pembeli tanpa retensi, kita cuma menyiram ember bocor. Angka target di bawah ini usulan untuk disepakati, dan besarannya menyesuaikan budget.</p>
+  <div class="tablewrap">
+   <table>
+    <thead><tr><th>Yang diukur</th><th class="n">Sekarang</th><th class="n">Usulan target</th></tr></thead>
+    <tbody>
+      <tr class="tgt"><td>Porsi order Fashion &amp; Olahraga</td><td class="n">6,7%</td><td class="n"><b>9%</b></td></tr>
+      <tr class="tgt"><td>Porsi Fashion Wanita di dalam Fashion</td><td class="n">8%</td><td class="n"><b>12%</b></td></tr>
+      <tr class="tgt"><td>Pembeli balik dalam 60 hari (Fashion &amp; Olahraga)</td><td class="n">~20%</td><td class="n"><b>naik bertahap</b></td></tr>
+    </tbody>
+   </table>
+  </div>
+  <div class="callout"><span class="h">Ukuran keberhasilan utama</span>Jangan cuma lihat biaya per pembeli baru. Lihat berapa banyak pembeli baru Fashion dan Olahraga yang balik belanja dalam 60 hari. Kalau angka ini naik, seluruh hitungan ikut sehat, karena pembeli yang balik menyumbang 77% dari GMV.</div>
+  <div class="panel soft">
+    <h3>Yang perlu diputuskan sebelum jalan</h3>
+    <ul class="tick">
+      <li>Angka margin per kategori dan budget, supaya target biaya iklan bisa dikunci tanpa menebak.</li>
+      <li>Kurasi produk untuk feed katalog (Fashion, Olahraga, Suplemen), plus siapkan penawaran Suplemen setelah pembelian.</li>
+      <li>Sepakati pembeli-balik-60-hari sebagai metrik utama, sejajar dengan biaya akuisisi.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="foot">
+  Toco, Fashion &amp; Olahraga Growth Story, Q2 2026. Data dari Metabase (DB Read replica). Order valid = status &gt; 105, timezone UTC, GMV dihitung dari harga dikali kuantitas sebelum diskon. Angka "dilihat" bersifat kumulatif sepanjang waktu, jadi dipakai untuk membandingkan minat antar kategori, bukan traffic per bulan. Data gender diisi sekitar separuh pembeli, jadi porsinya menunjukkan arah, bukan angka pasti. Pembeli-balik = % pembeli sebuah kategori yang belanja 2 kali atau lebih dalam 6 bulan (Januari sampai Juni 2026). Warna dan font mengikuti toco.id.
+</div>
+</div>
