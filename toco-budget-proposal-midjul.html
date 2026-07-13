@@ -1,0 +1,220 @@
+<title>Toco - Proposal Budget Paid Ads Q3 2026</title>
+<style>
+  :root{
+    --bg:#fffdf5; --panel:#ffffff; --panel2:#fffbea; --ink:#1b1916; --muted:#6f6a62; --faint:#a8a29a;
+    --line:#ece7d8; --brand:#ffd400; --brand-deep:#a67f06; --brand-soft:#fff3bf;
+    --good:#177a4a; --good-bg:#e4f4ea; --bad:#c22b1c; --bad-bg:#fbe7e4; --warn:#b45309; --warn-bg:#fcefda;
+    --track:#efe9d8;
+    --font:"Mulish","Nunito Sans","Nunito",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#191714; --panel:#241f1b; --panel2:#2c2620; --ink:#fdf7e3; --muted:#a8a29a; --faint:#7c766c;
+    --line:#38322b; --brand:#ffd400; --brand-deep:#ffd400; --brand-soft:#40350f;
+    --good:#5fd394; --good-bg:#16311d; --bad:#f79485; --bad-bg:#391d19; --warn:#f0b45f; --warn-bg:#372914; --track:#38322b;}}
+  :root[data-theme="dark"]{--bg:#191714; --panel:#241f1b; --panel2:#2c2620; --ink:#fdf7e3; --muted:#a8a29a; --faint:#7c766c;
+    --line:#38322b; --brand:#ffd400; --brand-deep:#ffd400; --brand-soft:#40350f;
+    --good:#5fd394; --good-bg:#16311d; --bad:#f79485; --bad-bg:#391d19; --warn:#f0b45f; --warn-bg:#372914; --track:#38322b;}
+  :root[data-theme="light"]{--bg:#fffdf5; --panel:#ffffff; --panel2:#fffbea; --ink:#1b1916; --muted:#6f6a62; --faint:#a8a29a;
+    --line:#ece7d8; --brand:#ffd400; --brand-deep:#a67f06; --brand-soft:#fff3bf;
+    --good:#177a4a; --good-bg:#e4f4ea; --bad:#c22b1c; --bad-bg:#fbe7e4; --warn:#b45309; --warn-bg:#fcefda; --track:#efe9d8;}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px 90px}
+
+  .hero{background:var(--brand);color:#1b1916;border-radius:0 0 28px 28px;padding:34px 32px 28px;margin-bottom:24px;position:relative;overflow:hidden}
+  .hero::after{content:"📈";position:absolute;right:-6px;top:-16px;font-size:130px;opacity:.14;transform:rotate(-8deg)}
+  .brandrow{display:flex;align-items:center;gap:10px;font-weight:900;font-size:19px;letter-spacing:-.02em}
+  .brandrow .dot{background:#1b1916;color:var(--brand);border-radius:9px;padding:2px 10px}
+  .hero h1{font-size:30px;line-height:1.12;margin:14px 0 10px;font-weight:900;letter-spacing:-.02em;max-width:22ch}
+  .hero .pre{font-size:15.5px;max-width:70ch;color:#33301f;font-weight:600;margin:0}
+  .hero .tags{margin-top:16px;display:flex;gap:7px;flex-wrap:wrap}
+  .hero .tags span{background:rgba(27,25,22,.09);border:1px solid rgba(27,25,22,.15);border-radius:999px;padding:3px 11px;font-size:11.5px;font-weight:700}
+
+  section{margin-top:36px}
+  h2.sec{font-size:20px;font-weight:900;letter-spacing:-.01em;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  h2.sec .n{background:#1b1916;color:var(--brand);width:28px;height:28px;border-radius:8px;font-size:14px;display:flex;align-items:center;justify-content:center;font-weight:900;flex:none}
+  :root[data-theme="dark"] h2.sec .n{background:var(--brand);color:#1b1916} @media (prefers-color-scheme:dark){h2.sec .n{background:var(--brand);color:#1b1916}}
+  .sub{color:var(--muted);font-size:14px;margin:2px 0 14px 38px}
+  @media(max-width:620px){.sub{margin-left:0}}
+  p{margin:0 0 13px}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:15px}
+  .kpi .v{font-size:24px;font-weight:900;letter-spacing:-.02em;line-height:1}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:6px;font-weight:600}
+
+  .askbox{background:var(--brand-soft);border:2px solid var(--brand);border-radius:16px;padding:18px 20px;margin-top:16px}
+  .askbox b.h{display:block;font-size:11.5px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--brand-deep);margin-bottom:6px}
+  :root[data-theme="dark"] .askbox b.h{color:var(--brand)} @media (prefers-color-scheme:dark){.askbox b.h{color:var(--brand)}}
+  .askbox .big{font-size:18px;font-weight:800;letter-spacing:-.01em}
+
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel);margin:14px 0}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+  th,td{padding:10px 13px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:800;background:var(--panel2)}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  tbody tr.tot td{font-weight:900;background:var(--brand-soft)}
+  tbody tr.hl td{background:var(--good-bg)}
+  caption{caption-side:top;text-align:left;font-size:12.5px;font-weight:800;color:var(--muted);padding:10px 13px 0}
+
+  .callout{border-radius:13px;padding:14px 17px;margin:16px 0;font-size:14px;font-weight:600;background:var(--brand-soft);border-left:4px solid var(--brand)}
+  .callout.warn{background:var(--warn-bg);border-color:var(--warn)}
+  .callout .h{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;color:var(--brand-deep)}
+  :root[data-theme="dark"] .callout .h{color:var(--brand)} @media (prefers-color-scheme:dark){.callout .h{color:var(--brand)}}
+  .callout.warn .h{color:var(--warn)}
+
+  ul.tick{list-style:none;padding:0;margin:8px 0}
+  ul.tick li{position:relative;padding:5px 0 5px 22px;font-size:14px}
+  ul.tick li::before{content:"";position:absolute;left:3px;top:11px;width:8px;height:8px;border-radius:3px;background:var(--brand)}
+  b.hot{color:var(--brand-deep)} :root[data-theme="dark"] b.hot{color:var(--brand)} @media (prefers-color-scheme:dark){b.hot{color:var(--brand)}}
+  .pill{display:inline-block;font-size:10.5px;font-weight:900;padding:2px 8px;border-radius:6px}
+  .p-con{background:var(--warn-bg);color:var(--warn)} .p-opt{background:var(--good-bg);color:var(--good)}
+  .foot{margin-top:44px;padding:16px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:11.5px;line-height:1.6}
+</style>
+
+<div class="wrap">
+
+<div class="hero">
+  <div class="brandrow"><span class="dot">toco</span> · Growth / Paid Media</div>
+  <h1>Proposal Budget Paid Ads &amp; Proyeksi Q3 2026</h1>
+  <p class="pre">Menaikkan budget iklan Meta &amp; Google untuk mendorong akuisisi pembeli baru, dengan efisiensi yang sudah terbukti dari performa saat ini.</p>
+  <div class="tags">
+    <span>Disiapkan oleh: Growth</span>
+    <span>Data performa: rata-rata harian terkini</span>
+    <span>Angka: 7-day click (bukan view-through)</span>
+  </div>
+</div>
+
+<!-- 1 THE ASK -->
+<section>
+  <h2 class="sec"><span class="n">1</span>Ringkasan &amp; Permintaan</h2>
+  <div class="kpis">
+    <div class="kpi"><div class="v">85 / hari</div><div class="l">Order dari iklan sekarang</div></div>
+    <div class="kpi"><div class="v">Rp29,4rb</div><div class="l">Blended CPA</div></div>
+    <div class="kpi"><div class="v">~39x</div><div class="l">ROAS (GMV)</div></div>
+    <div class="kpi"><div class="v">Rp2,5jt / hari</div><div class="l">Budget saat ini</div></div>
+  </div>
+  <div class="askbox">
+    <b class="h">Yang kami minta</b>
+    <div class="big">Naikkan budget dari Rp2,5 juta menjadi Rp3 juta per hari untuk minggu depan. Untuk Agustus (periode Merdeka Promo), budget bisa naik ke Rp4 juta per hari jika di-approve.</div>
+  </div>
+</section>
+
+<!-- 2 BUKTI -->
+<section>
+  <h2 class="sec"><span class="n">2</span>Performa Saat Ini (bukti)</h2>
+  <p class="sub">Dengan budget Rp2,5 juta per hari, iklan menghasilkan 85 order per hari dengan CPA yang efisien.</p>
+  <div class="tablewrap">
+   <table>
+    <thead><tr><th>Channel</th><th class="n">CPA</th><th class="n">Spend / hari</th><th class="n">Order / hari</th><th class="n">Revenue / hari (GMV)</th></tr></thead>
+    <tbody>
+      <tr><td>Meta</td><td class="n">Rp34.000</td><td class="n">Rp1.700.000</td><td class="n">50</td><td class="n">Rp57.500.000</td></tr>
+      <tr><td>Google</td><td class="n">Rp22.857</td><td class="n">Rp800.000</td><td class="n">35</td><td class="n">Rp40.250.000</td></tr>
+      <tr class="tot"><td>Total / blended</td><td class="n">Rp29.412</td><td class="n">Rp2.500.000</td><td class="n">85</td><td class="n">Rp97.750.000</td></tr>
+    </tbody>
+   </table>
+  </div>
+  <p style="font-size:12.5px;color:var(--muted);margin:-4px 2px">ROAS GMV = 39,1x · AOV ~Rp1.150.000 · angka dihitung dari 7-day click, bukan view-through yang membesar.</p>
+</section>
+
+<!-- 3 SKENARIO -->
+<section>
+  <h2 class="sec"><span class="n">3</span>Proyeksi di Budget Rp3 Juta / Hari</h2>
+  <p class="sub">Jika budget dinaikkan Rp0,5 juta (diarahkan ke Google), ini dua skenario: konservatif dan optimis.</p>
+
+  <div class="tablewrap">
+   <table>
+    <caption>Skenario A <span class="pill p-con">Konservatif</span> - CPA di level saat ini</caption>
+    <thead><tr><th>Channel</th><th class="n">CPA</th><th class="n">Spend</th><th class="n">Order</th><th class="n">Revenue (GMV)</th></tr></thead>
+    <tbody>
+      <tr><td>Meta</td><td class="n">Rp35.000</td><td class="n">Rp1.700.000</td><td class="n">49</td><td class="n">Rp51.000.000</td></tr>
+      <tr><td>Google</td><td class="n">Rp30.000</td><td class="n">Rp1.300.000</td><td class="n">43</td><td class="n">Rp52.000.000</td></tr>
+      <tr class="tot"><td>Total / blended</td><td class="n">Rp32.609</td><td class="n">Rp3.000.000</td><td class="n">92</td><td class="n">Rp103.000.000</td></tr>
+    </tbody>
+   </table>
+  </div>
+  <p style="font-size:12.5px;color:var(--muted);margin:-4px 2px 14px">ROAS GMV = 34,3x · AOV = Rp1.120.725</p>
+
+  <div class="tablewrap">
+   <table>
+    <caption>Skenario B <span class="pill p-opt">Target optimis</span> - setelah optimasi</caption>
+    <thead><tr><th>Channel</th><th class="n">CPA</th><th class="n">Spend</th><th class="n">Order</th><th class="n">Revenue (GMV)</th></tr></thead>
+    <tbody>
+      <tr><td>Meta</td><td class="n">Rp25.000</td><td class="n">Rp1.700.000</td><td class="n">68</td><td class="n">Rp76.500.000</td></tr>
+      <tr><td>Google</td><td class="n">Rp28.000</td><td class="n">Rp1.300.000</td><td class="n">46</td><td class="n">Rp58.500.000</td></tr>
+      <tr class="tot"><td>Total / blended</td><td class="n">Rp26.316</td><td class="n">Rp3.000.000</td><td class="n">114</td><td class="n">Rp135.000.000</td></tr>
+    </tbody>
+   </table>
+  </div>
+  <p style="font-size:12.5px;color:var(--muted);margin:-4px 2px 14px">ROAS GMV = 45x · AOV = Rp1.179.775</p>
+  <div class="callout"><span class="h">Rangkuman</span>Di Rp3 juta/hari, order dari iklan naik ke <b class="hot">92 sampai 114 per hari</b> (dari 85 sekarang), dengan CPA di kisaran Rp26rb sampai Rp33rb. Semakin optimasi berjalan, semakin dekat ke Skenario B.</div>
+</section>
+
+<!-- 4 Q3 TARGET -->
+<section>
+  <h2 class="sec"><span class="n">4</span>Kontribusi ke Target Q3</h2>
+  <p class="sub">Target order valid: Juli 43.000 · Agustus 55.000 · September 68.000.</p>
+  <div class="tablewrap">
+   <table>
+    <thead><tr><th>Bulan</th><th class="n">Target</th><th class="n">Per hari</th><th class="n">Run-rate sekarang</th><th>Catatan</th></tr></thead>
+    <tbody>
+      <tr><td>Juli</td><td class="n">43.000</td><td class="n">1.387</td><td class="n">~1.214 / hari</td><td>Proyeksi ~37.600 (~90%), paid menutup sebagian gap</td></tr>
+      <tr><td>Agustus</td><td class="n">55.000</td><td class="n">1.774</td><td class="n">butuh +46%</td><td>Didorong Merdeka Promo + budget naik ke Rp4 jt/hari</td></tr>
+      <tr><td>September</td><td class="n">68.000</td><td class="n">2.267</td><td class="n">butuh +87%</td><td>Perlu kombinasi paid, organik, dan tracking benar</td></tr>
+    </tbody>
+   </table>
+  </div>
+  <div class="callout warn"><span class="h">Jujur soal target</span>Paid saat ini efisien tapi porsinya kecil (~7% dari order harian), jadi tidak cukup mengejar target sendirian. Target Q3 yang agresif butuh kombinasi paid yang di-ramp, promo, dan pertumbuhan organik.</div>
+</section>
+
+<!-- 5 APP INSTALL CRM -->
+<section>
+  <h2 class="sec"><span class="n">5</span>Potensi App Install lewat CRM</h2>
+  <p class="sub">Install tidak dinilai dari order hari itu. Nilainya: menambah user terdaftar baru yang bisa diaktifkan jadi pembeli lewat CRM.</p>
+  <div class="tablewrap">
+   <table>
+    <thead><tr><th>Tahap funnel</th><th class="n">Rate</th><th class="n">Per bulan</th></tr></thead>
+    <tbody>
+      <tr><td>App install (dari iklan)</td><td class="n">-</td><td class="n">~4.500</td></tr>
+      <tr><td>Register (aktivasi awal)</td><td class="n">~59%</td><td class="n">~2.650</td></tr>
+      <tr><td>Jadi pembeli tanpa CRM (baseline)</td><td class="n">~12%</td><td class="n">~318</td></tr>
+      <tr class="hl"><td>Jadi pembeli dengan aktivasi CRM (target)</td><td class="n">~20%</td><td class="n">~530</td></tr>
+    </tbody>
+   </table>
+  </div>
+  <div class="tablewrap">
+   <table>
+    <thead><tr><th>Estimasi nilai (AOV ~Rp1,15 jt)</th><th class="n">Pembeli / bln</th><th class="n">Revenue / bln (GMV)</th></tr></thead>
+    <tbody>
+      <tr><td>Tanpa CRM</td><td class="n">~318</td><td class="n">~Rp366 jt</td></tr>
+      <tr class="hl"><td>Dengan aktivasi CRM</td><td class="n">~530</td><td class="n">~Rp610 jt</td></tr>
+      <tr class="tot"><td>Nilai tambah CRM</td><td class="n">+212</td><td class="n">+Rp244 jt</td></tr>
+    </tbody>
+   </table>
+  </div>
+  <div class="callout"><span class="h">Intinya</span>Setiap install yang register itu aset. Diaktifkan lewat CRM (push, email, promo bertarget), mereka bisa menghasilkan <b class="hot">~Rp610 juta GMV/bulan</b>, dengan potensi repeat karena kategori esensial. Angka rate di atas asumsi dan bisa disesuaikan dengan data aktual CRM.</div>
+</section>
+
+<!-- 6 PERMINTAAN -->
+<section>
+  <h2 class="sec"><span class="n">6</span>Permintaan Spesifik &amp; Kebutuhan</h2>
+  <div class="tablewrap">
+   <table>
+    <thead><tr><th>Item</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>Minggu depan</td><td>Naikkan budget ke Rp3 juta/hari (dari Rp2,5 juta)</td></tr>
+      <tr><td>Agustus (Merdeka Promo)</td><td>Rp4 juta/hari, jika di-approve</td></tr>
+      <tr><td>Aktivasi CRM</td><td>Jalankan flow aktivasi untuk user hasil install (push/email/promo)</td></tr>
+      <tr><td>Yang dibutuhkan dari management</td><td>Approval budget + konfirmasi target Q3 (order valid &gt; 105 atau semua order)</td></tr>
+    </tbody>
+   </table>
+  </div>
+</section>
+
+<div class="foot">
+  Sumber angka: performa campaign Meta &amp; Google (7-day click) rata-rata harian terkini, dan data order backend (Metabase). Revenue = GMV (nilai transaksi sebelum diskon). Skenario A &amp; B adalah proyeksi pada budget Rp3 juta/hari dan bersifat perkiraan, bukan jaminan. Funnel App Install memakai asumsi rate register dan aktivasi yang perlu divalidasi dengan data CRM aktual. Target Q3 diasumsikan order valid (status &gt; 105) dan perlu dikonfirmasi.
+</div>
+</div>
