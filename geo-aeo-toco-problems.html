@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Toco Problem Deep Dive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fffdf5;--panel:#ffffff;--panel2:#fffbea;--ink:#1b1916;--muted:#6f6a62;--line:#ece7d8;
+--brand:#ffd400;--brand-deep:#8a6a05;--brand-soft:#fff3bf;--link:#7a5c00;
+--bad:#c22b1c;--bad-bg:#fbe7e4;--warn:#b45309;--warn-bg:#fcefda;--good:#177a4a;--good-bg:#e4f4ea;
+--font:"Mulish","Nunito Sans",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#191714;--panel:#241f1b;--panel2:#2c2620;--ink:#fdf7e3;
+--muted:#b3ada4;--line:#38322b;--brand-deep:#ffd400;--brand-soft:#40350f;--link:#ffd84d;
+--bad:#f79485;--bad-bg:#391d19;--warn:#f0b45f;--warn-bg:#372914;--good:#5fd394;--good-bg:#16311d}}
+:root[data-theme="dark"]{--bg:#191714;--panel:#241f1b;--panel2:#2c2620;--ink:#fdf7e3;--muted:#b3ada4;--line:#38322b;
+--brand-deep:#ffd400;--brand-soft:#40350f;--link:#ffd84d;--bad:#f79485;--bad-bg:#391d19;--warn:#f0b45f;--warn-bg:#372914;--good:#5fd394;--good-bg:#16311d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+a{color:var(--link);text-underline-offset:2px}
+.hero{background:var(--brand);color:#1b1916;padding:44px 0 40px}
+.brandrow{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px}
+.brandrow .dot{background:#1b1916;color:#ffd400;border-radius:9px;padding:2px 10px}
+.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.08;margin:18px 0 14px;font-weight:900;letter-spacing:-.03em;max-width:18ch}
+.hero p{font-size:18.5px;font-weight:600;color:#33301f;max-width:58ch;margin:0}
+.hero .meta{margin-top:18px;font-size:13.5px;font-weight:700;color:#4a4530}
+section{padding:40px 0 4px}
+.kicker{font-size:12.5px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--brand-deep);margin:0 0 6px}
+h2{font-size:clamp(24px,3.4vw,30px);line-height:1.2;font-weight:900;letter-spacing:-.02em;margin:0 0 18px}
+.grid{display:grid;gap:14px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.card h3{font-size:18px;line-height:1.3;margin:0 0 6px;font-weight:800}
+.card p{margin:0;color:var(--muted);font-size:15.5px}
+.num{font-size:34px;font-weight:900;letter-spacing:-.03em;line-height:1;margin-bottom:8px}
+.pill{font-size:11.5px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 10px;white-space:nowrap;margin-top:3px;display:inline-block}
+.crit{background:var(--bad-bg);color:var(--bad)}
+.high{background:var(--warn-bg);color:var(--warn)}
+.owner{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end;flex-shrink:0;max-width:44%}
+.owner span{font-size:12px;font-weight:800;border:1px solid var(--line);border-radius:7px;padding:1px 7px;color:var(--muted);white-space:nowrap;background:var(--panel2)}
+.note{color:var(--muted);font-size:15px;margin:14px 0 0}
+.full{margin:44px 0 70px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:20px 22px;display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between}
+.full p{margin:0;font-size:15.5px;max-width:52ch}
+.btn{display:inline-block;background:var(--ink);color:var(--bg);text-decoration:none;font-weight:800;border-radius:999px;padding:10px 18px;font-size:15px}
+
+/* ---- deep-dive extensions ---- */
+html{scroll-behavior:smooth}
+section[id]{scroll-margin-top:64px}
+.toplinks{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:18px;font-size:14.5px;font-weight:800}
+.toplinks a{color:#1b1916}
+.toc{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.toc .wrap{display:flex;gap:8px;overflow-x:auto;padding-top:10px;padding-bottom:10px;scrollbar-width:none}
+.toc .wrap::-webkit-scrollbar{display:none}
+.toc a{flex-shrink:0;font-size:13.5px;font-weight:800;text-decoration:none;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap}
+.toc a:hover,.toc a:focus{background:var(--brand-soft);border-color:var(--brand)}
+.toc a .n{color:var(--brand-deep);margin-right:4px}
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:14px;background:var(--panel);margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.45}
+.tbl table{min-width:560px}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-top:1px solid var(--line)}
+thead th{background:var(--panel2);font-size:12.5px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);border-top:0}
+td.r,th.r{text-align:right;white-space:nowrap}
+td b{font-weight:800}
+.ov td:first-child a{font-weight:800}
+.phead{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:6px}
+.phead .kicker{margin:0}
+.sub{font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-deep);margin:26px 0 8px}
+.oneline{font-size:19px;font-weight:700;line-height:1.45;border-left:6px solid var(--brand);background:var(--panel);border-radius:12px;padding:14px 18px;margin:0}
+.facts,.why{margin:0;padding-left:22px}
+.facts li,.why li{margin:7px 0}
+.facts b,.why b{font-weight:800}
+.howto{margin-top:14px;background:var(--panel2);border:1px dashed var(--line);border-radius:14px;padding:14px 18px;font-size:15.5px}
+.howto h4{margin:0 0 6px;font-size:15px;font-weight:900}
+.howto ol{margin:0;padding-left:20px}
+.howto p{margin:6px 0 0}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:var(--panel2);border:1px solid var(--line);padding:0 5px;border-radius:5px;overflow-wrap:anywhere}
+pre{overflow-x:auto;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;margin:10px 0}
+pre code{background:none;border:0;padding:0;font-size:inherit;overflow-wrap:normal}
+.root{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin:0;font-size:16px}
+.steps{list-style:none;counter-reset:s;margin:0;padding:0}
+.steps>li{counter-increment:s;position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px 14px 56px}
+.steps>li+li{margin-top:10px}
+.steps>li::before{content:counter(s);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--brand);color:#1b1916;font-weight:900;display:grid;place-items:center;font-size:15px}
+.steps b{font-weight:800}
+.steps p{margin:4px 0 0;font-size:15.5px;color:var(--muted)}
+.steps ul{margin:6px 0 0;padding-left:18px;font-size:15.5px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.chips span{font-size:12px;font-weight:800;border:1px solid var(--line);border-radius:7px;padding:1px 7px;color:var(--muted);white-space:nowrap;background:var(--panel2)}
+.chips .size{background:var(--brand-soft);color:var(--brand-deep);border-color:transparent}
+.chips .when{background:var(--ink);color:var(--bg);border-color:transparent}
+.done{list-style:none;margin:0;padding:0}
+.done li{position:relative;padding:8px 0 8px 30px;border-top:1px solid var(--line)}
+.done li:first-child{border-top:0}
+.done li::before{content:"✓";position:absolute;left:4px;top:7px;font-weight:900;color:var(--good)}
+.decide{background:var(--warn-bg);border-radius:14px;padding:14px 18px}
+.decide ul{margin:0;padding-left:20px}
+.decide li{margin:6px 0}
+.decide b{font-weight:800}
+.gloss{display:block;color:var(--muted);font-size:13.5px;font-style:italic}
+.tag{font-size:11px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;border-radius:6px;padding:1px 6px;white-space:nowrap;background:var(--warn-bg);color:var(--warn)}
+.tag.ok{background:var(--good-bg);color:var(--good)}
+.tag.no{background:var(--bad-bg);color:var(--bad)}
+.lowc td{color:var(--muted)}
+.bar{display:block;height:6px;border-radius:3px;background:var(--brand);margin-top:5px}
+.zero{color:var(--bad);font-weight:900}
+.legend{font-size:14.5px;color:var(--muted);margin:12px 0 0}
+.legend b{color:var(--ink)}
+.outline{margin:0;padding-left:22px;font-size:15.5px}
+.outline li{margin:5px 0}
+hr.sep{border:0;border-top:2px solid var(--line);margin:44px 0 0}
+footer.ev{margin:44px 0 0}
+@media (max-width:760px){.g3,.g2{grid-template-columns:1fr}.wrap{padding:0 16px}
+.steps>li{padding-left:50px}.steps>li::before{left:12px}}
+@media print{
+:root:not([data-theme="zz"]){--bg:#fff;--panel:#fff;--panel2:#f5f5f5;--ink:#000;--muted:#333;--line:#bbb;--link:#000;--brand-deep:#000;--brand-soft:#eee}
+body{font-size:11.5pt}
+.toc,.btn{display:none}
+.hero{background:#fff;border-bottom:4px solid #000;padding:12px 0}
+.tbl{overflow:visible}.tbl table{min-width:0}
+pre{white-space:pre-wrap}
+.card,.steps>li,.howto,.decide,pre,tr{break-inside:avoid}
+section{break-before:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="hero"><div class="wrap">
+  <div class="toplinks"><a href="geo-aeo-toco.html">← Back to the summary</a><a href="geo-aeo-toco-full.html">Read the full report →</a></div>
+  <div class="brandrow"><span class="dot">toco</span> Problem deep dive</div>
+  <h1>Five problems on toco.id, in depth</h1>
+  <p>For each problem: what we found, why it matters, what causes it, how to fix it, and how we will know it is fixed.</p>
+  <div class="meta">Checked live on 29 Oct 2026 · For Engineering, Trust &amp; Safety, Legal, Content and Marketing</div>
+</div></header>
+
+<nav class="toc" aria-label="On this page"><div class="wrap">
+  <a href="#overview">Overview</a>
+  <a href="#risky-listings"><span class="n">1</span>Risky listings</a>
+  <a href="#ai-cant-read"><span class="n">2</span>AI can't read</a>
+  <a href="#seller-phones"><span class="n">3</span>Seller phones</a>
+  <a href="#brand-toco"><span class="n">4</span>Brand "Toco"</a>
+  <a href="#fees-page"><span class="n">5</span>Fees page</a>
+  <a href="#evidence">Evidence</a>
+</div></nav>
+
+<main class="wrap">
+
+<section id="overview">
+  <div class="kicker">Overview</div>
+  <h2>The five problems at a glance</h2>
+  <div class="tbl"><table class="ov">
+    <thead><tr><th>Problem</th><th>Severity</th><th>Owner</th><th>Effort</th><th>First step</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#risky-listings">1. Risky listings in the index</a></td><td><span class="pill crit">Critical</span></td><td>Trust &amp; Safety, Legal, Tech</td><td>S to start, then M to L</td><td>Take down the abortion-pill and Rx stores, and noindex the 4-store vape network</td></tr>
+      <tr><td><a href="#ai-cant-read">2. AI can't read key pages</a></td><td><span class="pill crit">Critical</span></td><td>Tech</td><td>M, about 1 to 2 sprints</td><td>Set <code>lang="id"</code>, then remove the "mounted" gate in the main layout</td></tr>
+      <tr><td><a href="#seller-phones">3. Seller phone numbers exposed</a></td><td><span class="pill high">High</span></td><td>Tech, Product, Legal</td><td>S, about 2 to 4 engineering days</td><td>Drop <code>toco_phone</code> from the public store page data</td></tr>
+      <tr><td><a href="#brand-toco">4. Every product labelled brand "Toco"</a></td><td><span class="pill high">High</span></td><td>Tech, Product</td><td>S now, M later</td><td>Remove <code>brand</code> from Product markup on third-party listings</td></tr>
+      <tr><td><a href="#fees-page">5. No single fees page</a></td><td><span class="pill high">High</span></td><td>Finance, Legal, Content, Tech, PR</td><td>M</td><td>Finance and Legal confirm the open fee facts, then publish toco.id/biaya</td></tr>
+    </tbody>
+  </table></div>
+  <p class="legend"><b>Sizes used on this page:</b> S = a few days or less. M = roughly one to two sprints. L = several sprints or ongoing work. These are rough planning sizes, not quotes.</p>
+</section>
+
+<section id="risky-listings">
+  <div class="phead"><div class="kicker">Problem 1</div><span class="pill crit">Critical</span></div>
+  <h2>Risky listings fill the index</h2>
+
+  <h3 class="sub">In one line</h3>
+  <p class="oneline">Every day, tens of thousands of new vape listings, along with abortion-pill spam, prescription drugs and alcohol, go out to Google and AI crawlers as normal pages that are open to indexing.</p>
+
+  <h3 class="sub">What we found</h3>
+  <ul class="facts">
+    <li>Today's newest-listings sitemap has 40,000 URLs. <b>75.0%</b> are vape by the basic keyword match, and <b>86.4%</b> with the extended classifier. Across the whole site, about <b>2.50M</b> listings are vape-type, which is <b>27.6%</b> of 9.07M. Heated tobacco and cigarettes add another 100,890.</li>
+    <li>The uploads come in bursts. <b>7 of the last 8 days</b> were burst days, with 94K to 203K new listings each and 52% to 62% of them vape. On quiet days vape is about 1%. October alone (to 28 Oct) brought 1.78M new listings, 47.5% of them vape.</li>
+    <li>Today's file comes from <b>4 stores</b>: <code>loka-gaya</code>, <code>mode-kita</code>, <code>wawa-velvet</code> and <code>nawa-club</code>. All 4 were created <b>within 9 minutes</b> on 2026-10-01, all list <b>Kota Bekasi</b>, and all uploaded profile pictures within one hour on 10-03. All 73 sampled vape listings came from them. No listing was moderated, and the bulk-upload flag was never set.</li>
+    <li>The vape is filed under <b>Elektronik &gt; Elektronik Rumah Tangga &gt; Setrika</b> (clothes irons): 80 of 94 fetched vape pages. <b>91 of 94</b> have <code>is_adult=false</code>.</li>
+    <li><b>54</b> abortion-pill listings are live, all returning 200 with <code>index, follow</code>. <b>51</b> come from one store, <code>ddfsdyd</code>, created 2026-10-13 and still not banned. Its store description advertises abortion pills in UAE cities. Two new Indonesian misoprostol listings appeared on 10-27 and 10-28.</li>
+    <li>Prescription and controlled drugs are listed: <b>alprazolam</b> 1 mg from a store named <code>alprazolam-1mg-ready</code> (filed as "Vitamin C"), <b>diazepam</b> (some disguised as "case hp kode valisanbe" phone cases), <b>codeine</b> 20 mg, and about <b>1,100</b> "jual viagra/cialis asli" doorway pages. Listings set to <code>show=false</code> are still served with <code>index, follow</code> and stay in the sitemap.</li>
+    <li>Alcohol sits in a real category, <b>Produk Dewasa &gt; Minuman Beralkohol</b>, even though Toco's own policy bans "Minuman beralkohol". The age gate is <b>client-side only</b>: the server HTML has no age marker, so crawlers get title, photos and markup in full.</li>
+  </ul>
+  <p class="note">Example duplicate pair, same title, same price, created 6 minutes apart by two network stores: <a href="https://toco.id/listing/foom-lite-mango-salt-nic-30ml-10mg-1793243062941-5696">foom-lite-mango (mode-kita)</a> and <a href="https://toco.id/listing/foom-lite-mango-salt-nic-30ml-10mg-1793243423925-0c49">foom-lite-mango (wawa-velvet)</a>.</p>
+
+  <div class="howto">
+    <h4>How to see it yourself</h4>
+    <ol>
+      <li>Open either example listing above. Press <b>Ctrl+U</b> (Cmd+Option+U on Mac) to view the page source.</li>
+      <li>Press Ctrl+F and search <code>robots</code>. You will see <code>index, follow</code>. Search <code>is_adult</code> and you will see <code>false</code>.</li>
+    </ol>
+    <p>To count vape in today's sitemap (one command, any Mac terminal):</p>
+<pre><code>curl -s https://sitemaps.toco.id/sitemap-listings-recent.xml.gz | gunzip \
+ | grep -oE '&lt;loc&gt;[^&lt;]+' | grep -ciE 'vape|liquid|saltnic|salt-nic|relx|foom|oxva|freebase|vapor|atomizer'</code></pre>
+    <p>Out of 40,000 URLs, the result today was 30,012.</p>
+  </div>
+
+  <h3 class="sub">Why it matters</h3>
+  <ul class="why">
+    <li><b>Legal.</b> <a href="https://www.hukumonline.com/klinik/a/dasar-hukum-larangan-jual-rokok-eceran-lt66b0f84e2aa17/">PP 28/2024 Pasal 434</a> bans selling tobacco and e-cigarettes through commercial websites and apps (ayat 1 huruf f). Ayat 2 exempts them only "jika terdapat verifikasi umur" (<i>if there is age verification</i>). A guest checkbox that vape pages never even show is a weak basis for that exemption. To be confirmed by Legal. Vape liquid is also an excise good (PMK 193/2021, amended by PMK 96/2024), and listings without excise stamp details add illegal-excise risk. Online alcohol sales under Permendag 20/2014 as amended: to be confirmed by Legal.</li>
+    <li><b>Our own policy.</b> The product policy bans "Narkotika, psikotropika, obat keras", "Minuman beralkohol", "Rokok dan produk tembakau" and "spam atau duplikasi tidak wajar". The bulk networks break the duplication rule, so Toco can act on them under today's wording.</li>
+    <li><b>Search and AI.</b> <a href="https://support.google.com/merchants/answer/6150004">Google Merchant Center's dangerous products policy</a> does not allow tobacco or e-cigarettes. <a href="https://developers.openai.com/commerce/guides/get-started.md">OpenAI's commerce guide</a> lists age-restricted products (alcohol, nicotine) and prescription-only medicines as prohibited. AI crawlers that read our sitemap see a catalogue that is about one quarter nicotine.</li>
+    <li><b>Trust.</b> Abortion-pill spam and coded psychotropics under the Toco name are a press and regulator risk on their own. They also carry brand "Toco" in their markup (see <a href="#brand-toco">Problem 4</a>).</li>
+  </ul>
+
+  <h3 class="sub">Root cause</h3>
+  <p class="root">Uploads are not moderated and stores are not risk-scored, so a few freshly created stores can push 40K listings in two hours. The vape is filed under Setrika with <code>is_adult=false</code>, and the age gate only fires on <code>is_adult</code> or the "Produk Dewasa" category, so it never triggers. The sitemap generator includes every listing, hidden ones too, and the only age control runs in the browser, which is not an SEO control.</p>
+
+  <h3 class="sub">How to keep a page out of the index</h3>
+  <div class="grid g2">
+    <div class="card"><h3>Taken down: return 410</h3><p>For removed listings, return HTTP 410 (or 404) and drop the URL from every sitemap the same day. A 410 tells search engines the page is gone for good.</p></div>
+    <div class="card"><h3>Allowed but restricted: noindex</h3><p>Send <code>&lt;meta name="robots" content="noindex, follow"&gt;</code> or the <code>X-Robots-Tag: noindex</code> header, and remove the Product markup.</p></div>
+    <div class="card"><h3>Filter the sitemap</h3><p>The generator should leave out restricted categories, <code>is_adult</code> listings, blocklist hits, risky stores, hidden listings and duplicates.</p></div>
+    <div class="card"><h3>Stop it at upload</h3><p>Run the classifier and a store risk score when listings are created, so the next network never reaches the index.</p></div>
+    <div class="card"><h3>Urgent cases: Search Console Removals</h3><p>Use the Removals tool to hide the worst URLs in Google quickly while the 410 takes effect. It is temporary, not a fix.</p></div>
+    <div class="card"><h3>Not robots.txt Disallow</h3><p>Disallow stops crawling, so Google can never see the noindex or the 410. Blocked URLs can stay indexed from links, just without a description.</p></div>
+  </div>
+<pre><code># restricted but allowed (e.g. if vape is kept with real age checks)
+X-Robots-Tag: noindex
+&lt;meta name="robots" content="noindex, follow"&gt;
+
+# taken down
+HTTP/1.1 410 Gone</code></pre>
+
+  <h3 class="sub">How to fix it</h3>
+  <ol class="steps">
+    <li><b>Take down the clearly illegal listings this week.</b> Suspend store <code>ddfsdyd</code> with its 51 listings and store page, the 2 misoprostol listings, the alprazolam, diazepam and codeine listings and their stores <code>alprazolam-1mg-ready</code> and <code>quantum-bio-group-629051</code>, and the Rx and sex-toy doorway pages with phone numbers in the title. Return 410 and drop them from sitemaps the same day.
+      <div class="chips"><span class="when">Do first</span><span>Trust &amp; Safety</span><span>Tech</span><span class="size">S</span></div></li>
+    <li><b>Act on the 4-store network.</b> Noindex <code>nawa-club</code>, <code>wawa-velvet</code>, <code>loka-gaya</code> and <code>mode-kita</code>, remove them from sitemaps and freeze their bulk uploads until the vape decision is made. This alone removes at least about 96% of today's recent sitemap.
+      <div class="chips"><span class="when">Do first</span><span>Trust &amp; Safety</span><span>Tech</span><span class="size">S</span></div></li>
+    <li><b>Close the hidden-listing leak.</b> A listing with <code>show=false</code>, deleted or archived must never be in a sitemap and must return noindex or 404/410.
+      <div class="chips"><span class="when">Do first</span><span>Tech</span><span class="size">S</span></div></li>
+    <li><b>Add sitemap exclusion and page-level noindex rules.</b> Exclude and noindex restricted category IDs, <code>is_adult=true</code>, hits on the reviewed blocklist (run on title and description, not only the slug), high-risk stores, and listings out of stock for more than 30 days. Remove Product markup on all of them.
+      <div class="chips"><span>Tech</span><span class="size">M</span></div></li>
+    <li><b>Moderate at upload and score stores.</b> Block abortion, psychotropic and phone-in-title hits. Queue vape, tobacco, alcohol and obat keras for review. Force vape out of Setrika. Score stores 0 to 100 on age, missing KYC, upload speed, blocklist share, links to other young stores and phone numbers in the description: noindex at 50 or more, freeze at 70 or more. Throttle new stores for their first 14 days and set the bulk-upload flag correctly.
+      <div class="chips"><span>Trust &amp; Safety</span><span>Tech</span><span>Product</span><span class="size">L</span></div></li>
+    <li><b>Collapse duplicates.</b> Keep one canonical listing per store and product and canonicalise or merge the rest. About 71% of today's recent file is redundant, and up to about 4.5M URLs sitewide.
+      <div class="chips"><span>Tech</span><span class="size">M</span></div></li>
+    <li><b>Fix the policy and categories.</b> Name "rokok elektrik, cairan rokok elektrik (liquid), pod/cartridge, HPTL" in policy section H, make the policy page server-rendered, and either disable the alcohol and rokok categories or document the age-verification regime. Not both.
+      <div class="chips"><span>Legal</span><span>Trust &amp; Safety</span><span>Content</span><span class="size">S</span></div></li>
+    <li><b>Keep the blocklist honest.</b> Review monthly. Each new term needs a 200-listing precision sample and ships only at 95% precision or better.
+      <div class="chips"><span class="when">Ongoing</span><span>Trust &amp; Safety</span></div></li>
+  </ol>
+
+  <h3 class="sub">Done when</h3>
+  <ul class="done">
+    <li>The blocklist scan over every listing sitemap reports <b>0</b> hits. Today: 34,595 of 40,000 in the recent file and 2,656,300 sitewide.</li>
+    <li>Duplicate share in any listing sitemap is below <b>5%</b> (today 71.3% in the recent file).</li>
+    <li>A random sample of 200 sitemap URLs: all return 200 with <code>index</code> and <code>show=true</code>, none are <code>is_adult</code> or in a restricted category.</li>
+    <li>The 54 abortion URLs, 5 Rx URLs and 4 network stores return 404/410 or noindex and appear in no sitemap.</li>
+    <li>No hourly sitemap has more than 25% of URLs from one store, or more than 50% from stores younger than 30 days.</li>
+    <li>The scan and duplicate scripts already exist and can be handed to Tech and Trust &amp; Safety as-is.</li>
+  </ul>
+
+  <h3 class="sub">Decisions needed</h3>
+  <div class="decide"><ul>
+    <li><b>Vape policy, in writing.</b> Choose one: keep it with real server-side age verification (the minimum under PP 28/2024) plus noindex and excise checks; keep it but noindex it and leave it out of every sitemap and feed; or remove it. Toco's policy already bans tobacco, so the policy text must match the choice. Owners: Legal, Trust &amp; Safety.</li>
+    <li><b>Alcohol.</b> Disable the Minuman Beralkohol category, or keep it with a documented verification regime. Owner: Legal.</li>
+    <li><b>Grey zone.</b> About 50 "telat haid" herbal listings need human review, not automatic takedown. Owner: Trust &amp; Safety.</li>
+  </ul></div>
+</section>
+
+<section id="ai-cant-read">
+  <div class="phead"><div class="kicker">Problem 2</div><span class="pill crit">Critical</span></div>
+  <h2>AI can't read our key pages</h2>
+
+  <h3 class="sub">In one line</h3>
+  <p class="oneline">The home page, About, FAQ, product policy, category pages and the "0% biaya admin" article are blank to any crawler that does not run JavaScript, and that includes ChatGPT, Claude and Perplexity.</p>
+
+  <h3 class="sub">What we found</h3>
+  <ul class="facts">
+    <li><b>0</b> visible characters on all 8 pages we tested, read the way GPTBot reads them. Home, About, FAQ, policy, the article and <code>/p/dapur</code> also have <b>no title, description, canonical or structured data</b>.</li>
+    <li>The result is identical for OAI-SearchBot, ClaudeBot, PerplexityBot, Googlebot and desktop Chrome. Nothing blocks bots, and robots.txt allows everyone. The page is simply empty until JavaScript runs.</li>
+    <li>Listing and store pages are partly better: they have head tags, and listings carry Product markup. Their body text is still <b>0</b>.</li>
+    <li>The FAQ content comes from an API response of <b>910 KB</b>, and <b>94%</b> of it is 7 base64-embedded images. The real text is about 50.7K characters across 81 questions.</li>
+    <li>Every page says <code>&lt;html lang="en"&gt;</code>, even under <code>/id/</code>, although the content is Indonesian.</li>
+    <li>Missing listings, stores, categories and articles return <b>200</b> instead of 404. A missing store even says <code>index, follow</code> and points its canonical at the fake URL.</li>
+    <li>Every page is sent as <code>private, no-store</code>, so CloudFront misses on every crawler hit.</li>
+  </ul>
+
+  <div class="tbl"><table>
+    <thead><tr><th>Page</th><th class="r">What ChatGPT sees</th><th class="r">What a browser sees</th><th>Title for AI bots</th></tr></thead>
+    <tbody>
+      <tr><td>Home <code>/</code></td><td class="r"><span class="zero">0</span></td><td class="r">4,114<span class="bar" style="width:8%"></span></td><td><span class="tag no">None</span></td></tr>
+      <tr><td>About</td><td class="r"><span class="zero">0</span></td><td class="r">3,212<span class="bar" style="width:6%"></span></td><td><span class="tag no">None</span></td></tr>
+      <tr><td>FAQ</td><td class="r"><span class="zero">0</span></td><td class="r">54,477<span class="bar" style="width:100%"></span></td><td><span class="tag no">None</span></td></tr>
+      <tr><td>Article "tanpa biaya admin"</td><td class="r"><span class="zero">0</span></td><td class="r">3,377<span class="bar" style="width:6%"></span></td><td><span class="tag no">None</span></td></tr>
+      <tr><td>Product policy</td><td class="r"><span class="zero">0</span></td><td class="r">6,507<span class="bar" style="width:12%"></span></td><td><span class="tag no">None</span></td></tr>
+      <tr><td>Category <code>/p/dapur</code></td><td class="r"><span class="zero">0</span></td><td class="r">8,372<span class="bar" style="width:15%"></span></td><td><span class="tag no">None</span></td></tr>
+      <tr><td>A product listing</td><td class="r"><span class="zero">0</span></td><td class="r">4,381<span class="bar" style="width:8%"></span></td><td><span class="tag ok">Yes</span></td></tr>
+      <tr><td>A store page</td><td class="r"><span class="zero">0</span></td><td class="r">18,815<span class="bar" style="width:35%"></span></td><td><span class="tag ok">Yes</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Visible characters of page text. "What a browser sees" is after JavaScript runs in headless Chrome and includes header and footer text.</p>
+
+  <div class="howto">
+    <h4>How to see it yourself</h4>
+    <ol>
+      <li>Open <a href="https://toco.id/faq">toco.id/faq</a> and press <b>Ctrl+U</b> (Cmd+Option+U on Mac) for view-source. Do not use "Inspect": that shows the page after JavaScript.</li>
+      <li>Press Ctrl+F and search <code>Bagaimana cara membuat akun</code> (a real FAQ question). <b>0 results.</b> Search <code>&lt;title</code>: no page title either.</li>
+    </ol>
+    <p>Or in a terminal, which prints nothing today:</p>
+<pre><code>curl -s -A "GPTBot/1.2" https://toco.id/about | grep -o '&lt;title&gt;[^&lt;]*'</code></pre>
+  </div>
+
+  <h3 class="sub">Why it matters</h3>
+  <ul class="why">
+    <li><b>AI visibility.</b> GPTBot, OAI-SearchBot, ClaudeBot and PerplexityBot fetch raw HTML and do not run JavaScript, according to the vendors' crawler docs and the Vercel/MERJ crawler study (Dec 2024). Our main pitch, "tanpa biaya admin", is invisible to them on the very pages that explain it, so questions like "apa itu Toco" are answered from third-party sites or competitors.</li>
+    <li><b>Google and Bing.</b> Googlebot does render JavaScript, but in a second, delayed queue. On a 9M-URL site that costs coverage and freshness. Bing, and with it Copilot, renders less reliably.</li>
+    <li><b>Wasted work.</b> The SEO work already exists. Organization, WebSite and NewsArticle markup, titles and canonicals all appear after JavaScript, so crawlers that skip JavaScript never get them. Soft 404s also burn crawl budget on a site with millions of listing URLs.</li>
+  </ul>
+
+  <h3 class="sub">Root cause</h3>
+  <p class="root">The shared <code>MainLayout</code> component returns nothing until a browser-only effect sets <code>mounted=true</code>. It was probably added to hide hydration warnings from a screen-size check. Almost every page wraps both its content and its <code>&lt;Head&gt;</code> SEO tags inside this layout, so the server sends an empty shell. A second layer sits on top: FAQ, policy and article text are fetched in the browser, the listing body is marked client-only, and <code>_document</code> hard-codes <code>lang="en"</code>.</p>
+<pre><code>// today (simplified): nothing renders on the server
+const [mounted, setMounted] = useState(false);
+useEffect(() =&gt; setMounted(true), []);
+return mounted ? &lt;div&gt;{header}{children}{footer}&lt;/div&gt; : null;
+
+// fix: always render; gate only browser-only widgets
+return &lt;div&gt;{header}{children}{footer}&lt;ClientOnly&gt;&lt;FloatingChat/&gt;&lt;/ClientOnly&gt;&lt;/div&gt;;</code></pre>
+
+  <h3 class="sub">How to fix it</h3>
+  <ol class="steps">
+    <li><b>F4. Set the page language.</b> Change <code>_document</code> to <code>&lt;Html lang="id"&gt;</code>.
+      <div class="chips"><span class="when">Do first</span><span>Tech</span><span class="size">S</span></div></li>
+    <li><b>F1. Remove the layout gate.</b> Render <code>MainLayout</code> on the server. Make the screen-size hook SSR-safe (<code>initializeWithValue: false</code>, or CSS breakpoints), wrap only truly browser-only widgets in a small <code>&lt;ClientOnly&gt;</code>, and move every <code>&lt;SEO/&gt;</code>/<code>&lt;Head&gt;</code> outside the layout, as listing and store pages already do. Most of the effort is hunting hydration mismatches and QA across templates, premium storefronts included.
+      <div class="chips"><span class="when">Do first</span><span>Tech</span><span class="size">M</span></div></li>
+    <li><b>F2. Fetch content on the server.</b> FAQ, product policy (and likely terms and privacy) via <code>getStaticProps</code> with revalidate. The article already has its data in props, so seed the query with it. Move the FAQ's base64 images to CDN URLs first, or the HTML grows by about 1.8 MB.
+      <div class="chips"><span>Tech</span><span class="size">S each</span></div></li>
+    <li><b>F5. Return real 404s.</b> In <code>getServerSideProps</code>, use <code>return { notFound: true }</code> for missing listings, categories, articles and stores. Store and article need a server-side existence check.
+      <div class="chips"><span>Tech</span><span class="size">S per route</span></div></li>
+    <li><b>F6. Structured data in the server HTML.</b> Organization and WebSite appear automatically after F1. Add FAQPage (81 questions, plain text), BreadcrumbList on category, listing and article pages, and Store on store pages. Do not output the CMS <code>articleMeta.seo</code> string as-is: it has an empty description and raw HTML in the body.
+      <div class="chips"><span>Tech</span><span class="size">S</span></div></li>
+    <li><b>F3. Server-render the listing body.</b> Or, as a smaller fallback, server-render a static block with H1, price, condition, description, store and rating.
+      <div class="chips"><span class="when">Later</span><span>Tech</span><span class="size">M to L</span></div></li>
+    <li><b>Optional F7. Cache content pages at the edge.</b> For About, FAQ, policy and articles, use <code>public, s-maxage=600, stale-while-revalidate=86400</code> or ISR.
+      <div class="chips"><span class="when">Later</span><span>Tech</span><span class="size">S</span></div></li>
+  </ol>
+  <p class="note"><b>Overall: M, about 1 to 2 sprints</b> for one frontend engineer plus QA. F4, F1 and F2 alone make home, About, FAQ, policy and articles fully readable to every AI crawler.</p>
+
+  <h3 class="sub">Done when</h3>
+  <ul class="done">
+    <li>The crawler check script (4 AI user agents × 6 pages, plus 4 missing-page URLs) passes. Today it scores <b>28 of 28 FAIL</b>.</li>
+    <li>Raw HTML with no JavaScript shows at least: home 1,500 characters, About 500, FAQ 20,000, policy 3,000, the article 2,000, <code>/p/dapur</code> 1,000, any listing 300. Each page has a title, a description and a canonical.</li>
+    <li>FAQ carries FAQPage markup and the text "Bagaimana cara membuat akun", and its HTML is under <b>300 KB</b>. The article carries Article markup and "tanpa biaya admin".</li>
+    <li>Every page says <code>&lt;html lang="id"&gt;</code>, and missing listings, stores, categories and articles return <b>404</b>.</li>
+    <li>Google URL Inspection (live test) and the Rich Results Test pass. That is needed but not enough: the curl checks are the real test for ChatGPT, Claude and Perplexity.</li>
+  </ul>
+
+  <h3 class="sub">Decisions needed</h3>
+  <div class="decide"><ul>
+    <li><b>Locale setup.</b> Every URL is duplicated under <code>/id/</code>, and the default locale is <code>en</code>. Decide whether the English locale and the <code>/id/</code> prefix should exist at all. Owners: Tech, Product.</li>
+  </ul></div>
+</section>
+
+<section id="seller-phones">
+  <div class="phead"><div class="kicker">Problem 3</div><span class="pill high">High</span></div>
+  <h2>Seller phone numbers are exposed on store pages</h2>
+
+  <h3 class="sub">In one line</h3>
+  <p class="oneline">For sellers who switched phone display on, the public store page hands their phone number to anyone. That skips the login and consent step Toco built for buyers.</p>
+
+  <h3 class="sub">What we found</h3>
+  <ul class="facts">
+    <li><b>The seller's toggle is respected.</b> When <code>visible_phone_number = false</code>, the number is not in the page data (<b>10 of 10</b> stores).</li>
+    <li><b>When the toggle is on, the number is in plain text</b> in the store page data (<b>36 of 36</b>), three copies per page. The store page never shows it: there is no <code>tel:</code> link, no WhatsApp link, and the store code never reads the field. It is sent by accident.</li>
+    <li><b>Toco's intended flow is gated.</b> On a listing, "Hubungi Penjual" requires login, then acceptance of the contact terms, then a call to an authenticated endpoint, then a modal with a fraud warning. The store page skips all three steps.</li>
+    <li><b>Harvesting is cheap.</b> The same data comes from <code>/_next/data/{buildId}/store/{slug}.json</code> as about 4 KB of JSON. All about 141,662 store slugs are in public sitemaps, and 90% of sampled stores had a number, so roughly <b>109K to 136K</b> numbers are reachable by one unauthenticated crawler in a few hours. We saw no rate limiting.</li>
+    <li><b>Analytics leak.</b> When a buyer clicks a contact option, the seller's number is sent to PostHog (US cloud) as the event property <code>seller_phone_number</code>.</li>
+    <li>Only the phone leaks. Listing pages are clean (0 of 20), and we found no email, address, ID number or bank details in any page data.</li>
+  </ul>
+
+  <div class="howto">
+    <h4>How to see it yourself</h4>
+    <ol>
+      <li>Use an internal test seller with phone display switched on. Open its store page on toco.id while logged out.</li>
+      <li>Press <b>Ctrl+U</b> for view-source, then Ctrl+F <code>toco_phone</code>. Today you will find the number three times. After the fix it should find nothing.</li>
+    </ol>
+    <p>Please do not test on real sellers' stores or copy any number you see.</p>
+  </div>
+
+  <h3 class="sub">Why it matters</h3>
+  <ul class="why">
+    <li><b>Legal: UU PDP.</b> Under <a href="https://jdih.kemenkoinfra.go.id/uu-no-272022-pelindungan-data-pribadi">UU No. 27/2022</a>, a mobile number tied to a store name and city identifies most individual and UMKM sellers. Toco's own consent flow defines the purpose as contact from a logged-in, consenting buyer, so anonymous bulk exposure goes beyond it (purpose limitation, Pasal 27 to 28; security, Pasal 35 to 39). Full obligations have applied since October 2024. Administrative sanctions reach up to <b>2% of annual revenue</b> (Pasal 57). Sending the number to PostHog in the US touches the cross-border rules in Pasal 56. The status of the implementing PP and the PDP agency is to be confirmed by Legal.</li>
+    <li><b>Seller safety.</b> Fake-buyer WhatsApp scams are common in Indonesia: fake payment proofs, and malware APKs disguised as shipping receipts. A list of 100K+ seller numbers tagged with store, city, category and an "online now" signal is an ideal target list. Toco's own modal says it does not cover fraud outside the app.</li>
+    <li><b>Already copied.</b> Crawlers that store raw HTML (Common Crawl, Internet Archive, SEO and AI-training crawlers) have likely captured this data. Treat old copies as already out there. This is reasoned, not verified.</li>
+  </ul>
+  <p class="note"><b>Why High and not Critical:</b> the seller's own visibility setting is honoured, only the phone number leaks (no ID, bank, address or email), nothing is cached at the edge, and no secrets are exposed. It is still a real control bypass that affects about 90% of listed stores.</p>
+
+  <h3 class="sub">Root cause</h3>
+  <p class="root">The store page's <code>getServerSideProps</code> passes the raw <code>store-detail</code> object from the backend straight into page props, three times (<code>profile</code>, <code>storeMetaData</code> and the react-query cache). Next.js then prints those props into every page and its data route. The upstream store API probably returns the phone to anonymous callers too. We did not call it directly, so Tech must check.</p>
+
+  <h3 class="sub">How to fix it</h3>
+  <ol class="steps">
+    <li><b>Whitelist the public store fields.</b> Map the store through one <code>toPublicStore()</code>, use it for all three copies (or drop the duplicates), and leave out <code>toco_phone</code>. This also fixes the data route.
+<pre><code>const toPublicStore = s =&gt; ({ id: s.id, toco_name: s.toco_name,
+  toco_short_name: s.toco_short_name, toco_city: s.toco_city, /* other display fields */
+  visible_phone_number: !!s.visible_phone_number }); // bool only, never the number</code></pre>
+      <div class="chips"><span class="when">Do first</span><span>Tech</span><span class="size">0.5 to 1 day</span></div></li>
+    <li><b>Remove the phone from the PostHog event</b> (and ideally the seller name), keep <code>seller_id</code>, and delete the property's history in PostHog.
+      <div class="chips"><span class="when">Do first</span><span>Tech</span><span class="size">Under 1 hour</span></div></li>
+    <li><b>Fix it at the source.</b> The public store-detail API should not return the phone to anonymous or unprivileged callers. The number should only come from <code>/api/store/phone/{store_id}</code>.
+      <div class="chips"><span>Tech</span><span class="size">0.5 to 1 day</span></div></li>
+    <li><b>Harden the phone endpoint on the server.</b> Require login and contact consent, return 404 when the toggle is off, rate-limit per user and per IP, and log reveals for abuse detection. Today the gate is enforced in browser code.
+      <div class="chips"><span>Tech</span><span class="size">0.5 to 1 day</span></div></li>
+    <li><b>Add a regression test and a nightly check.</b> Fail CI if store props contain phone, email, ID or bank keys or values. Each night, sample 50 sitemap stores and 50 listings on production with the same check.
+      <div class="chips"><span>Tech</span><span class="size">About 0.5 day</span></div></li>
+    <li><b>Audit similar routes.</b> Search and category pages, premium store pages (check that <code>contact_info.phone</code> is a business contact published on purpose), classified ad detail, buyer profiles and review authors, and order or share-card endpoints.
+      <div class="chips"><span>Tech</span><span class="size">S</span></div></li>
+    <li><b>Settle consent.</b> Confirm the toggle wording and its default. If the default was on, ask sellers again. If a public contact channel is wanted, use in-app chat or a masked relay number.
+      <div class="chips"><span class="when">Later</span><span>Product</span><span>Legal</span></div></li>
+  </ol>
+  <p class="note"><b>Total: about 2 to 4 engineering days</b>, low risk, because the store page never reads the field and the listing flow already fetches the number from its own endpoint.</p>
+
+  <h3 class="sub">Done when</h3>
+  <ul class="done">
+    <li>For a test store with the toggle on, both the store page HTML and its <code>/_next/data</code> JSON contain <b>0</b> <code>toco_phone</code> keys and <b>0</b> phone-pattern matches.</li>
+    <li>The same holds for 50 random sitemap stores and 50 random listings.</li>
+    <li>"Hubungi Penjual" still works for a logged-in buyer who accepted the terms.</li>
+    <li>An anonymous request to <code>/api/store/phone/{id}</code> returns 401 or 403.</li>
+    <li>PostHog events no longer contain <code>seller_phone_number</code>.</li>
+    <li>The check command and CI test spec are written and can be handed to Tech.</li>
+  </ul>
+
+  <h3 class="sub">Decisions needed</h3>
+  <div class="decide"><ul>
+    <li><b>Consent default.</b> 90% of sitemap stores have the toggle on, but only 40% in the listing sample. That gap suggests a default or legacy value rather than an active choice, which weakens consent under Pasal 22. Confirm the default and the toggle text. Owners: Product, Legal.</li>
+    <li><b>Notification.</b> Whether this counts as a protection failure that triggers the written notice duty in Pasal 46 (3 × 24 hours). Owner: Legal.</li>
+  </ul></div>
+</section>
+
+<section id="brand-toco">
+  <div class="phead"><div class="kicker">Problem 4</div><span class="pill high">High</span></div>
+  <h2>Every product is labelled brand "Toco"</h2>
+
+  <h3 class="sub">In one line</h3>
+  <p class="oneline">Every product page tells Google, Meta and AI shopping systems that the product's brand is "Toco", whether it is Jameson whisky, a Dreame vacuum or a vape liquid.</p>
+
+  <h3 class="sub">What we found</h3>
+  <ul class="facts">
+    <li><b>205 of 205</b> fetched listings emit <code>"brand":{"@type":"Brand","name":"Toco"}</code>. That includes vape, alcohol, Rx drugs and the abortion-pill spam.</li>
+    <li>The listing data has <b>no brand field at all</b> (no brand, merk or attribute fields, and variants empty on 205 of 205). The value is hard-coded.</li>
+    <li>28 of 50 non-vape titles do name a real brand, but guessing it from the text fails. A simple dictionary match was wrong in at least <b>5 of 9</b> hits: "compatible with iPhone" or "Cover Bolt CVT Vespa" would be labelled Apple or Vespa.</li>
+    <li>The markup is thin: always the same 7 keys, never <code>seller</code>, <code>sku</code>, <code>gtin</code>, ratings or breadcrumbs. Only the first photo is included, and the description is a 160-character cut that ends mid-sentence ("Cocok untuk ").</li>
+    <li><b>0 of 205</b> listings have any reviews, so no rating markup is allowed today.</li>
+    <li>Across 9.07M pages, "Toco" is declared the brand of about <b>2.4M vape products</b>, plus alcohol, Rx and misoprostol.</li>
+  </ul>
+  <p class="note">Example used below: the <a href="https://toco.id/listing/makadam-tempat-bumbu-masak-set-praktis-simple-ringan-praktis-portable-camping-trekking-hiking-outdoor-travel-1793255377982-42b0">MAKADAM camping spice set</a>, sold by the official MAKADAM store, and still labelled brand "Toco".</p>
+
+  <div class="howto">
+    <h4>How to see it yourself</h4>
+    <ol>
+      <li>Open any listing, press <b>Ctrl+U</b>, then Ctrl+F <code>"Brand"</code>. You will see <code>"name":"Toco"</code>.</li>
+      <li>Or paste the listing URL into Google's <a href="https://search.google.com/test/rich-results">Rich Results Test</a> and open the Product item. Brand reads "Toco".</li>
+    </ol>
+  </div>
+
+  <h3 class="sub">Why it matters</h3>
+  <ul class="why">
+    <li><b>Google policy.</b> Structured data "must be a true representation of the page content", and violations can lead to a manual action (<a href="https://developers.google.com/search/docs/appearance/structured-data/sd-policies">general structured data guidelines</a>). Merchant Center allows the store name as brand only if you manufacture the product, and says to leave brand out when in doubt (<a href="https://support.google.com/merchants/answer/6324351">brand attribute</a>). A wrong brand reads as <a href="https://support.google.com/merchants/answer/6150127">misrepresentation</a>, and a third-party brand on a knock-off reads as <a href="https://support.google.com/merchants/answer/6149993">counterfeit</a>.</li>
+    <li><b>We already paid for this.</b> Earlier in 2026, Toco's Meta catalog took <b>3 trademark and counterfeit strikes</b> after pixel-ingested listings carried brand "Toco". The Meta pixel reads the same on-page markup, so fixing the markup also fixes that path.</li>
+    <li><b>AI shopping.</b> The <a href="https://developers.openai.com/commerce/specs/feed">OpenAI product feed spec</a> requires brand "as shown on the product page" and a seller name, with the seller's own page for marketplaces. Today we give the wrong brand and no seller.</li>
+    <li><b>Entity confusion.</b> AI systems learn brand-to-product links from this markup, so "Toco" becomes a co-brand of vape liquids and misoprostol. That is a GEO problem and a risk to the Toco mark itself.</li>
+  </ul>
+
+  <h3 class="sub">Root cause</h3>
+  <p class="root">The Product markup builder hard-codes <code>brand: "Toco"</code> because listings have no brand field to read from. The same builder only outputs the first image and the short description, and never adds the seller.</p>
+
+  <h3 class="sub">How to fix it</h3>
+  <ol class="steps">
+    <li><b>Omit <code>brand</code> on all third-party listings now.</b> Keep "Toco" only for products Toco itself makes or private-labels.
+      <div class="chips"><span class="when">Do first</span><span>Tech</span><span class="size">S</span></div></li>
+    <li><b>Make the markup complete.</b> Add <code>offers.seller</code> (store name and store URL), <code>sku</code> (seller SKU, or the listing ID as fallback) and <code>productID</code>, all photos as an image array, the full description trimmed at a word boundary, availability from stock, and condition. Add BreadcrumbList, using only crumbs whose category URL returns 200. Output no Product markup at all on restricted or noindexed listings.
+      <div class="chips"><span>Tech</span><span class="size">S to M</span></div></li>
+    <li><b>Ratings only when real.</b> Add <code>aggregateRating</code> or <code>review</code> only when at least one real review is visible on the page.
+      <div class="chips"><span>Tech</span><span class="size">S</span></div></li>
+    <li><b>Add a seller-declared brand field.</b> At upload, a picker from a brand registry plus "Tanpa merek / generic". Output brand only when it is declared, is not "Toco", and is not contradicted by "compatible with / untuk / for" in the title. Optionally require authorisation for the top protected brands, which ties in with policy section D, "Pelanggaran merek". Never derive brand from free text.
+      <div class="chips"><span class="when">Later</span><span>Product</span><span>Tech</span><span>Trust &amp; Safety</span><span>Legal</span><span class="size">M to L</span></div></li>
+    <li><b>Re-check the Meta catalog</b> after the markup ships, and confirm no new brand-related strikes.
+      <div class="chips"><span class="when">Later</span><span>Marketing</span><span class="size">S</span></div></li>
+  </ol>
+
+  <p class="note"><b>Before</b> (live today, abbreviated):</p>
+<pre><code>{ "@type": "Product",
+  "name": "MAKADAM - Tempat Bumbu Masak Set Praktis",
+  "image": "(first photo only, as a single string)",
+  "description": "Dilengkapi berbagai wadah [cut at 160 chars] Cocok untuk ",
+  "brand": { "@type": "Brand", "name": "Toco" },
+  "offers": { "@type": "Offer", "price": 69000, "priceCurrency": "IDR" } }</code></pre>
+  <p class="note"><b>After</b> (built from the same listing's data, abbreviated):</p>
+<pre><code>{ "@type": "Product",
+  "name": "MAKADAM - Tempat Bumbu Masak Set Praktis",
+  "image": ["(all 7 photo URLs)"],
+  "description": "(full description, trimmed at a word boundary)",
+  "sku": "MDTBPE8S-BC",
+  "offers": { "@type": "Offer", "price": 69000, "priceCurrency": "IDR",
+    "availability": "https://schema.org/InStock",
+    "seller": { "@type": "Organization", "name": "Jejak Alam Adventure",
+                "url": "https://toco.id/store/jejak-alam-adventure" } } }
+// + a BreadcrumbList: Beranda &gt; Olahraga &gt; Hiking &amp; Camping &gt; Alat Masak Camping
+// no "brand" until the seller declares one (here it would later be "MAKADAM")</code></pre>
+
+  <h3 class="sub">Done when</h3>
+  <ul class="done">
+    <li>In a random sample of 200 sitemap listings, <b>0</b> Product markup items have brand "Toco", unless the store is Toco's own.</li>
+    <li>Every Product item has <code>offers.seller</code> with the store URL, and restricted or noindexed listings have no Product markup.</li>
+    <li>The Rich Results Test passes for Product and Breadcrumb on a sample listing.</li>
+    <li>No Product item carries <code>aggregateRating</code> without visible reviews.</li>
+    <li>The live-page sampling script that checks this already exists and can be handed to Tech.</li>
+  </ul>
+
+  <h3 class="sub">Decisions needed</h3>
+  <div class="decide"><ul>
+    <li><b>Brand registry scope.</b> Which brands need proof of authorisation before a seller can declare them, and who maintains the list. Owners: Product, Legal, Trust &amp; Safety.</li>
+    <li><b>Toco's own products.</b> Confirm whether Toco makes or private-labels any products that should keep brand "Toco". Owner: Product.</li>
+  </ul></div>
+</section>
+
+<section id="fees-page">
+  <div class="phead"><div class="kicker">Problem 5</div><span class="pill high">High</span></div>
+  <h2>No single page explains our fees</h2>
+
+  <h3 class="sub">In one line</h3>
+  <p class="oneline">Toco has no one page that states its fees, its own pages contradict each other, and when people ask for a "marketplace tanpa biaya admin", AI answers conclude that none exists.</p>
+
+  <h3 class="sub">What we found</h3>
+  <ul class="facts">
+    <li>Fee wording appears in <b>107 of 511</b> articles. None of it is in server HTML. The /faq has 75 questions and <b>no seller-fee question</b>. The seller landing page's fee answers exist only in a JavaScript bundle.</li>
+    <li>Toco's own pages disagree on who pays, where the Rp2.000 applies, how Toco Mall works, and whether sellers ever see deductions (table below).</li>
+    <li>/terms says fees "dapat diubah sewaktu-waktu" <span class="gloss">can be changed at any time</span> and "berlaku sejak ditampilkan" <span class="gloss">effective once displayed</span>, with no carve-out for sellers. The certificate promises 0% "seumur hidup" <span class="gloss">for life</span>.</li>
+    <li>In <b>9</b> answer-engine searches, <b>no toco.id URL appeared</b>, not even for <code>site:toco.id biaya admin</code>. For "marketplace tanpa biaya admin 2026", Toco is absent. One summary said it found no official Toco fee schedule.</li>
+    <li>Shopee's fee page, "Ringkasan Jenis Biaya" (dated 31-07-2026), has a fee-by-seller-type table with totals and footnotes, and ranks #1 for Shopee fee queries.</li>
+    <li>From <b>25 Oct 2026</b>, Permen UMKM 3/2026 makes other platforms cut admin and commission fees by at least <b>50%</b> for verified UMK. Toco's seller-side Rp0 is still lower, and our page should say so honestly.</li>
+    <li><code>toco.id/biaya</code> returns 404 today, so the URL is free.</li>
+  </ul>
+
+  <h3 class="sub">Toco's own statements, side by side</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Topic</th><th>One Toco page says</th><th>Another Toco page says</th></tr></thead>
+    <tbody>
+      <tr><td><b>Do buyers pay?</b></td><td>"toco marketplace dengan Rp.0 biaya transaksi" (2024-07-18)<span class="gloss">Rp0 transaction fee</span></td><td>"Jumlahnya cuma Rp2.000 per transaksi" (2026-01-20)<span class="gloss">only Rp2.000 per transaction</span></td></tr>
+      <tr><td><b>Where does Rp2.000 apply?</b></td><td>"Saat ini, biaya parkir berlaku di website, sementara transaksi di aplikasi dan Toco Mall masih gratis." (2026-01-05)<span class="gloss">website only; app and Toco Mall still free</span></td><td>"Mulai bulan September 2025, biaya parkir ini resmi berlaku untuk semua transaksi" (2026-01-20)<span class="gloss">all transactions since September 2025</span></td></tr>
+      <tr><td><b>Toco Mall</b></td><td>"Pembelian barang di Toco Mall gak dikenakan biaya parkir" (2025-11-12)<span class="gloss">no parking fee on Toco Mall purchases</span></td><td>"biaya parkir sepenuhnya ditanggung oleh penjual di Official Store" (2026-01-20)<span class="gloss">Official Store sellers absorb the fee</span></td></tr>
+      <tr><td><b>Seller deductions</b></td><td>"100% tanpa potongan biaya apapun" (2024-12-02)<span class="gloss">100% with no deductions at all</span></td><td>"Selisih biaya tersebut dipotong langsung dari dana pencairan (disbursement) seller" (2026-04-10); "ongkos kirim retur akan dipotong dari saldo seller" (2026-10-14)<span class="gloss">weight differences and return shipping are deducted</span></td></tr>
+      <tr><td><b>The only buyer fee?</b></td><td>"Satu-satunya biaya yang dibayarkan pembeli hanyalah biaya parkir flat Rp2.000" (2025-12-15)<span class="gloss">the parking fee is the only buyer fee</span></td><td>/faq: "Ongkos pembayaran (biaya payment gateway)" (live)<span class="gloss">a payment-gateway fee also applies</span></td></tr>
+      <tr><td><b>Permanent?</b></td><td>Seller FAQ: "berlaku secara permanen, bukan program promo" (live)<span class="gloss">permanent, not a promotion</span></td><td>/terms: "dapat diubah sewaktu-waktu" (live, no version date)<span class="gloss">can be changed at any time</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Terminology also drifts: "biaya parkir", "biaya layanan Toco", "gratis biaya layanan" and "biaya tetap" all describe the same Rp2.000. The accurate seller claim is <b>0% admin fee, 0% commission, no order-processing fee</b>, not "no deductions".</p>
+
+  <h3 class="sub">Worked example: a seller sells one item at Rp100.000</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Platform</th><th>Deductions</th><th class="r">Seller receives</th><th>Confidence</th></tr></thead>
+    <tbody>
+      <tr><td><b>Toco</b> (regular shop)</td><td>Admin Rp0, commission Rp0, order processing Rp0. Buyer pays Rp2.000 parkir on top.</td><td class="r"><b>Rp100.000</b></td><td>Finance to confirm no withdrawal fee</td></tr>
+      <tr><td><b>Toco Mall / Official Store</b></td><td>Rp2.000 parkir absorbed by seller (per the 2026-01-20 article)</td><td class="r"><b>Rp98.000</b></td><td>Finance to confirm</td></tr>
+      <tr><td>Shopee Non-Star/Star</td><td>10% admin + Rp1.250</td><td class="r">Rp88.750</td><td><span class="tag ok">High</span> official, 31-07-2026</td></tr>
+      <tr><td>Shopee + Gratis Ongkir XTRA</td><td>plus up to 8% (optional)</td><td class="r">≈Rp80.750</td><td><span class="tag ok">High</span></td></tr>
+      <tr><td>Shopee Mall</td><td>11,70% + 1,80% payment + Rp1.250</td><td class="r">Rp85.250</td><td><span class="tag ok">High</span></td></tr>
+      <tr><td>Tokopedia / TikTok Shop</td><td>9 to 10% commission + 8% dynamic commission + Rp1.250 + logistics</td><td class="r">≈Rp75.690 to 81.650</td><td><span class="tag">Medium</span> press-sourced</td></tr>
+      <tr class="lowc"><td>Lazada</td><td>about 4 to 8% commission (unverified) + Rp1.250</td><td class="r">≈Rp90.750 to 94.750</td><td><span class="tag no">Low</span></td></tr>
+      <tr class="lowc"><td>Blibli</td><td>"di bawah 10%"</td><td class="r">&gt;Rp90.000</td><td><span class="tag no">Low</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Assumptions: women's fashion (top fee tier), no vouchers, ads or optional programs, buyer pays shipping, taxes excluded. <b>For a verified UMK from 25 Oct 2026:</b> Shopee becomes Rp93.750 and Tokopedia/TikTok about Rp84.690 to 90.150. Toco's Rp100.000 is still the highest payout.</p>
+
+  <h3 class="sub">What answer engines say today</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Query (29 Oct 2026)</th><th>Toco appears?</th><th>What the answer concluded</th></tr></thead>
+    <tbody>
+      <tr><td>marketplace tanpa biaya admin 2026</td><td><span class="tag no">No</span></td><td>"tidak menemukan marketplace yang benar-benar bebas biaya admin di 2026"<span class="gloss">found no truly fee-free marketplace in 2026</span></td></tr>
+      <tr><td>marketplace gratis biaya admin untuk seller</td><td><span class="tag ok">Yes, lead</span></td><td>Toco most often named, with the caveat "Klaim ini datang dari pihak perusahaan"<span class="gloss">this claim comes from the company</span></td></tr>
+      <tr><td>jualan online tanpa potongan admin</td><td><span class="tag ok">Yes</span></td><td>"biaya tetap kecil, bukan nol sama sekali"<span class="gloss">a small fixed fee, not zero</span></td></tr>
+      <tr><td>alternatif shopee tanpa biaya admin</td><td><span class="tag">In passing</span></td><td>No full list of fee-free platforms</td></tr>
+      <tr><td>biaya admin toco</td><td><span class="tag">Barely</span></td><td>Answers drift to bank admin fees</td></tr>
+      <tr><td>toco marketplace biaya</td><td><span class="tag ok">Yes</span></td><td>Correct model, but no official Toco fee schedule found</td></tr>
+      <tr><td>site:toco.id biaya admin</td><td><span class="tag no">No</span></td><td>No toco.id URLs returned, press only</td></tr>
+      <tr><td>marketplace bebas biaya admin seumur hidup</td><td><span class="tag ok">Yes</span></td><td>Toco is the answer, with a "cek situs Toco" caveat</td></tr>
+      <tr><td>daftar marketplace biaya admin paling murah 2026</td><td><span class="tag no">No</span></td><td>No 2026 fee comparison table found</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="howto">
+    <h4>How to see it yourself</h4>
+    <ol>
+      <li>Open <a href="https://toco.id/biaya">toco.id/biaya</a>: it returns a 404 page.</li>
+      <li>Ask ChatGPT, Gemini or Perplexity "marketplace tanpa biaya admin 2026" and check whether Toco or any toco.id link appears in the answer.</li>
+      <li>Open <a href="https://toco.id/faq">toco.id/faq</a> and look for a question about seller fees. There is none.</li>
+    </ol>
+  </div>
+
+  <h3 class="sub">Why it matters</h3>
+  <ul class="why">
+    <li><b>AI visibility.</b> The generic query is won by national business news (Katadata, Bisnis, Detik, Kontan) and by official fee pages such as Shopee's. No outlet links to an official Toco fee page because none exists, and 2026 coverage has started to drop the Rp2.000 detail.</li>
+    <li><b>Legal: Permendag 19/2026.</b> Signed 8 Jun 2026 (<a href="https://www.cnnindonesia.com/ekonomi/20260609133130-92-1367064/permendag-baru-e-commerce-terbit-ini-10-poin-pentingnya">CNN Indonesia</a>): every fee must be in a written agreement or e-contract, explained "dengan mudah dipahami" <span class="gloss">in an easy-to-understand way</span>, and changes need the seller's consent first, with objections answered within 14 working days. The effective date is to be confirmed by Legal against the JDIH text. If Official Store sellers absorb the Rp2.000, that is a seller fee that must be disclosed.</li>
+    <li><b>Legal: Permen UMKM 3/2026.</b> The 50% cut for verified UMK applies from 25 Oct 2026 (<a href="https://sumbar.antaranews.com/berita/783525/umkm-dapat-potongan-biaya-marketplace-50-persen-mulai-25-oktober">ANTARA</a>). Whether Toco counts as a "PPMSE non-UMKM", and whether the Official Store parkir is a "biaya layanan", is to be confirmed by Legal.</li>
+    <li><b>Trust.</b> "Tanpa potongan apapun" next to real deductions, and "seumur hidup" next to a terms clause that allows change at any time, are contradictions a journalist, regulator or AI answer can quote back at us.</li>
+  </ul>
+
+  <h3 class="sub">Root cause</h3>
+  <p class="root">The fee model changed over two years (Rp0 for everyone, then a parking fee announced, then web only, then all transactions), and each change was described in new articles without updating the old ones. No page is the official source, no one owns the wording, the pages that do exist are client-rendered, and /terms was never reconciled with the lifetime certificate.</p>
+
+  <h3 class="sub">How to fix it</h3>
+  <ol class="steps">
+    <li><b>Confirm the facts.</b> Finance and Legal answer the open questions listed under "Decisions needed" below. Nothing is published before that.
+      <div class="chips"><span class="when">Do first</span><span>Finance</span><span>Legal</span><span class="size">S</span></div></li>
+    <li><b>Rewrite the /terms fee clause.</b> Carve out the seller 0% commitment and add notice, consent and an objection route in line with Permendag 19/2026. Put the seller fee schedule in a versioned e-contract annex in Seller Center.
+      <div class="chips"><span class="when">Do first</span><span>Legal</span><span class="size">M</span></div></li>
+    <li><b>Build <code>toco.id/biaya</code>.</b> Server-rendered, <code>lang="id"</code>, with title, description, canonical, and WebPage + FAQPage markup that matches the visible text. 301 <code>/biaya-admin</code>, <code>/biaya-parkir</code> and <code>/fees</code> to it. Outline below.
+      <div class="chips"><span>Content</span><span>Tech</span><span>Legal</span><span class="size">M</span></div></li>
+    <li><b>Consolidate the articles.</b>
+      <ul>
+        <li><b>301 four pages</b> into /biaya: the 2024 "bebas biaya nol rupiah" article, the certificate explainer (to #sertifikat), and the two parkir explainers (to #biaya-parkir).</li>
+        <li><b>Rewrite about 17</b> in place: wrong buyer claims ("Rp0 biaya transaksi"), the parkir scope line, Toco Mall, "satu-satunya biaya", and outdated or unsourced competitor percentages.</li>
+        <li><b>Add a link box to all 107</b> fee-mentioning articles with one template component: "Info biaya resmi &amp; terbaru: toco.id/biaya".</li>
+      </ul>
+      <div class="chips"><span>Content</span><span>Tech</span><span class="size">M</span></div></li>
+    <li><b>Link it everywhere.</b> Sitewide footer, the seller landing page (and move its fee answers into server HTML), Seller Center dashboard and payout page, an "Apa ini?" link next to the parkir line at checkout, a new Biaya category in /faq, the /terms fee section, and the listing OG text.
+      <div class="chips"><span>Tech</span><span>Content</span><span>Product</span><span class="size">S</span></div></li>
+    <li><b>Pitch it off-site.</b> With a one-page fact sheet linked to /biaya: Katadata's e-commerce desk (a data story on what sellers save at 0%), Bisnis.com teknologi (add Toco as a row in their next fee comparison), Detik Finance, CNN Indonesia, Kompas and Kontan on the regulation angle, the comparison and listicle sites that rank for "biaya admin marketplace 2026" (for example remarketing.id, rekapcepat.id, webekspor.com, Desty, Ginee, Biteship and Mojok, whose list is outdated), and idEA, Kementerian UMKM and Kemenekraf explainers. Editorial requests only, no paid or undisclosed placements.
+      <div class="chips"><span class="when">Later</span><span>PR</span><span>Marketing</span><span class="size">Ongoing</span></div></li>
+    <li><b>Keep it current.</b> Finance owns the numbers, Legal the wording, Content the publishing. On any fee change: notify sellers, update /biaya, bump the version, add a changelog entry, and sync /faq, /terms, the seller page, checkout copy and the press fact sheet in the same release. Monthly: re-check competitor rows against official pages and re-run the prompt panel. Quarterly: re-scan articles for drifting fee claims.
+      <div class="chips"><span class="when">Ongoing</span><span>Finance</span><span>Legal</span><span>Content</span></div></li>
+  </ol>
+
+  <h3 class="sub">Page outline: toco.id/biaya</h3>
+  <div class="card">
+    <p style="color:var(--ink)"><b>H1:</b> Biaya di Toco: 0% Biaya Admin untuk Penjual, Biaya Parkir Rp2.000 untuk Pembeli</p>
+    <p style="margin-top:8px"><b style="color:var(--ink)">Answer sentence first</b>, then a visible line: "Terakhir diperbarui: [TANGGAL] · Versi [v1.0] · Berlaku sejak: [TANGGAL]" with a link to the changelog.</p>
+    <ol class="outline" style="margin-top:10px">
+      <li><b>Ringkasan: siapa bayar apa</b> <span class="gloss">who pays what: a seller and buyer table, fee by fee</span></li>
+      <li><b>Biaya untuk penjual</b> <span class="gloss">the Rp0 lines, then an honest list of deductions that can happen (weight difference, return shipping, seller-funded vouchers)</span></li>
+      <li><b>Biaya untuk pembeli</b> <span class="gloss">parkir amount and unit, payment-method fees, non-refundable rule</span></li>
+      <li><b>Toco Mall dan Official Store</b> <span class="gloss">one authoritative paragraph</span></li>
+      <li><b>Sertifikat Bebas Biaya Admin Seumur Hidup</b> <span class="gloss">scope, who gets it, where to download</span></li>
+      <li><b>Contoh hitung: jual produk Rp100.000</b> <span class="gloss">the worked example, with sources and a UMK row</span></li>
+      <li><b>Perbandingan biaya marketplace</b> <span class="gloss">dated, sourced competitor table</span></li>
+      <li><b>Perubahan biaya dan persetujuan penjual</b> <span class="gloss">notice, consent and objection route</span></li>
+      <li><b>Riwayat perubahan</b> <span class="gloss">changelog</span></li>
+      <li><b>FAQ</b> and <b>Istilah lain</b> <span class="gloss">aliases: biaya admin = admin fee; biaya parkir = biaya layanan Toco = biaya tetap Rp2.000</span></li>
+    </ol>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Sample FAQ (kept in Indonesian)</th><th>Draft answer, in English</th></tr></thead>
+    <tbody>
+      <tr><td>Potongan Toco berapa persen?</td><td>0%. No admin fee, commission or order-processing fee.</td></tr>
+      <tr><td>Yang bayar Rp2.000 siapa?</td><td>The buyer, added at checkout whatever the order value. [Unit and Toco Mall: to confirm]</td></tr>
+      <tr><td>Kalau gratis admin, Toco dapat untung dari mana?</td><td>From the Rp2.000 parkir paid by buyers. [Other revenue lines: to confirm]</td></tr>
+      <tr><td>Beneran seumur hidup? Bisa berubah gak?</td><td>[Legal wording, aligned with /terms] Any seller fee change is notified in advance and needs the seller's consent.</td></tr>
+      <tr><td>Ada potongan lain di saldo penjual?</td><td>Only weight differences, return shipping on valid complaints (unless insured), or promos the seller creates. [Tax: to confirm]</td></tr>
+      <tr><td>Kalau pesanan di-refund, biaya parkir balik gak?</td><td>No. Parkir and payment-method fees are not refunded.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="sub">Done when</h3>
+  <ul class="done">
+    <li><code>toco.id/biaya</code> returns 200, and raw HTML with no JavaScript contains the H1, answer sentence, tables and FAQ, with title, canonical and <code>lang="id"</code>.</li>
+    <li>WebPage and FAQPage markup parse, and the FAQ markup text matches the visible text exactly.</li>
+    <li>A visible update date, version number and changelog are on the page.</li>
+    <li>The four duplicate pages 301 to /biaya, and all 107 fee articles carry the link box.</li>
+    <li>A re-scan of the 511 articles finds no "Rp0" buyer claim and no "tanpa potongan apapun". The article scan already exists and can be handed to Content.</li>
+    <li>The monthly prompt panel logs whether Toco is named and whether toco.id/biaya is cited.</li>
+  </ul>
+
+  <h3 class="sub">Decisions needed</h3>
+  <div class="decide">
+    <p style="margin:0 0 6px"><b>Finance and Legal must confirm before publishing:</b></p>
+    <ul>
+      <li>Parkir unit: per transaction, per checkout, or per shop in a multi-shop cart.</li>
+      <li>Parkir start dates per channel (web, app, Toco Mall).</li>
+      <li>Toco Mall / Official Store: who absorbs the Rp2.000.</li>
+      <li>Payment-method fees per method, and who bears them.</li>
+      <li>Any seller withdrawal or transfer fee.</li>
+      <li>Whether Toco is an appointed PPh 22 (0,5%) collector.</li>
+      <li>Certificate scope, legal effect and download path.</li>
+      <li>The /terms rewrite for notice, consent and objection.</li>
+      <li>Whether Toco is a "PPMSE non-UMKM" under Permen UMKM 3/2026.</li>
+      <li>Clearance to name competitors in the comparison table.</li>
+      <li>Revenue lines other than parkir, for the "dapat untung dari mana" answer.</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="ev" id="evidence">
+  <hr class="sep">
+  <section style="padding-top:28px">
+    <div class="kicker">Evidence and scripts</div>
+    <h2>What sits behind these numbers</h2>
+    <ul class="why">
+      <li>All checks were read-only and ran on 29 Oct 2026: public pages, sitemaps, JavaScript bundles and a few public content endpoints. No logins, no forms.</li>
+      <li>The raw evidence (fetched pages, sitemaps, rendered page copies, API responses, article text) and the check scripts (AI crawler check, sitemap blocklist and duplicate scan, store phone check, article fee scan) are kept internally and can be handed to the owning teams.</li>
+      <li>Some raw files contain seller phone numbers from store pages and listing titles. They stay internal and are never shared outside the team. This page contains no phone numbers or personal data.</li>
+      <li><b>Slug-based counts show scale, not page-by-page confirmed violations.</b> Keyword classes were checked by hand on random samples (for example, 24 of 25 vape hits were real), so totals are close estimates. Final takedown decisions need human review.</li>
+    </ul>
+  </section>
+  <div class="full">
+    <p><b>Want the wider picture?</b> The summary has the 90-day plan, and the full report has every source and the complete audit.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn" href="geo-aeo-toco.html">← Back to the summary</a><a class="btn" href="geo-aeo-toco-full.html">Read the full report →</a></div>
+  </div>
+</footer>
+
+</main>
+</body>
+</html>

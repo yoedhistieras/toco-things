@@ -39,7 +39,9 @@ h2{font-size:clamp(24px,3.4vw,30px);line-height:1.2;font-weight:900;letter-spaci
 .num{font-size:34px;font-weight:900;letter-spacing:-.03em;line-height:1;margin-bottom:8px}
 .myth{margin-top:14px;background:var(--panel2);border:1px dashed var(--line);border-radius:14px;padding:14px 18px;font-size:15.5px}
 .myth b{font-weight:800}
-.prob{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
+.prob{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:start}
+.prob .pill{justify-self:start}
+.more{display:inline-block;margin-top:6px;font-size:14px;font-weight:800}
 .prob + .prob{margin-top:12px}
 .pill{font-size:11.5px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 10px;white-space:nowrap;margin-top:3px;display:inline-block}
 .crit{background:var(--bad-bg);color:var(--bad)}
@@ -107,11 +109,11 @@ h2{font-size:clamp(24px,3.4vw,30px);line-height:1.2;font-weight:900;letter-spaci
   <h2>Five problems on toco.id today</h2>
   <div class="big"><div class="n">0</div><p>characters of readable text on every page we tested when opened the way ChatGPT, Claude and Perplexity read pages (they don't run JavaScript).</p></div>
   <div class="card">
-    <div class="prob"><span class="pill crit">Critical</span><div><h3>AI can't read our key pages</h3><p>About, FAQ and the "0% biaya admin" articles only appear after JavaScript runs, so most AI tools see a blank page.</p></div></div>
-    <div class="prob"><span class="pill crit">Critical</span><div><h3>Risky listings fill the index</h3><p>About two thirds of the newest product links are vapes, and we found alcohol and abortion-pill spam open to search engines.</p></div></div>
-    <div class="prob"><span class="pill crit">Critical</span><div><h3>Seller phone numbers are public</h3><p>Store pages expose seller phone numbers in the page data. This is a personal data risk.</p></div></div>
-    <div class="prob"><span class="pill high">High</span><div><h3>Every product is labelled brand "Toco"</h3><p>The same mistake caused the trademark strikes on our Meta catalog this year.</p></div></div>
-    <div class="prob"><span class="pill high">High</span><div><h3>No single page explains our fees</h3><p>When asked for a "marketplace tanpa biaya admin", AI answers say none exists. Our main selling point is missing.</p></div></div>
+    <div class="prob"><span class="pill crit">Critical</span><div><h3>Risky listings fill the index</h3><p>Three quarters of today's newest product links are vapes, mostly from 4 stores created minutes apart. Abortion-pill spam, prescription drugs and alcohol are also open to search engines.</p><a class="more" href="geo-aeo-toco-problems.html#risky-listings">See the deep dive →</a></div></div>
+    <div class="prob"><span class="pill crit">Critical</span><div><h3>AI can't read our key pages</h3><p>About, FAQ and the "0% biaya admin" articles only appear after JavaScript runs, so ChatGPT, Claude and Perplexity see a blank page.</p><a class="more" href="geo-aeo-toco-problems.html#ai-cant-read">See the deep dive →</a></div></div>
+    <div class="prob"><span class="pill high">High</span><div><h3>Seller phone numbers leak from store pages</h3><p>For sellers who switched phone display on, the store page hands the number to anyone, skipping the login and consent step buyers normally go through.</p><a class="more" href="geo-aeo-toco-problems.html#seller-phones">See the deep dive →</a></div></div>
+    <div class="prob"><span class="pill high">High</span><div><h3>Every product is labelled brand "Toco"</h3><p>The same mistake caused the trademark strikes on our Meta catalog this year.</p><a class="more" href="geo-aeo-toco-problems.html#brand-toco">See the deep dive →</a></div></div>
+    <div class="prob"><span class="pill high">High</span><div><h3>No single page explains our fees</h3><p>When asked for a "marketplace tanpa biaya admin", AI answers say none exists. Our own articles also describe the fees in conflicting ways.</p><a class="more" href="geo-aeo-toco-problems.html#fees-page">See the deep dive →</a></div></div>
   </div>
 </section>
 
@@ -185,8 +187,8 @@ h2{font-size:clamp(24px,3.4vw,30px);line-height:1.2;font-weight:900;letter-spaci
   <h2>What we need from Toco to start</h2>
   <ol class="ask">
     <li><b>The full official fee structure</b><span>Every seller and buyer fee, its official name, and the terms of the lifetime fee-free certificate.</span></li>
-    <li><b>A decision on vapes</b><span>They are about two thirds of new listings. Keep, restrict to 18+, or remove.</span></li>
-    <li><b>Seller phone numbers</b><span>Did sellers agree to having them public? If not, they come off now.</span></li>
+    <li><b>A decision on vapes</b><span>They are three quarters of today's new listings, and PP 28/2024 restricts selling e-cigarettes online without age verification. Keep with real age checks, hide from search, or remove.</span></li>
+    <li><b>Seller phone numbers</b><span>Store pages should never carry the number. Confirm buyers only get it through the logged-in, consented contact flow.</span></li>
     <li><b>Regulation timing</b><span>When the new fee disclosure rule (Permendag 19/2026) takes effect for Toco.</span></li>
     <li><b>Owners and access</b><span>A Tech owner for the site fixes, plus access to Search Console, server logs and Merchant Center.</span></li>
   </ol>
