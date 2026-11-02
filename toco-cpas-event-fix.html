@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Toco CPAS Event Fix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: two-part brief. Part A reads like a memo (plain language, cards, before/after). Part B is a spec sheet (tables, steps, code). Sticky index on desktop. */
+:root {
+  --bg: #fbfaf6;
+  --surface: #ffffff;
+  --sunk: #f3f1ea;
+  --fg: #1d1c18;
+  --muted: #66625a;
+  --line: #e2ded3;
+  --accent: #a87800;
+  --accent-soft: #fff1c7;
+  --bad: #c2362f;
+  --bad-soft: #fbeceb;
+  --good: #2f7d4f;
+  --good-soft: #e7f4ec;
+  --code-bg: #f6f4ee;
+  --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15140f; --surface: #1d1c16; --sunk: #24231c; --fg: #ece9df; --muted: #a39e91;
+    --line: #34322a; --accent: #f2c230; --accent-soft: #3a3013; --bad: #ef6f66; --bad-soft: #3a1c1a;
+    --good: #6cc48f; --good-soft: #17301f; --code-bg: #1a1913; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15140f; --surface: #1d1c16; --sunk: #24231c; --fg: #ece9df; --muted: #a39e91;
+  --line: #34322a; --accent: #f2c230; --accent-soft: #3a3013; --bad: #ef6f66; --bad-soft: #3a1c1a;
+  --good: #6cc48f; --good-soft: #17301f; --code-bg: #1a1913; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.62;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 56px; }
+@media (max-width: 880px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; } nav.toc { display: none; } }
+
+nav.toc { position: sticky; top: calc(24px + env(safe-area-inset-top, 0px)); align-self: start; font-size: 14px; display: grid; gap: 18px; }
+nav.toc .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+nav.toc a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; }
+nav.toc a:hover, nav.toc a:focus-visible { background: var(--sunk); }
+
+main { min-width: 0; }
+header.top { padding-bottom: 8px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--muted); margin-bottom: 14px; align-items: center; }
+.meta b { color: var(--fg); font-weight: 600; }
+.meta a.lang { margin-left: auto; font-weight: 600; color: var(--fg); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; background: var(--surface); }
+.meta a.lang:hover { background: var(--sunk); }
+.meta a.lang:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1 { font-size: clamp(28px, 4vw, 38px); line-height: 1.15; letter-spacing: -.015em; margin: 0 0 14px; text-wrap: balance; font-weight: 700; }
+.lead { font-size: 18px; max-width: 64ch; margin: 0; }
+
+.part { margin-top: 40px; border-top: 2px solid var(--fg); padding-top: 14px; }
+.part-head { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; }
+.part-head .tag { font: 600 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.part-head h2.pt { font-size: 15px; margin: 0; font-weight: 600; }
+.part-head p { margin: 0; font-size: 14px; color: var(--muted); flex-basis: 100%; }
+
+section { padding-top: 34px; scroll-margin-top: 16px; }
+h2 { font-size: 23px; letter-spacing: -.01em; margin: 0 0 12px; text-wrap: balance; line-height: 1.25; }
+h3 { font-size: 17px; margin: 26px 0 8px; }
+p { max-width: 68ch; margin: 0 0 12px; }
+code { font-family: var(--font-mono); font-size: .85em; background: var(--code-bg); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+
+/* Part A components */
+.tldr { background: var(--accent-soft); border-radius: 12px; padding: 18px 20px; max-width: 72ch; display: grid; gap: 10px; }
+.tldr p { margin: 0; }
+.tldr b.k { display: inline-block; min-width: 9.5em; }
+@media (max-width: 560px) { .tldr b.k { display: block; min-width: 0; } }
+
+.story { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 14px 0 6px; }
+@media (max-width: 760px) { .story { grid-template-columns: minmax(0, 1fr); } }
+.story > div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.story .step { font: 600 12px var(--font-mono); color: var(--muted); margin-bottom: 6px; }
+.story h4 { margin: 0 0 6px; font-size: 16px; }
+.story p { margin: 0; font-size: 15px; }
+.story .warn { border-color: var(--bad); background: var(--bad-soft); }
+
+.compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 14px 0 6px; }
+@media (max-width: 760px) { .compare { grid-template-columns: minmax(0, 1fr); } }
+.compare > div { border-radius: 12px; padding: 16px 18px; border: 1px solid var(--line); background: var(--surface); }
+.compare .now { border-color: var(--bad); }
+.compare .after { border-color: var(--good); }
+.compare h4 { margin: 0 0 10px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+.compare .now h4 { color: var(--bad); }
+.compare .after h4 { color: var(--good); }
+.flow { display: grid; gap: 8px; }
+.flow .row { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; align-items: center; font-size: 14px; }
+.flow .pill { padding: 6px 10px; border-radius: 8px; background: var(--sunk); text-align: center; }
+.flow .arrow { color: var(--muted); font-family: var(--font-mono); }
+.flow .pill.badp { background: var(--bad-soft); color: var(--bad); font-weight: 600; }
+.flow .pill.goodp { background: var(--good-soft); color: var(--good); font-weight: 600; }
+.compare .verdict { margin: 12px 0 0; font-size: 14px; }
+
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 10px; }
+@media (max-width: 760px) { .two { grid-template-columns: minmax(0, 1fr); } }
+.two > div { border-radius: 12px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); }
+.two h4 { margin: 0 0 8px; font-size: 15px; }
+.two ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 15px; }
+.two .ok h4 { color: var(--good); }
+.two .todo h4 { color: var(--bad); }
+
+ol.plain { margin: 8px 0 0; padding: 0; list-style: none; counter-reset: p; display: grid; gap: 12px; max-width: 72ch; }
+ol.plain > li { counter-increment: p; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; }
+ol.plain > li::before { content: counter(p); width: 28px; height: 28px; border-radius: 50%; background: var(--fg); color: var(--bg); font: 600 13px var(--font-mono); display: grid; place-items: center; }
+ol.plain b { display: block; }
+ol.plain span.why { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
+
+dl.gloss { display: grid; grid-template-columns: minmax(140px, 200px) minmax(0, 1fr); gap: 0; margin: 10px 0 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); max-width: 80ch; }
+dl.gloss dt, dl.gloss dd { padding: 10px 14px; border-bottom: 1px solid var(--line); margin: 0; }
+dl.gloss dt { font-weight: 600; background: var(--sunk); }
+dl.gloss dt:last-of-type, dl.gloss dd:last-of-type { border-bottom: 0; }
+@media (max-width: 560px) { dl.gloss { grid-template-columns: minmax(0, 1fr); } dl.gloss dt { border-bottom: 0; padding-bottom: 2px; } }
+
+/* Part B components */
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); margin: 8px 0 16px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.scroll table { min-width: 720px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--sunk); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bad { color: var(--bad); font-weight: 600; }
+.good { color: var(--good); font-weight: 600; }
+tr.group td { background: var(--sunk); font-weight: 600; font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+td.f { white-space: nowrap; }
+
+ul.facts { margin: 0 0 16px; padding-left: 20px; max-width: 68ch; display: grid; gap: 6px; }
+.callout { border-left: 3px solid var(--bad); background: var(--bad-soft); padding: 14px 18px; border-radius: 0 10px 10px 0; max-width: 72ch; margin: 12px 0; }
+.callout.ok { border-left-color: var(--good); background: var(--good-soft); }
+.callout b.lbl { display: block; margin-bottom: 2px; }
+
+.diagram { overflow-x: auto; margin: 8px 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 12px; }
+.diagram svg { display: block; min-width: 640px; width: 100%; height: auto; }
+svg .box { fill: none; stroke: var(--muted); stroke-width: 1.25; }
+svg .box-bad { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 2; }
+svg .lane-bad { fill: var(--surface); stroke: var(--bad); stroke-width: 2; }
+svg .lane { fill: var(--surface); stroke: var(--muted); stroke-width: 1.25; }
+svg .container { fill: var(--sunk); stroke: var(--line); stroke-width: 1.25; }
+svg .t-name { fill: var(--fg); font: 600 13px var(--font-body); }
+svg .t-body { fill: var(--fg); font: 400 11.5px var(--font-body); }
+svg .t-quiet { fill: var(--muted); font: 400 11.5px var(--font-body); }
+svg .t-bad { fill: var(--bad); font: 600 11.5px var(--font-body); }
+svg .wire { fill: none; stroke: var(--muted); stroke-width: 1.25; }
+svg .wire-bad { fill: none; stroke: var(--bad); stroke-width: 2; }
+svg .head { fill: var(--muted); }
+svg .head-bad { fill: var(--bad); }
+.cap { font-size: 14px; color: var(--muted); max-width: 68ch; }
+
+ol.steps { margin: 8px 0 0; padding: 0; list-style: none; counter-reset: st; display: grid; gap: 22px; max-width: 80ch; }
+ol.steps > li { counter-increment: st; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; }
+ol.steps > li::before { content: counter(st); width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--fg); font: 600 13px var(--font-mono); display: grid; place-items: center; }
+ol.steps > li > div { min-width: 0; }
+ol.steps b.t { display: block; margin-bottom: 4px; font-size: 16px; }
+ol.steps ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 5px; }
+
+.checks { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; max-width: 80ch; }
+.checks li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.checks input { width: 18px; height: 18px; margin: 3px 0 0; accent-color: var(--accent); cursor: pointer; }
+.checks label { cursor: pointer; min-width: 0; }
+.checks label b { display: block; margin-bottom: 2px; }
+.checks li:has(input:checked) { background: var(--sunk); }
+.checks li:has(input:checked) label { color: var(--muted); }
+.when { font-family: var(--font-mono); font-size: 11.5px; color: var(--accent); font-weight: 600; margin-left: 6px; white-space: nowrap; }
+.progress { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+
+.tabs { display: flex; gap: 4px; margin: 16px 0 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.tabs button { font: 600 14px var(--font-body); color: var(--muted); background: none; border: 0; padding: 10px 14px; border-bottom: 2px solid transparent; cursor: pointer; margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+.tabs button:focus-visible, .copy:focus-visible, nav.toc a:focus-visible, .checks input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.code { position: relative; border: 1px solid var(--line); border-radius: 10px; background: var(--code-bg); margin: 8px 0 12px; }
+.tabs + .code, .code.tabbed { border-top: 0; border-radius: 0 0 10px 10px; margin-top: 0; }
+.code pre { margin: 0; padding: 16px; padding-top: 44px; overflow-x: auto; font: 400 13px/1.55 var(--font-mono); }
+.code .k { color: var(--accent); }
+.code .s { color: var(--good); }
+.code .c { color: var(--muted); }
+.copy { position: absolute; top: 8px; right: 8px; font: 600 12px var(--font-body); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.copy:hover { background: var(--sunk); }
+
+details.faq { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); max-width: 80ch; margin-top: 8px; }
+details.faq summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style-position: inside; }
+details.faq > div { padding: 0 16px 14px; }
+details.faq > div p:last-child { margin-bottom: 0; }
+
+.note { font-size: 14px; color: var(--muted); max-width: 70ch; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 18px; }
+footer { margin-top: 48px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <nav class="toc" aria-label="Contents">
+    <div>
+      <div class="label">A. For everyone</div>
+      <ol>
+        <li><a href="#summary">In short</a></li>
+        <li><a href="#story">What is happening</a></li>
+        <li><a href="#compare">Now vs after the fix</a></li>
+        <li><a href="#ask">What we need from developers</a></li>
+        <li><a href="#glossary">Glossary</a></li>
+      </ol>
+    </div>
+    <div>
+      <div class="label">B. For developers</div>
+      <ol>
+        <li><a href="#evidence">Evidence from Events Manager</a></li>
+        <li><a href="#flow">Current data flow</a></li>
+        <li><a href="#check">Check before coding</a></li>
+        <li><a href="#steps">Implementation steps</a></li>
+        <li><a href="#fields">Field specification</a></li>
+        <li><a href="#payloads">Example payloads</a></li>
+        <li><a href="#test">Testing and verification</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ol>
+    </div>
+  </nav>
+
+  <main>
+    <header class="top">
+      <div class="meta">
+        <span>As of <b>2 November 2026</b></span>
+        <span>Dataset <b>Toco's Pixel 2044906276042075</b></span>
+        <span>Business ID <b>471770590506121</b></span>
+        <a class="lang" href="toco-cpas-event-fix-id.html" lang="id">Versi Bahasa Indonesia</a>
+      </div>
+      <h1>Fixing Toco's purchase data in Meta so CPAS can go live</h1>
+      <p class="lead">This page has two parts. Part A explains the problem in everyday language. Part B is the full specification for the development team.</p>
+    </header>
+
+    <!-- ================= PART A ================= -->
+    <div class="part">
+      <div class="part-head"><span class="tag">Part A</span><h2 class="pt">Explained without technical terms</h2><p>For marketing, management, and anyone who needs to understand the problem without reading code.</p></div>
+    </div>
+
+    <section id="summary">
+      <h2>In short</h2>
+      <div class="tldr">
+        <p><b class="k">The goal</b>Turn on CPAS in Collaboration Center, so brands and sellers can advertise with Toco's catalog without a separate catalog built for each of them.</p>
+        <p><b class="k">What blocks it</b>Meta rejects Toco's purchase data. According to Meta, some purchases "never went into a cart".</p>
+        <p><b class="k">The cause</b>Purchases made in the Toco app are reported to Meta as if they happened on the website.</p>
+        <p><b class="k">The fix</b>One part of Toco's backend: the part that reports purchases to Meta. Nothing else needs to change.</p>
+      </div>
+    </section>
+
+    <section id="story">
+      <h2>What is actually happening</h2>
+      <p>Think of Meta as an auditor matching two records: who put an item in the cart, and who ended up paying. When the two records don't line up, Meta treats the data as unreliable.</p>
+      <div class="story">
+        <div>
+          <div class="step">Step 1</div>
+          <h4>Add to cart</h4>
+          <p>A shopper in the app taps "add to cart". The app tells Meta: <b>"someone added to cart, in the app."</b> This part is correct.</p>
+        </div>
+        <div class="warn">
+          <div class="step">Step 2</div>
+          <h4>Pay</h4>
+          <p>The same shopper pays. Toco's server tells Meta: <b>"someone paid, on the website."</b> This is wrong, because the purchase happened in the app.</p>
+        </div>
+        <div>
+          <div class="step">The result</div>
+          <h4>Meta can't match them</h4>
+          <p>In the app, about 7,000 people add to cart every day and nobody pays. On the website, almost everyone who adds to cart pays right away. Neither makes sense.</p>
+        </div>
+      </div>
+      <div class="callout ok"><b class="lbl">To be clear</b>Reporting payments from the server (rather than from the website or app screens) is <b>fine</b> and is a common setup. Only the origin label is wrong: purchases made in the app must be labelled "app".</div>
+    </section>
+
+    <section id="compare">
+      <h2>Now vs after the fix</h2>
+      <div class="compare">
+        <div class="now">
+          <h4>Now</h4>
+          <div class="flow">
+            <div class="row"><span class="pill">Shopping in the app</span><span class="arrow">→</span><span class="pill badp">recorded as "website"</span></div>
+            <div class="row"><span class="pill">Shopping on the website</span><span class="arrow">→</span><span class="pill">recorded as "website"</span></div>
+          </div>
+          <p class="verdict">Every purchase piles up under "website". Meta can't match them with cart activity in the app, so CPAS is rejected.</p>
+        </div>
+        <div class="after">
+          <h4>After the fix</h4>
+          <div class="flow">
+            <div class="row"><span class="pill">Shopping in the app</span><span class="arrow">→</span><span class="pill goodp">recorded as "app"</span></div>
+            <div class="row"><span class="pill">Shopping on the website</span><span class="arrow">→</span><span class="pill goodp">recorded as "website"</span></div>
+          </div>
+          <p class="verdict">Each purchase connects to the cart activity in the same place. Meta can verify the data and CPAS can be turned on.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="ask">
+      <h2>What we need from developers</h2>
+      <div class="two">
+        <div class="ok">
+          <h4>No change needed</h4>
+          <ul>
+            <li>"Add to cart" reporting from the app and the website</li>
+            <li>Toco reporting checkout and payment from the server</li>
+            <li>No new tracking needed on website or app screens</li>
+          </ul>
+        </div>
+        <div class="todo">
+          <h4>Needs to change</h4>
+          <ul>
+            <li>The server code that reports checkout and payment to Meta</li>
+            <li>A pixel setting: restrict it to the toco.id domain</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Four things to do, in plain words</h3>
+      <ol class="plain">
+        <li><div><b>The server must know whether each order came from the app or the website.</b><span class="why">The order system doesn't record this today, so everything is treated as website.</span></div></li>
+        <li><div><b>Orders from the app are reported as "app", together with the device's identity.</b><span class="why">Meta uses the device identity to connect the payment with the cart activity in the app.</span></div></li>
+        <li><div><b>Orders from the website are reported with the page address and the shopper's browser details.</b><span class="why">Today 95% of reports have no page address, so Meta struggles to connect them to ad clicks.</span></div></li>
+        <li><div><b>Use the shopper's internet address (IP), not Toco's server address.</b><span class="why">Right now many reports look like they come from "the same person" because they all carry the server's address.</span></div></li>
+      </ol>
+      <h3>Once developers are done</h3>
+      <p>Results can be checked the same day with Meta's test tool. The status in Collaboration Center usually changes a few days later, because Meta judges the last few days of data. Once it turns green, the marketing team clicks <b>Finish</b> to turn CPAS on.</p>
+    </section>
+
+    <section id="glossary">
+      <h2>Glossary</h2>
+      <p>Terms used in Part B, to make conversations with developers easier.</p>
+      <dl class="gloss">
+        <dt>CPAS</dt><dd>Collaborative Ads. A Meta feature that lets brands or sellers advertise using a marketplace's (Toco's) catalog.</dd>
+        <dt>Event</dt><dd>One activity report sent to Meta, for example "view product", "add to cart", "checkout" or "pay" (Purchase).</dd>
+        <dt>Pixel / dataset</dt><dd>The "inbox" at Meta that collects all of Toco's events. Toco's is called Toco's Pixel.</dd>
+        <dt>Conversions API (CAPI)</dt><dd>A way to send events straight from Toco's server to Meta. Toco uses it for checkout and payment.</dd>
+        <dt>Facebook SDK</dt><dd>Meta's code inside the Toco app that sends events from the app.</dd>
+        <dt>action_source</dt><dd>The origin label of an event: "app" if it happened in the app, "website" if on the website. This is what's wrong for app orders.</dd>
+        <dt>content_ids</dt><dd>The product codes bought. They must match the product codes in Toco's catalog.</dd>
+        <dt>fbp / fbc</dt><dd>Browser markers Meta sets on the website, used to connect a shopper with an ad click.</dd>
+        <dt>Events Manager</dt><dd>The Meta page that shows every event received, including problems.</dd>
+      </dl>
+    </section>
+
+    <!-- ================= PART B ================= -->
+    <div class="part">
+      <div class="part-head"><span class="tag">Part B</span><h2 class="pt">Specification for developers</h2><p>Technical detail, implementation steps and testing. Part A above is the summary for non-technical stakeholders.</p></div>
+    </div>
+
+    <section id="evidence">
+      <h2>Evidence from Events Manager</h2>
+      <p>Issue in Collaboration Center (Setup &gt; Online sales &gt; Event source) for Toco's Pixel: <em>"Purchases are being sent from this event source without add to cart events, which could be impacting your partner's campaign performance."</em> The step passes once at least one event source is clean.</p>
+      <p>Data for 5 October to 1 November 2026:</p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Event</th><th>28-day total</th><th>action_source app</th><th>action_source website</th><th>Integration recorded by Meta</th></tr></thead>
+          <tbody>
+            <tr><td>AddToCart</td><td class="num">254K</td><td class="num">~7K/day</td><td class="num">~2K/day</td><td>App: Facebook SDK. Web: Meta Pixel (browser) + Meta-hosted CAPI Gateway</td></tr>
+            <tr><td>InitiateCheckout</td><td class="num">62.3K</td><td class="num bad">0</td><td class="num">all</td><td>Conversions API (Toco backend)</td></tr>
+            <tr><td>Purchase</td><td class="num">52.5K</td><td class="num bad">1</td><td class="num">~1.9K/day</td><td>Conversions API (Toco backend)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="facts">
+        <li><code>orders</code> holds 64.1K orders in the same 28 days, so the "website" Purchase stream actually covers nearly every order, app and web.</li>
+        <li>Of ~100 sampled Purchases, only ~8 carry <code>event_source_url</code> (<code>https://toco.id/checkout</code>). Diagnostics: 95% of Purchases lack <code>event_source_url</code>, active since 25 September.</li>
+        <li>Diagnostics: 55% of PageView, ViewContent and Purchase events send a <code>client_ip_address</code> shared by many users (the server's IP, not the shopper's).</li>
+        <li>The pixel receives data from 17 domains other than toco.id, including two ngrok URLs, giftbeamng.com and luckymall.id.</li>
+      </ul>
+      <div class="callout"><b class="lbl">Root cause</b>Purchase and InitiateCheckout for app orders are sent with <code>action_source = "website"</code>, with no URL and no device identifiers. AddToCart from the app (device identifiers, app label) can't be paired with Purchase from the app (website label, different identifiers).</div>
+    </section>
+
+    <section id="flow">
+      <h2>Current data flow</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 760 372" role="img" aria-label="App orders land in the website lane, cut off from app Add to Cart">
+          <defs>
+            <marker id="a-norm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="head" d="M0 0L10 5L0 10z"/></marker>
+            <marker id="a-bad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="head-bad" d="M0 0L10 5L0 10z"/></marker>
+          </defs>
+          <path class="wire" d="M324 60H390V102H472" marker-end="url(#a-norm)"/>
+          <path class="wire" d="M324 156H390V202H472" marker-end="url(#a-norm)"/>
+          <path class="wire-bad" d="M324 252H420V230H472" marker-end="url(#a-bad)"/>
+          <rect class="box" x="24" y="24" width="300" height="72" rx="8"/>
+          <text class="t-name" x="40" y="48">Toco app</text>
+          <text class="t-body" x="40" y="68">AddToCart via Facebook SDK</text>
+          <text class="t-quiet" x="40" y="84">~7K per day</text>
+          <rect class="box" x="24" y="120" width="300" height="72" rx="8"/>
+          <text class="t-name" x="40" y="144">Web toco.id</text>
+          <text class="t-body" x="40" y="164">AddToCart via Meta Pixel + CAPI Gateway</text>
+          <text class="t-quiet" x="40" y="180">~2K per day</text>
+          <rect class="box-bad" x="24" y="216" width="300" height="72" rx="8"/>
+          <text class="t-name" x="40" y="240">Toco backend (Conversions API)</text>
+          <text class="t-body" x="40" y="260">Purchase + InitiateCheckout</text>
+          <text class="t-body" x="40" y="276">all sent as action_source = website</text>
+          <text class="t-quiet" x="332" y="244">Purchase + IC</text>
+          <text class="t-quiet" x="332" y="270">includes app orders</text>
+          <rect class="container" x="456" y="24" width="280" height="244" rx="8"/>
+          <text class="t-name" x="472" y="48">Toco's Pixel 2044906276042075</text>
+          <rect class="lane" x="472" y="64" width="248" height="76" rx="8"/>
+          <text class="t-name" x="488" y="88">action_source = app</text>
+          <text class="t-body" x="488" y="108">AddToCart ~7K per day</text>
+          <text class="t-bad" x="488" y="124">Purchase: 1 event in 28 days</text>
+          <rect class="lane-bad" x="472" y="176" width="248" height="76" rx="8"/>
+          <text class="t-name" x="488" y="200">action_source = website</text>
+          <text class="t-body" x="488" y="220">AddToCart ~2K per day</text>
+          <text class="t-bad" x="488" y="236">Purchase ~1.9K per day (every order)</text>
+          <text class="t-name" x="24" y="336">Fix: send app orders with action_source = app plus device</text>
+          <text class="t-name" x="24" y="354">identifiers, so Purchase moves to the app lane.</text>
+        </svg>
+      </div>
+      <p class="cap">AddToCart from the app and the web already sits in the right lane. Only the backend Purchase and InitiateCheckout sender needs to change.</p>
+    </section>
+
+    <section id="check">
+      <h2>Check before coding</h2>
+      <p>The answers decide the implementation details. Ticks are saved in your own browser.</p>
+      <ul class="checks" data-group="cek">
+        <li><input type="checkbox" id="cek-1"><label for="cek-1"><b>Who sends the app events?</b>Meta records app AddToCart as "Facebook SDK". Confirm whether it's the SDK on the device or the backend via the App Events API. This decides where the app <code>anon_id</code> and <code>external_id</code> come from.</label></li>
+        <li><input type="checkbox" id="cek-2"><label for="cek-2"><b>How do we know an order came from the app or the web?</b><code>orders</code> has no platform column (<code>channel</code> holds the courier). Look for a signal available at checkout: separate endpoints, the <code>User-Agent</code> header, an app version header, or a client id.</label></li>
+        <li><input type="checkbox" id="cek-3"><label for="cek-3"><b>Today's Purchase and InitiateCheckout payload.</b>Log one real payload. Note the values of <code>action_source</code>, <code>event_source_url</code>, <code>client_ip_address</code>, <code>client_user_agent</code>, <code>fbp</code>, <code>fbc</code>, <code>external_id</code>, <code>content_ids</code>, <code>content_type</code>, <code>event_id</code>, <code>event_time</code>.</label></li>
+        <li><input type="checkbox" id="cek-4"><label for="cek-4"><b>Where <code>client_ip_address</code> comes from.</b>If it's read from the server socket or a queue worker, it's an internal IP. It must come from the checkout request headers (leftmost <code>X-Forwarded-For</code>, or the real-IP header from the load balancer / CDN).</label></li>
+        <li><input type="checkbox" id="cek-5"><label for="cek-5"><b><code>setUserID</code> in the app.</b>If the app SDK calls <code>setUserID</code>, note the value (Toco user id or something else). <code>external_id</code> on app Purchases must use the same value before hashing.</label></li>
+        <li><input type="checkbox" id="cek-6"><label for="cek-6"><b><code>content_ids</code> format on AddToCart.</b>Must be the <code>listings.id</code> UUID (e.g. <code>a3d27fe9-b226-4412-921f-02954404aad9</code>) with <code>content_type = product</code>, same as Purchase.</label></li>
+        <li><input type="checkbox" id="cek-7"><label for="cek-7"><b>The "Buy now" flow.</b>If a button goes straight to checkout without the cart, check that AddToCart still fires. If not, send AddToCart when that button is pressed.</label></li>
+        <li><input type="checkbox" id="cek-8"><label for="cek-8"><b><code>_fbp</code> and <code>_fbc</code> cookies reach the backend.</b>The web pixel is active, so these cookies should exist on toco.id. Check that web checkout requests carry them (first-party cookie, or sent explicitly in the body).</label></li>
+      </ul>
+      <p class="progress" id="cek-progress" aria-live="polite"></p>
+    </section>
+
+    <section id="steps">
+      <h2>Implementation steps</h2>
+      <p>The principle: capture the shopper's data when the checkout request arrives (while the request from the device or browser is still there), store it with the order, and use it when the event is sent. Purchase is usually sent after payment succeeds, when the shopper's request is long gone.</p>
+      <ol class="steps">
+        <li><div><b class="t">Store tracking context when checkout is created</b>
+          Add columns to <code>orders</code> or a new table (for example <code>order_tracking_context</code>, one row per order):
+          <ul>
+            <li><code>platform</code>: <code>app_android</code>, <code>app_ios</code> or <code>web</code></li>
+            <li><code>client_ip</code> and <code>user_agent</code> from the checkout request</li>
+            <li>Web: <code>fbp</code>, <code>fbc</code> (from cookies), <code>page_url</code></li>
+            <li>App: <code>anon_id</code>, <code>madid</code> (advertiser ID, empty if the user hasn't allowed it), <code>tracking_enabled</code> (tracking consent status), and device data for <code>extinfo</code></li>
+          </ul></div></li>
+        <li><div><b class="t">The app sends device identifiers to the checkout API</b>
+          The backend can't know the device's identity on its own, so the app has to include it in the checkout request (header or body):
+          <ul>
+            <li><code>anon_id</code> from the Facebook SDK (Android: <code>AppEventsLogger.getAnonymousAppDeviceGUID(context)</code>, iOS: <code>AppEvents.shared.anonymousID</code>)</li>
+            <li>Advertiser ID (GAID / IDFA) if the user allows it, plus the consent status (iOS: ATT result)</li>
+            <li>App version, OS version, device model, locale and timezone for <code>extinfo</code></li>
+          </ul></div></li>
+        <li><div><b class="t">Branch the event builder by platform</b>
+          The Purchase and InitiateCheckout sender reads the context from step 1 and builds an app or web payload. See the pseudocode below and the <a href="#fields">field specification</a>.</div></li>
+        <li><div><b class="t">Set event time and ID</b>
+          <ul>
+            <li>InitiateCheckout is sent when checkout is created. Purchase is sent when payment succeeds.</li>
+            <li><code>event_time</code> = when it actually happened (unix seconds), not when it's sent. Meta accepts events up to 7 days old.</li>
+            <li><code>event_id</code> unique and stable per order, e.g. <code>purchase_&lt;order_id&gt;</code>. Retries with the same ID won't be double-counted.</li>
+          </ul></div></li>
+        <li><div><b class="t">Turn on the domain allowlist for the pixel</b>
+          Events Manager &gt; Toco's Pixel &gt; Settings &gt; Traffic permissions: add <code>toco.id</code> (and official subdomains) to the allowlist, so data from other domains such as ngrok isn't counted.</div></li>
+      </ol>
+
+      <h3>Builder pseudocode</h3>
+      <div class="code">
+        <button class="copy" type="button" data-target="code-pseudo">Copy</button>
+<pre id="code-pseudo"><span class="c">// Called when checkout is created (InitiateCheckout) and when payment succeeds (Purchase)</span>
+function buildMetaEvent(eventName, order, ctx) {
+  const items = order.items.map(i =&gt; ({ id: i.listing_id, quantity: i.qty, item_price: i.price }));
+
+  const event = {
+    event_name: eventName,                         <span class="c">// "InitiateCheckout" | "Purchase"</span>
+    event_time: toUnixSeconds(eventName === "Purchase" ? order.paid_at : order.created_at),
+    event_id:   `${eventName.toLowerCase()}_${order.id}`,
+    user_data: {
+      external_id: [sha256(normalize(order.user_id))],
+      em: order.email ? [sha256(normalize(order.email))] : undefined,
+      ph: order.phone ? [sha256(normalizePhone(order.phone))] : undefined,
+      client_ip_address: ctx.client_ip,          <span class="c">// shopper's IP, not the server's</span>
+      client_user_agent: ctx.user_agent
+    },
+    custom_data: {
+      currency: "IDR",
+      value: order.items_total,
+      content_type: "product",
+      content_ids: items.map(i =&gt; i.id),          <span class="c">// listings.id UUID</span>
+      contents: items,
+      num_items: items.reduce((n, i) =&gt; n + i.quantity, 0),
+      order_id: order.id
+    }
+  };
+
+  if (ctx.platform === "web") {
+    event.action_source = "website";
+    event.event_source_url = ctx.page_url || "https://toco.id/checkout";
+    event.user_data.fbp = ctx.fbp;
+    event.user_data.fbc = ctx.fbc;
+  } else {                                       <span class="c">// app_android | app_ios</span>
+    event.action_source = "app";
+    event.user_data.anon_id = ctx.anon_id;
+    if (ctx.tracking_enabled &amp;&amp; ctx.madid) event.user_data.madid = ctx.madid;
+    event.app_data = {
+      advertiser_tracking_enabled: ctx.tracking_enabled ? 1 : 0,
+      application_tracking_enabled: 1,
+      extinfo: buildExtinfo(ctx)                 <span class="c">// 16 elements, Meta's official format</span>
+    };
+  }
+  return event;
+}</pre>
+      </div>
+    </section>
+
+    <section id="fields">
+      <h2>Field specification</h2>
+      <p>For Purchase and InitiateCheckout. "Required" means the event can't be matched without it; "recommended" raises match quality.</p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Field</th><th>App order</th><th>Web order</th><th>Source</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr class="group"><td colspan="5">Event identity</td></tr>
+            <tr><td class="f"><code>action_source</code></td><td><span class="good">"app"</span></td><td>"website"</td><td>Platform column from step 1</td><td>The core of the fix. Today everything is "website".</td></tr>
+            <tr><td class="f"><code>event_time</code></td><td colspan="2">Required, unix seconds</td><td><code>paid_at</code> (Purchase), <code>created_at</code> (IC)</td><td>Real time of the event</td></tr>
+            <tr><td class="f"><code>event_id</code></td><td colspan="2">Required, unique per order</td><td><code>purchase_&lt;order_id&gt;</code></td><td>Prevents double counting on retry</td></tr>
+            <tr><td class="f"><code>event_source_url</code></td><td>Leave empty</td><td><span class="bad">Required</span></td><td>Checkout / success page URL</td><td>95% empty today</td></tr>
+            <tr class="group"><td colspan="5">Shopper identity (user_data)</td></tr>
+            <tr><td class="f"><code>client_ip_address</code></td><td colspan="2"><span class="bad">Required</span>, shopper's IP</td><td>Checkout request headers</td><td>Server IP today, 55% of events flagged "hot IP"</td></tr>
+            <tr><td class="f"><code>client_user_agent</code></td><td>Recommended</td><td><span class="bad">Required</span></td><td>Checkout <code>User-Agent</code> header</td><td>Required for website events</td></tr>
+            <tr><td class="f"><code>external_id</code></td><td colspan="2">Recommended, SHA-256</td><td>Toco user id (same as <code>setUserID</code> in the app)</td><td>Links events across app, web and server</td></tr>
+            <tr><td class="f"><code>em</code> / <code>ph</code></td><td colspan="2">Recommended, SHA-256</td><td>Shopper email / phone, normalized</td><td>Keeps match quality up (8.1/10 today)</td></tr>
+            <tr><td class="f"><code>fbp</code> / <code>fbc</code></td><td>Not available</td><td><span class="bad">Required when present</span></td><td><code>_fbp</code> / <code>_fbc</code> cookies</td><td>Links to ad clicks and web AddToCart</td></tr>
+            <tr><td class="f"><code>anon_id</code></td><td><span class="bad">Required</span></td><td>Not available</td><td>Facebook SDK in the app (step 2)</td><td>Links to app AddToCart</td></tr>
+            <tr><td class="f"><code>madid</code></td><td>If allowed</td><td>Not available</td><td>GAID / IDFA from the app</td><td>Device matching</td></tr>
+            <tr class="group"><td colspan="5">App data (app_data), app orders only</td></tr>
+            <tr><td class="f"><code>advertiser_tracking_enabled</code></td><td><span class="bad">Required</span></td><td>Not available</td><td>Tracking consent status (iOS: ATT)</td><td>Required for app events</td></tr>
+            <tr><td class="f"><code>application_tracking_enabled</code></td><td><span class="bad">Required</span></td><td>Not available</td><td>App setting (usually 1)</td><td>Required for app events</td></tr>
+            <tr><td class="f"><code>extinfo</code></td><td><span class="bad">Required</span></td><td>Not available</td><td>Device data from the app; first element <code>"a2"</code> Android, <code>"i2"</code> iOS</td><td>Required for app events, 16 elements in fixed order</td></tr>
+            <tr class="group"><td colspan="5">Product data (custom_data)</td></tr>
+            <tr><td class="f"><code>content_ids</code></td><td colspan="2"><span class="bad">Required</span></td><td><code>listings.id</code> UUID per item</td><td>Must match the catalog and AddToCart</td></tr>
+            <tr><td class="f"><code>content_type</code></td><td colspan="2">"product"</td><td>Fixed</td><td>Marks product-level IDs</td></tr>
+            <tr><td class="f"><code>contents</code></td><td colspan="2">Recommended</td><td><code>id</code>, <code>quantity</code>, <code>item_price</code></td><td>Per-item detail</td></tr>
+            <tr><td class="f"><code>value</code> / <code>currency</code></td><td colspan="2"><span class="bad">Required</span> for Purchase</td><td>Total item value, "IDR"</td><td>Value optimization and reporting</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="payloads">
+      <h2>Example Purchase payloads</h2>
+      <p>Sent to the Conversions API for dataset 2044906276042075. Everything in angle brackets is a placeholder.</p>
+      <div class="tabs" role="tablist" aria-label="Example payloads">
+        <button role="tab" id="tab-app" aria-selected="true" aria-controls="panel-app">App order</button>
+        <button role="tab" id="tab-web" aria-selected="false" aria-controls="panel-web" tabindex="-1">Web order</button>
+      </div>
+      <div class="code tabbed" role="tabpanel" id="panel-app" aria-labelledby="tab-app">
+        <button class="copy" type="button" data-target="code-app">Copy</button>
+<pre id="code-app">{
+  <span class="k">"event_name"</span>: <span class="s">"Purchase"</span>,
+  <span class="k">"event_time"</span>: 1793577600,
+  <span class="k">"event_id"</span>: <span class="s">"purchase_ORD123456"</span>,
+  <span class="k">"action_source"</span>: <span class="s">"app"</span>,
+  <span class="k">"user_data"</span>: {
+    <span class="k">"external_id"</span>: [<span class="s">"&lt;sha256 Toco user id&gt;"</span>],
+    <span class="k">"em"</span>: [<span class="s">"&lt;sha256 email&gt;"</span>],
+    <span class="k">"ph"</span>: [<span class="s">"&lt;sha256 phone number&gt;"</span>],
+    <span class="k">"anon_id"</span>: <span class="s">"&lt;anon id from Facebook SDK&gt;"</span>,
+    <span class="k">"madid"</span>: <span class="s">"&lt;GAID or IDFA, if allowed&gt;"</span>,
+    <span class="k">"client_ip_address"</span>: <span class="s">"&lt;shopper IP&gt;"</span>,
+    <span class="k">"client_user_agent"</span>: <span class="s">"&lt;app user agent&gt;"</span>
+  },
+  <span class="k">"app_data"</span>: {
+    <span class="k">"advertiser_tracking_enabled"</span>: 1,
+    <span class="k">"application_tracking_enabled"</span>: 1,
+    <span class="k">"extinfo"</span>: [<span class="s">"a2"</span>, <span class="s">"&lt;package name&gt;"</span>, <span class="s">"&lt;short version&gt;"</span>, <span class="s">"&lt;long version&gt;"</span>, <span class="s">"&lt;OS version&gt;"</span>, <span class="s">"&lt;device model&gt;"</span>, <span class="s">"id_ID"</span>, <span class="s">"WIB"</span>, <span class="s">"&lt;carrier&gt;"</span>, <span class="s">"&lt;screen width&gt;"</span>, <span class="s">"&lt;screen height&gt;"</span>, <span class="s">"&lt;density&gt;"</span>, <span class="s">"&lt;CPU cores&gt;"</span>, <span class="s">"&lt;storage GB&gt;"</span>, <span class="s">"&lt;free storage GB&gt;"</span>, <span class="s">"Asia/Jakarta"</span>]
+  },
+  <span class="k">"custom_data"</span>: {
+    <span class="k">"currency"</span>: <span class="s">"IDR"</span>,
+    <span class="k">"value"</span>: 94000,
+    <span class="k">"content_type"</span>: <span class="s">"product"</span>,
+    <span class="k">"content_ids"</span>: [<span class="s">"a3d27fe9-b226-4412-921f-02954404aad9"</span>],
+    <span class="k">"contents"</span>: [{ <span class="k">"id"</span>: <span class="s">"a3d27fe9-b226-4412-921f-02954404aad9"</span>, <span class="k">"quantity"</span>: 1, <span class="k">"item_price"</span>: 94000 }],
+    <span class="k">"num_items"</span>: 1,
+    <span class="k">"order_id"</span>: <span class="s">"ORD123456"</span>
+  }
+}</pre>
+      </div>
+      <div class="code tabbed" role="tabpanel" id="panel-web" aria-labelledby="tab-web" hidden>
+        <button class="copy" type="button" data-target="code-web">Copy</button>
+<pre id="code-web">{
+  <span class="k">"event_name"</span>: <span class="s">"Purchase"</span>,
+  <span class="k">"event_time"</span>: 1793577600,
+  <span class="k">"event_id"</span>: <span class="s">"purchase_ORD123457"</span>,
+  <span class="k">"action_source"</span>: <span class="s">"website"</span>,
+  <span class="k">"event_source_url"</span>: <span class="s">"https://toco.id/checkout"</span>,
+  <span class="k">"user_data"</span>: {
+    <span class="k">"external_id"</span>: [<span class="s">"&lt;sha256 Toco user id&gt;"</span>],
+    <span class="k">"em"</span>: [<span class="s">"&lt;sha256 email&gt;"</span>],
+    <span class="k">"ph"</span>: [<span class="s">"&lt;sha256 phone number&gt;"</span>],
+    <span class="k">"client_ip_address"</span>: <span class="s">"&lt;shopper IP&gt;"</span>,
+    <span class="k">"client_user_agent"</span>: <span class="s">"&lt;browser user agent&gt;"</span>,
+    <span class="k">"fbp"</span>: <span class="s">"&lt;_fbp cookie&gt;"</span>,
+    <span class="k">"fbc"</span>: <span class="s">"&lt;_fbc cookie, if present&gt;"</span>
+  },
+  <span class="k">"custom_data"</span>: {
+    <span class="k">"currency"</span>: <span class="s">"IDR"</span>,
+    <span class="k">"value"</span>: 94000,
+    <span class="k">"content_type"</span>: <span class="s">"product"</span>,
+    <span class="k">"content_ids"</span>: [<span class="s">"a3d27fe9-b226-4412-921f-02954404aad9"</span>],
+    <span class="k">"contents"</span>: [{ <span class="k">"id"</span>: <span class="s">"a3d27fe9-b226-4412-921f-02954404aad9"</span>, <span class="k">"quantity"</span>: 1, <span class="k">"item_price"</span>: 94000 }],
+    <span class="k">"num_items"</span>: 1,
+    <span class="k">"order_id"</span>: <span class="s">"ORD123457"</span>
+  }
+}</pre>
+      </div>
+      <p class="note">For the <code>extinfo</code> format (16 elements, fixed order) and the normalization rules before hashing, follow Meta's official documentation for the Conversions API and App Events. Check it before implementing.</p>
+    </section>
+
+    <section id="test">
+      <h2>Testing and verification</h2>
+      <p>While testing, add the <code>test_event_code</code> parameter (from the Test events tab in Events Manager) to Conversions API requests, so test events show up separately and don't mix with real data.</p>
+      <ul class="checks" data-group="ver">
+        <li><input type="checkbox" id="ver-1"><label for="ver-1"><b>Test events <span class="when">same day</span></b>Place one test order from the app (Android and iOS if possible) and one from the web. In Events Manager &gt; Toco's Pixel &gt; Test events, the app Purchase shows source App and the web Purchase shows source Web plus a URL. Both carry listing UUID <code>content_ids</code>.</label></li>
+        <li><input type="checkbox" id="ver-2"><label for="ver-2"><b>Purchase event source <span class="when">1-2 days</span></b>In the Purchase event detail &gt; Event source, the App chart starts filling. The Website chart drops to web orders only.</label></li>
+        <li><input type="checkbox" id="ver-3"><label for="ver-3"><b>Ratios make sense <span class="when">1-2 days</span></b>On the web, Purchases are far fewer than AddToCarts (no longer ~1:1). In the app, Purchases appear alongside ~7K AddToCarts per day.</label></li>
+        <li><input type="checkbox" id="ver-4"><label for="ver-4"><b>Clean diagnostics <span class="when">3-7 days</span></b>"Send missing event source URL" and "client IP addresses associated with multiple users" disappear from Active errors.</label></li>
+        <li><input type="checkbox" id="ver-5"><label for="ver-5"><b>Collaboration Center</b>Setup &gt; Online sales &gt; Event source: Toco's Pixel is no longer marked Fix now. The marketing team then clicks Finish.</label></li>
+      </ul>
+      <p class="progress" id="ver-progress" aria-live="polite"></p>
+    </section>
+
+    <section id="faq">
+      <h2>FAQ</h2>
+      <details class="faq"><summary>Checkout and Purchase are only sent from the backend. Is that a problem?</summary><div><p>No. Server-only events through the Conversions API are a supported and common setup. There's no need to add Checkout or Purchase events on the front end. Only the <code>action_source</code> label and the completeness of shopper data need fixing.</p></div></details>
+      <details class="faq"><summary>Why not label every order "website", since it's sent from the server?</summary><div><p><code>action_source</code> says where the conversion happened, not which system sent the event. An order created in the app must be labelled "app", even when the server sends it. If it stays "website", Meta can't pair it with app AddToCart and the Collaboration Center issue won't go away.</p></div></details>
+      <details class="faq"><summary>What if an iOS user declines tracking (ATT)?</summary><div><p>Still send the event. Set <code>advertiser_tracking_enabled = 0</code> and don't send <code>madid</code>. Keep sending <code>anon_id</code>, <code>external_id</code>, <code>em</code> and <code>ph</code>.</p></div></details>
+      <details class="faq"><summary>One order has products from several stores. What then?</summary><div><p>Put every <code>listings.id</code> in <code>content_ids</code> and <code>contents</code>, with <code>value</code> = the total value of all items in that order. If the system splits one checkout into several orders per store, send one Purchase per order, each with its own <code>event_id</code>.</p></div></details>
+      <details class="faq"><summary>Does AddToCart need to change?</summary><div><p>No, unless the checks show its <code>content_ids</code> aren't listing UUIDs, or the "Buy now" flow doesn't send AddToCart.</p></div></details>
+      <details class="faq"><summary>After the fix, will the catalog match rate go above 90%?</summary><div><p>Probably not, and that's expected. The catalog only holds Official Store products, while most orders come from non-official stores. The catalog match rate isn't one of the requirements being addressed here.</p></div></details>
+    </section>
+
+    <footer>Sources: Meta Events Manager and Collaboration Center (Business ID 471770590506121) and the Toco database (<code>orders</code> table), checked 2 November 2026.</footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  // Per-viewer checklist memory; the page works without it.
+  var KEY = 'toco-cpas-checks';
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
+
+  function updateProgress(group) {
+    var boxes = document.querySelectorAll('.checks[data-group="' + group + '"] input');
+    var done = 0;
+    boxes.forEach(function (b) { if (b.checked) done++; });
+    var out = document.getElementById(group + '-progress');
+    if (out) out.textContent = done + ' of ' + boxes.length + ' done';
+  }
+  document.querySelectorAll('.checks input').forEach(function (box) {
+    if (saved[box.id]) box.checked = true;
+    box.addEventListener('change', function () {
+      saved[box.id] = box.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+      updateProgress(box.closest('.checks').dataset.group);
+    });
+  });
+  updateProgress('cek');
+  updateProgress('ver');
+
+  // Payload tabs
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tabs [role="tab"]'));
+  function select(tab) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { select(t); });
+    t.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        var next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+        select(next); next.focus();
+      }
+    });
+  });
+
+  // Copy buttons
+  document.querySelectorAll('.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var pre = document.getElementById(btn.dataset.target);
+      var text = pre.textContent;
+      function done(msg) { btn.textContent = msg; setTimeout(function () { btn.textContent = 'Copy'; }, 1600); }
+      function fallback() {
+        var r = document.createRange(); r.selectNodeContents(pre);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        done('Text selected, press Ctrl+C');
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done('Copied'); }, fallback);
+      } else { fallback(); }
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Toco CPAS Event Fix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: two-part brief. Part A reads like a memo (plain language, cards, before/after). Part B is a spec sheet (tables, steps, code). Sticky index on desktop. */
+:root {
+  --bg: #fbfaf6;
+  --surface: #ffffff;
+  --sunk: #f3f1ea;
+  --fg: #1d1c18;
+  --muted: #66625a;
+  --line: #e2ded3;
+  --accent: #a87800;
+  --accent-soft: #fff1c7;
+  --bad: #c2362f;
+  --bad-soft: #fbeceb;
+  --good: #2f7d4f;
+  --good-soft: #e7f4ec;
+  --code-bg: #f6f4ee;
+  --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15140f; --surface: #1d1c16; --sunk: #24231c; --fg: #ece9df; --muted: #a39e91;
+    --line: #34322a; --accent: #f2c230; --accent-soft: #3a3013; --bad: #ef6f66; --bad-soft: #3a1c1a;
+    --good: #6cc48f; --good-soft: #17301f; --code-bg: #1a1913; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15140f; --surface: #1d1c16; --sunk: #24231c; --fg: #ece9df; --muted: #a39e91;
+  --line: #34322a; --accent: #f2c230; --accent-soft: #3a3013; --bad: #ef6f66; --bad-soft: #3a1c1a;
+  --good: #6cc48f; --good-soft: #17301f; --code-bg: #1a1913; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.62;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 56px; }
+@media (max-width: 880px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; } nav.toc { display: none; } }
+
+nav.toc { position: sticky; top: calc(24px + env(safe-area-inset-top, 0px)); align-self: start; font-size: 14px; display: grid; gap: 18px; }
+nav.toc .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+nav.toc a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; }
+nav.toc a:hover, nav.toc a:focus-visible { background: var(--sunk); }
+
+main { min-width: 0; }
+header.top { padding-bottom: 8px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--muted); margin-bottom: 14px; align-items: center; }
+.meta b { color: var(--fg); font-weight: 600; }
+.meta a.lang { margin-left: auto; font-weight: 600; color: var(--fg); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; background: var(--surface); }
+.meta a.lang:hover { background: var(--sunk); }
+.meta a.lang:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1 { font-size: clamp(28px, 4vw, 38px); line-height: 1.15; letter-spacing: -.015em; margin: 0 0 14px; text-wrap: balance; font-weight: 700; }
+.lead { font-size: 18px; max-width: 64ch; margin: 0; }
+
+.part { margin-top: 40px; border-top: 2px solid var(--fg); padding-top: 14px; }
+.part-head { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; }
+.part-head .tag { font: 600 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.part-head h2.pt { font-size: 15px; margin: 0; font-weight: 600; }
+.part-head p { margin: 0; font-size: 14px; color: var(--muted); flex-basis: 100%; }
+
+section { padding-top: 34px; scroll-margin-top: 16px; }
+h2 { font-size: 23px; letter-spacing: -.01em; margin: 0 0 12px; text-wrap: balance; line-height: 1.25; }
+h3 { font-size: 17px; margin: 26px 0 8px; }
+p { max-width: 68ch; margin: 0 0 12px; }
+code { font-family: var(--font-mono); font-size: .85em; background: var(--code-bg); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+
+/* Part A components */
+.tldr { background: var(--accent-soft); border-radius: 12px; padding: 18px 20px; max-width: 72ch; display: grid; gap: 10px; }
+.tldr p { margin: 0; }
+.tldr b.k { display: inline-block; min-width: 9.5em; }
+@media (max-width: 560px) { .tldr b.k { display: block; min-width: 0; } }
+
+.story { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 14px 0 6px; }
+@media (max-width: 760px) { .story { grid-template-columns: minmax(0, 1fr); } }
+.story > div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.story .step { font: 600 12px var(--font-mono); color: var(--muted); margin-bottom: 6px; }
+.story h4 { margin: 0 0 6px; font-size: 16px; }
+.story p { margin: 0; font-size: 15px; }
+.story .warn { border-color: var(--bad); background: var(--bad-soft); }
+
+.compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 14px 0 6px; }
+@media (max-width: 760px) { .compare { grid-template-columns: minmax(0, 1fr); } }
+.compare > div { border-radius: 12px; padding: 16px 18px; border: 1px solid var(--line); background: var(--surface); }
+.compare .now { border-color: var(--bad); }
+.compare .after { border-color: var(--good); }
+.compare h4 { margin: 0 0 10px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+.compare .now h4 { color: var(--bad); }
+.compare .after h4 { color: var(--good); }
+.flow { display: grid; gap: 8px; }
+.flow .row { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; align-items: center; font-size: 14px; }
+.flow .pill { padding: 6px 10px; border-radius: 8px; background: var(--sunk); text-align: center; }
+.flow .arrow { color: var(--muted); font-family: var(--font-mono); }
+.flow .pill.badp { background: var(--bad-soft); color: var(--bad); font-weight: 600; }
+.flow .pill.goodp { background: var(--good-soft); color: var(--good); font-weight: 600; }
+.compare .verdict { margin: 12px 0 0; font-size: 14px; }
+
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 10px; }
+@media (max-width: 760px) { .two { grid-template-columns: minmax(0, 1fr); } }
+.two > div { border-radius: 12px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); }
+.two h4 { margin: 0 0 8px; font-size: 15px; }
+.two ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 15px; }
+.two .ok h4 { color: var(--good); }
+.two .todo h4 { color: var(--bad); }
+
+ol.plain { margin: 8px 0 0; padding: 0; list-style: none; counter-reset: p; display: grid; gap: 12px; max-width: 72ch; }
+ol.plain > li { counter-increment: p; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; }
+ol.plain > li::before { content: counter(p); width: 28px; height: 28px; border-radius: 50%; background: var(--fg); color: var(--bg); font: 600 13px var(--font-mono); display: grid; place-items: center; }
+ol.plain b { display: block; }
+ol.plain span.why { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
+
+dl.gloss { display: grid; grid-template-columns: minmax(140px, 200px) minmax(0, 1fr); gap: 0; margin: 10px 0 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); max-width: 80ch; }
+dl.gloss dt, dl.gloss dd { padding: 10px 14px; border-bottom: 1px solid var(--line); margin: 0; }
+dl.gloss dt { font-weight: 600; background: var(--sunk); }
+dl.gloss dt:last-of-type, dl.gloss dd:last-of-type { border-bottom: 0; }
+@media (max-width: 560px) { dl.gloss { grid-template-columns: minmax(0, 1fr); } dl.gloss dt { border-bottom: 0; padding-bottom: 2px; } }
+
+/* Part B components */
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); margin: 8px 0 16px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.scroll table { min-width: 720px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--sunk); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bad { color: var(--bad); font-weight: 600; }
+.good { color: var(--good); font-weight: 600; }
+tr.group td { background: var(--sunk); font-weight: 600; font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+td.f { white-space: nowrap; }
+
+ul.facts { margin: 0 0 16px; padding-left: 20px; max-width: 68ch; display: grid; gap: 6px; }
+.callout { border-left: 3px solid var(--bad); background: var(--bad-soft); padding: 14px 18px; border-radius: 0 10px 10px 0; max-width: 72ch; margin: 12px 0; }
+.callout.ok { border-left-color: var(--good); background: var(--good-soft); }
+.callout b.lbl { display: block; margin-bottom: 2px; }
+
+.diagram { overflow-x: auto; margin: 8px 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 12px; }
+.diagram svg { display: block; min-width: 640px; width: 100%; height: auto; }
+svg .box { fill: none; stroke: var(--muted); stroke-width: 1.25; }
+svg .box-bad { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 2; }
+svg .lane-bad { fill: var(--surface); stroke: var(--bad); stroke-width: 2; }
+svg .lane { fill: var(--surface); stroke: var(--muted); stroke-width: 1.25; }
+svg .container { fill: var(--sunk); stroke: var(--line); stroke-width: 1.25; }
+svg .t-name { fill: var(--fg); font: 600 13px var(--font-body); }
+svg .t-body { fill: var(--fg); font: 400 11.5px var(--font-body); }
+svg .t-quiet { fill: var(--muted); font: 400 11.5px var(--font-body); }
+svg .t-bad { fill: var(--bad); font: 600 11.5px var(--font-body); }
+svg .wire { fill: none; stroke: var(--muted); stroke-width: 1.25; }
+svg .wire-bad { fill: none; stroke: var(--bad); stroke-width: 2; }
+svg .head { fill: var(--muted); }
+svg .head-bad { fill: var(--bad); }
+.cap { font-size: 14px; color: var(--muted); max-width: 68ch; }
+
+ol.steps { margin: 8px 0 0; padding: 0; list-style: none; counter-reset: st; display: grid; gap: 22px; max-width: 80ch; }
+ol.steps > li { counter-increment: st; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; }
+ol.steps > li::before { content: counter(st); width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--fg); font: 600 13px var(--font-mono); display: grid; place-items: center; }
+ol.steps > li > div { min-width: 0; }
+ol.steps b.t { display: block; margin-bottom: 4px; font-size: 16px; }
+ol.steps ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 5px; }
+
+.checks { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; max-width: 80ch; }
+.checks li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.checks input { width: 18px; height: 18px; margin: 3px 0 0; accent-color: var(--accent); cursor: pointer; }
+.checks label { cursor: pointer; min-width: 0; }
+.checks label b { display: block; margin-bottom: 2px; }
+.checks li:has(input:checked) { background: var(--sunk); }
+.checks li:has(input:checked) label { color: var(--muted); }
+.when { font-family: var(--font-mono); font-size: 11.5px; color: var(--accent); font-weight: 600; margin-left: 6px; white-space: nowrap; }
+.progress { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+
+.tabs { display: flex; gap: 4px; margin: 16px 0 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.tabs button { font: 600 14px var(--font-body); color: var(--muted); background: none; border: 0; padding: 10px 14px; border-bottom: 2px solid transparent; cursor: pointer; margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+.tabs button:focus-visible, .copy:focus-visible, nav.toc a:focus-visible, .checks input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.code { position: relative; border: 1px solid var(--line); border-radius: 10px; background: var(--code-bg); margin: 8px 0 12px; }
+.tabs + .code, .code.tabbed { border-top: 0; border-radius: 0 0 10px 10px; margin-top: 0; }
+.code pre { margin: 0; padding: 16px; padding-top: 44px; overflow-x: auto; font: 400 13px/1.55 var(--font-mono); }
+.code .k { color: var(--accent); }
+.code .s { color: var(--good); }
+.code .c { color: var(--muted); }
+.copy { position: absolute; top: 8px; right: 8px; font: 600 12px var(--font-body); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.copy:hover { background: var(--sunk); }
+
+details.faq { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); max-width: 80ch; margin-top: 8px; }
+details.faq summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style-position: inside; }
+details.faq > div { padding: 0 16px 14px; }
+details.faq > div p:last-child { margin-bottom: 0; }
+
+.note { font-size: 14px; color: var(--muted); max-width: 70ch; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 18px; }
+footer { margin-top: 48px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <nav class="toc" aria-label="Isi dokumen">
+    <div>
+      <div class="label">A. Untuk semua</div>
+      <ol>
+        <li><a href="#ringkas">Ringkasnya</a></li>
+        <li><a href="#cerita">Apa yang terjadi</a></li>
+        <li><a href="#bandingkan">Sekarang vs setelah fix</a></li>
+        <li><a href="#minta">Yang kita minta ke developer</a></li>
+        <li><a href="#istilah">Kamus istilah</a></li>
+      </ol>
+    </div>
+    <div>
+      <div class="label">B. Untuk developer</div>
+      <ol>
+        <li><a href="#bukti">Bukti dari Events Manager</a></li>
+        <li><a href="#alur">Alur data saat ini</a></li>
+        <li><a href="#cek">Cek sebelum coding</a></li>
+        <li><a href="#langkah">Langkah implementasi</a></li>
+        <li><a href="#field">Spesifikasi field</a></li>
+        <li><a href="#contoh">Contoh payload</a></li>
+        <li><a href="#tes">Cara tes dan verifikasi</a></li>
+        <li><a href="#faq">Pertanyaan umum</a></li>
+      </ol>
+    </div>
+  </nav>
+
+  <main>
+    <header class="top">
+      <div class="meta">
+        <span>Per <b>2 November 2026</b></span>
+        <span>Dataset <b>Toco's Pixel 2044906276042075</b></span>
+        <span>Business ID <b>471770590506121</b></span>
+        <a class="lang" href="toco-cpas-event-fix.html" lang="en">English version</a>
+      </div>
+      <h1>Perbaikan data pembelian Toco ke Meta, supaya CPAS bisa aktif</h1>
+      <p class="lead">Halaman ini punya dua bagian. Bagian A menjelaskan masalahnya dengan bahasa sehari-hari. Bagian B adalah spesifikasi lengkap untuk tim developer.</p>
+    </header>
+
+    <!-- ================= PART A ================= -->
+    <div class="part">
+      <div class="part-head"><span class="tag">Bagian A</span><h2 class="pt">Penjelasan tanpa istilah teknis</h2><p>Untuk tim marketing, manajemen, dan siapa saja yang perlu paham masalahnya tanpa harus membaca kode.</p></div>
+    </div>
+
+    <section id="ringkas">
+      <h2>Ringkasnya</h2>
+      <div class="tldr">
+        <p><b class="k">Tujuannya</b>Mengaktifkan CPAS di Collaboration Center, supaya brand atau seller bisa beriklan memakai katalog Toco tanpa harus dibuatkan katalog satu per satu.</p>
+        <p><b class="k">Yang menghalangi</b>Meta menolak data pembelian Toco. Menurut Meta, ada pembelian yang "tidak pernah masuk keranjang".</p>
+        <p><b class="k">Penyebabnya</b>Pembelian dari aplikasi Toco dilaporkan ke Meta seolah-olah terjadi di website.</p>
+        <p><b class="k">Perbaikannya</b>Satu bagian di sistem backend Toco, yaitu bagian yang melaporkan pembelian ke Meta. Bagian lain tidak perlu diubah.</p>
+      </div>
+    </section>
+
+    <section id="cerita">
+      <h2>Apa yang sebenarnya terjadi</h2>
+      <p>Bayangkan Meta sebagai pemeriksa yang mencocokkan dua catatan: siapa yang memasukkan barang ke keranjang, dan siapa yang akhirnya membayar. Kalau dua catatan itu tidak nyambung, Meta menganggap datanya tidak bisa dipercaya.</p>
+      <div class="story">
+        <div>
+          <div class="step">Langkah 1</div>
+          <h4>Masuk keranjang</h4>
+          <p>Pembeli di aplikasi menekan "tambah ke keranjang". Aplikasi melapor ke Meta: <b>"ada yang masukin keranjang, dari aplikasi."</b> Ini sudah benar.</p>
+        </div>
+        <div class="warn">
+          <div class="step">Langkah 2</div>
+          <h4>Bayar</h4>
+          <p>Pembeli yang sama membayar. Server Toco melapor ke Meta: <b>"ada yang bayar, dari website."</b> Ini yang salah, karena pembeliannya terjadi di aplikasi.</p>
+        </div>
+        <div>
+          <div class="step">Hasilnya</div>
+          <h4>Meta bingung</h4>
+          <p>Di aplikasi ada ±7.000 orang masukin keranjang per hari tapi tidak ada yang bayar. Di website, hampir semua yang masukin keranjang langsung bayar. Dua-duanya tidak masuk akal.</p>
+        </div>
+      </div>
+      <div class="callout ok"><b class="lbl">Yang perlu diluruskan</b>Melaporkan pembayaran lewat server (bukan dari tampilan website atau aplikasi) itu <b>tidak masalah</b> dan memang cara yang umum. Yang salah hanya label asalnya: pembelian dari aplikasi harus dilabeli "aplikasi".</div>
+    </section>
+
+    <section id="bandingkan">
+      <h2>Sekarang vs setelah diperbaiki</h2>
+      <div class="compare">
+        <div class="now">
+          <h4>Sekarang</h4>
+          <div class="flow">
+            <div class="row"><span class="pill">Belanja di aplikasi</span><span class="arrow">→</span><span class="pill badp">dicatat "website"</span></div>
+            <div class="row"><span class="pill">Belanja di website</span><span class="arrow">→</span><span class="pill">dicatat "website"</span></div>
+          </div>
+          <p class="verdict">Semua pembelian menumpuk di "website". Meta tidak bisa mencocokkan dengan aktivitas keranjang di aplikasi, jadi CPAS ditolak.</p>
+        </div>
+        <div class="after">
+          <h4>Setelah diperbaiki</h4>
+          <div class="flow">
+            <div class="row"><span class="pill">Belanja di aplikasi</span><span class="arrow">→</span><span class="pill goodp">dicatat "aplikasi"</span></div>
+            <div class="row"><span class="pill">Belanja di website</span><span class="arrow">→</span><span class="pill goodp">dicatat "website"</span></div>
+          </div>
+          <p class="verdict">Setiap pembelian tersambung ke aktivitas keranjang di tempat yang sama. Meta bisa memverifikasi datanya dan CPAS bisa diaktifkan.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="minta">
+      <h2>Yang kita minta ke developer</h2>
+      <div class="two">
+        <div class="ok">
+          <h4>Tidak perlu diubah</h4>
+          <ul>
+            <li>Laporan "masuk keranjang" dari aplikasi dan website</li>
+            <li>Cara Toco melaporkan checkout dan pembayaran lewat server</li>
+            <li>Tidak perlu menambah pelacakan di tampilan website atau aplikasi</li>
+          </ul>
+        </div>
+        <div class="todo">
+          <h4>Perlu diubah</h4>
+          <ul>
+            <li>Bagian server yang melaporkan checkout dan pembayaran ke Meta</li>
+            <li>Pengaturan pixel: batasi hanya untuk domain toco.id</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Empat hal yang harus dilakukan, dalam bahasa sederhana</h3>
+      <ol class="plain">
+        <li><div><b>Server harus tahu setiap pesanan datang dari aplikasi atau website.</b><span class="why">Saat ini sistem pesanan tidak mencatat hal ini, jadi semuanya dianggap website.</span></div></li>
+        <li><div><b>Pesanan dari aplikasi dilaporkan sebagai "aplikasi", lengkap dengan identitas perangkatnya.</b><span class="why">Identitas perangkat ini yang dipakai Meta untuk menyambungkan pembayaran dengan aktivitas keranjang di aplikasi.</span></div></li>
+        <li><div><b>Pesanan dari website dilaporkan lengkap dengan alamat halaman dan data browser pembeli.</b><span class="why">Saat ini 95% laporan tidak menyertakan alamat halaman, sehingga Meta sulit menyambungkannya ke klik iklan.</span></div></li>
+        <li><div><b>Pakai alamat internet (IP) pembeli, bukan alamat server Toco.</b><span class="why">Sekarang banyak laporan terlihat datang dari "orang yang sama" karena semuanya memakai alamat server.</span></div></li>
+      </ol>
+      <h3>Setelah developer selesai</h3>
+      <p>Hasilnya bisa dicek di hari yang sama lewat fitur tes di Meta. Status di Collaboration Center biasanya baru berubah beberapa hari kemudian, karena Meta menilai dari data beberapa hari terakhir. Setelah statusnya hijau, tim marketing tinggal klik <b>Finish</b> untuk mengaktifkan CPAS.</p>
+    </section>
+
+    <section id="istilah">
+      <h2>Kamus istilah</h2>
+      <p>Istilah yang muncul di Bagian B, supaya obrolan dengan developer lebih mudah.</p>
+      <dl class="gloss">
+        <dt>CPAS</dt><dd>Collaborative Ads. Fitur Meta yang membolehkan brand atau seller beriklan memakai katalog milik marketplace (Toco).</dd>
+        <dt>Event</dt><dd>Satu laporan aktivitas ke Meta, misalnya "lihat produk", "masuk keranjang", "checkout", atau "bayar" (Purchase).</dd>
+        <dt>Pixel / dataset</dt><dd>"Kotak penampung" di Meta tempat semua event Toco dikirim. Milik Toco bernama Toco's Pixel.</dd>
+        <dt>Conversions API (CAPI)</dt><dd>Cara mengirim event langsung dari server Toco ke Meta. Ini yang dipakai Toco untuk checkout dan pembayaran.</dd>
+        <dt>Facebook SDK</dt><dd>Kode Meta yang terpasang di aplikasi Toco untuk mengirim event dari aplikasi.</dd>
+        <dt>action_source</dt><dd>Label asal event: "app" kalau terjadi di aplikasi, "website" kalau di website. Inilah yang salah untuk pesanan dari aplikasi.</dd>
+        <dt>content_ids</dt><dd>Kode produk yang dibeli. Harus sama dengan kode produk di katalog Toco.</dd>
+        <dt>fbp / fbc</dt><dd>Penanda browser yang dibuat Meta di website, dipakai untuk menyambungkan pembeli dengan klik iklan.</dd>
+        <dt>Events Manager</dt><dd>Halaman di Meta untuk melihat semua event yang diterima, termasuk masalahnya.</dd>
+      </dl>
+    </section>
+
+    <!-- ================= PART B ================= -->
+    <div class="part">
+      <div class="part-head"><span class="tag">Bagian B</span><h2 class="pt">Spesifikasi untuk developer</h2><p>Detail teknis, langkah implementasi, dan cara tes. Bagian A di atas adalah ringkasan untuk stakeholder non-teknis.</p></div>
+    </div>
+
+    <section id="bukti">
+      <h2>Bukti dari Events Manager</h2>
+      <p>Issue di Collaboration Center (Setup &gt; Online sales &gt; Event source) untuk Toco's Pixel: <em>"Purchases are being sent from this event source without add to cart events, which could be impacting your partner's campaign performance."</em> Step ini tercentang kalau minimal satu event source lolos.</p>
+      <p>Data 5 Oktober sampai 1 November 2026:</p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Event</th><th>Total 28 hari</th><th>action_source app</th><th>action_source website</th><th>Integrasi yang tercatat di Meta</th></tr></thead>
+          <tbody>
+            <tr><td>AddToCart</td><td class="num">254K</td><td class="num">~7K/hari</td><td class="num">~2K/hari</td><td>App: Facebook SDK. Web: Meta Pixel (browser) + Meta-hosted CAPI Gateway</td></tr>
+            <tr><td>InitiateCheckout</td><td class="num">62,3K</td><td class="num bad">0</td><td class="num">semua</td><td>Conversions API (backend Toco)</td></tr>
+            <tr><td>Purchase</td><td class="num">52,5K</td><td class="num bad">1</td><td class="num">~1,9K/hari</td><td>Conversions API (backend Toco)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="facts">
+        <li><code>orders</code> berisi 64,1K order dalam 28 hari yang sama, jadi Purchase "website" sebenarnya mencakup hampir semua order, app dan web.</li>
+        <li>Dari ~100 sampel Purchase, hanya ~8 yang membawa <code>event_source_url</code> (<code>https://toco.id/checkout</code>). Diagnostics: 95% Purchase tanpa <code>event_source_url</code>, aktif sejak 25 September.</li>
+        <li>Diagnostics: 55% PageView, ViewContent dan Purchase mengirim <code>client_ip_address</code> yang dipakai banyak user (IP server, bukan IP pembeli).</li>
+        <li>Pixel menerima data dari 17 domain di luar toco.id, termasuk dua URL ngrok, giftbeamng.com dan luckymall.id.</li>
+      </ul>
+      <div class="callout"><b class="lbl">Akar masalah</b>Purchase dan InitiateCheckout untuk order dari app dikirim dengan <code>action_source = "website"</code>, tanpa URL dan tanpa identifier perangkat. AddToCart app (identifier perangkat, label app) tidak bisa dipasangkan dengan Purchase app (label website, identifier lain).</div>
+    </section>
+
+    <section id="alur">
+      <h2>Alur data saat ini</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 760 372" role="img" aria-label="Order dari app masuk jalur Website, terpisah dari Add to Cart app">
+          <defs>
+            <marker id="a-norm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="head" d="M0 0L10 5L0 10z"/></marker>
+            <marker id="a-bad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="head-bad" d="M0 0L10 5L0 10z"/></marker>
+          </defs>
+          <path class="wire" d="M324 60H390V102H472" marker-end="url(#a-norm)"/>
+          <path class="wire" d="M324 156H390V202H472" marker-end="url(#a-norm)"/>
+          <path class="wire-bad" d="M324 252H420V230H472" marker-end="url(#a-bad)"/>
+          <rect class="box" x="24" y="24" width="300" height="72" rx="8"/>
+          <text class="t-name" x="40" y="48">App Toco</text>
+          <text class="t-body" x="40" y="68">AddToCart via Facebook SDK</text>
+          <text class="t-quiet" x="40" y="84">~7K per hari</text>
+          <rect class="box" x="24" y="120" width="300" height="72" rx="8"/>
+          <text class="t-name" x="40" y="144">Web toco.id</text>
+          <text class="t-body" x="40" y="164">AddToCart via Meta Pixel + CAPI Gateway</text>
+          <text class="t-quiet" x="40" y="180">~2K per hari</text>
+          <rect class="box-bad" x="24" y="216" width="300" height="72" rx="8"/>
+          <text class="t-name" x="40" y="240">Backend Toco (Conversions API)</text>
+          <text class="t-body" x="40" y="260">Purchase + InitiateCheckout</text>
+          <text class="t-body" x="40" y="276">semua action_source = website</text>
+          <text class="t-quiet" x="332" y="244">Purchase + IC</text>
+          <text class="t-quiet" x="332" y="270">termasuk order app</text>
+          <rect class="container" x="456" y="24" width="280" height="244" rx="8"/>
+          <text class="t-name" x="472" y="48">Toco's Pixel 2044906276042075</text>
+          <rect class="lane" x="472" y="64" width="248" height="76" rx="8"/>
+          <text class="t-name" x="488" y="88">action_source = app</text>
+          <text class="t-body" x="488" y="108">AddToCart ~7K per hari</text>
+          <text class="t-bad" x="488" y="124">Purchase: 1 event dalam 28 hari</text>
+          <rect class="lane-bad" x="472" y="176" width="248" height="76" rx="8"/>
+          <text class="t-name" x="488" y="200">action_source = website</text>
+          <text class="t-body" x="488" y="220">AddToCart ~2K per hari</text>
+          <text class="t-bad" x="488" y="236">Purchase ~1,9K per hari (semua order)</text>
+          <text class="t-name" x="24" y="336">Fix: order app dikirim dengan action_source = app + identifier</text>
+          <text class="t-name" x="24" y="354">perangkat, sehingga Purchase pindah ke jalur app.</text>
+        </svg>
+      </div>
+      <p class="cap">AddToCart dari app dan web sudah berada di jalur yang benar. Yang perlu diubah hanya sender Purchase dan InitiateCheckout di backend.</p>
+    </section>
+
+    <section id="cek">
+      <h2>Cek sebelum coding</h2>
+      <p>Jawaban poin-poin ini menentukan detail implementasi. Centang tersimpan di browser masing-masing.</p>
+      <ul class="checks" data-group="cek">
+        <li><input type="checkbox" id="cek-1"><label for="cek-1"><b>Siapa yang mengirim event app?</b>Meta mencatat AddToCart app sebagai "Facebook SDK". Pastikan apakah dari SDK di device atau backend lewat App Events API. Ini menentukan dari mana <code>anon_id</code> dan <code>external_id</code> app diambil.</label></li>
+        <li><input type="checkbox" id="cek-2"><label for="cek-2"><b>Bagaimana tahu sebuah order dibuat dari app atau web?</b><code>orders</code> tidak punya kolom platform (<code>channel</code> berisi kurir). Cari sinyal yang tersedia saat checkout: endpoint berbeda, header <code>User-Agent</code>, header versi app, atau client id.</label></li>
+        <li><input type="checkbox" id="cek-3"><label for="cek-3"><b>Payload Purchase dan InitiateCheckout sekarang.</b>Log satu payload nyata. Catat nilai <code>action_source</code>, <code>event_source_url</code>, <code>client_ip_address</code>, <code>client_user_agent</code>, <code>fbp</code>, <code>fbc</code>, <code>external_id</code>, <code>content_ids</code>, <code>content_type</code>, <code>event_id</code>, <code>event_time</code>.</label></li>
+        <li><input type="checkbox" id="cek-4"><label for="cek-4"><b>Sumber <code>client_ip_address</code>.</b>Kalau diambil dari socket server atau worker queue, hasilnya IP internal. Harus dari header request checkout (<code>X-Forwarded-For</code> paling kiri, atau header IP asli dari load balancer / CDN).</label></li>
+        <li><input type="checkbox" id="cek-5"><label for="cek-5"><b><code>setUserID</code> di app.</b>Kalau SDK app memanggil <code>setUserID</code>, catat nilainya (user id Toco atau lainnya). <code>external_id</code> di Purchase app harus memakai nilai yang sama sebelum di-hash.</label></li>
+        <li><input type="checkbox" id="cek-6"><label for="cek-6"><b>Format <code>content_ids</code> di AddToCart.</b>Harus UUID <code>listings.id</code> (contoh <code>a3d27fe9-b226-4412-921f-02954404aad9</code>) dengan <code>content_type = product</code>, sama seperti Purchase.</label></li>
+        <li><input type="checkbox" id="cek-7"><label for="cek-7"><b>Alur "Beli Sekarang".</b>Kalau ada tombol yang langsung ke checkout tanpa keranjang, cek apakah AddToCart tetap terkirim. Kalau tidak, kirim AddToCart saat tombol itu ditekan.</label></li>
+        <li><input type="checkbox" id="cek-8"><label for="cek-8"><b>Cookie <code>_fbp</code> dan <code>_fbc</code> sampai ke backend.</b>Pixel web aktif, jadi cookie ini seharusnya ada di domain toco.id. Cek apakah request checkout dari web membawanya (cookie first-party, atau dikirim eksplisit di body).</label></li>
+      </ul>
+      <p class="progress" id="cek-progress" aria-live="polite"></p>
+    </section>
+
+    <section id="langkah">
+      <h2>Langkah implementasi</h2>
+      <p>Prinsipnya: data pembeli ditangkap saat request checkout masuk (selagi request dari device atau browser masih ada), disimpan bersama order, lalu dipakai saat event dikirim. Purchase biasanya dikirim setelah pembayaran sukses, saat request dari pembeli sudah lewat.</p>
+      <ol class="steps">
+        <li><div><b class="t">Simpan konteks tracking saat checkout dibuat</b>
+          Tambahkan kolom di <code>orders</code> atau tabel baru (misalnya <code>order_tracking_context</code>, satu baris per order):
+          <ul>
+            <li><code>platform</code>: <code>app_android</code>, <code>app_ios</code>, atau <code>web</code></li>
+            <li><code>client_ip</code> dan <code>user_agent</code> dari request checkout</li>
+            <li>Web: <code>fbp</code>, <code>fbc</code> (dari cookie), <code>page_url</code></li>
+            <li>App: <code>anon_id</code>, <code>madid</code> (advertiser ID, kosongkan kalau user tidak mengizinkan), <code>tracking_enabled</code> (status izin tracking), dan data perangkat untuk <code>extinfo</code></li>
+          </ul></div></li>
+        <li><div><b class="t">App mengirim identifier perangkat ke API checkout</b>
+          Backend tidak bisa tahu identitas device sendiri, jadi app perlu menyertakannya di request checkout (header atau body):
+          <ul>
+            <li><code>anon_id</code> dari Facebook SDK (Android: <code>AppEventsLogger.getAnonymousAppDeviceGUID(context)</code>, iOS: <code>AppEvents.shared.anonymousID</code>)</li>
+            <li>Advertiser ID (GAID / IDFA) kalau user mengizinkan, beserta status izinnya (iOS: hasil ATT)</li>
+            <li>Versi app, versi OS, model device, locale, timezone untuk <code>extinfo</code></li>
+          </ul></div></li>
+        <li><div><b class="t">Cabangkan builder event berdasarkan platform</b>
+          Sender Purchase dan InitiateCheckout membaca konteks dari langkah 1, lalu membentuk payload app atau web. Lihat pseudocode di bawah dan <a href="#field">tabel spesifikasi field</a>.</div></li>
+        <li><div><b class="t">Atur waktu dan ID event</b>
+          <ul>
+            <li>InitiateCheckout dikirim saat checkout dibuat. Purchase dikirim saat pembayaran sukses.</li>
+            <li><code>event_time</code> = waktu kejadian sebenarnya (unix detik), bukan waktu kirim. Meta menerima event sampai 7 hari ke belakang.</li>
+            <li><code>event_id</code> unik dan stabil per order, misalnya <code>purchase_&lt;order_id&gt;</code>. Retry dengan ID yang sama tidak akan dihitung dobel.</li>
+          </ul></div></li>
+        <li><div><b class="t">Aktifkan allowlist domain di pixel</b>
+          Events Manager &gt; Toco's Pixel &gt; Settings &gt; Traffic permissions: tambahkan <code>toco.id</code> (dan subdomain resmi) ke allowlist, supaya data dari domain lain seperti ngrok tidak dihitung.</div></li>
+      </ol>
+
+      <h3>Pseudocode builder</h3>
+      <div class="code">
+        <button class="copy" type="button" data-target="code-pseudo">Salin</button>
+<pre id="code-pseudo"><span class="c">// Dipanggil saat checkout dibuat (InitiateCheckout) dan saat pembayaran sukses (Purchase)</span>
+function buildMetaEvent(eventName, order, ctx) {
+  const items = order.items.map(i =&gt; ({ id: i.listing_id, quantity: i.qty, item_price: i.price }));
+
+  const event = {
+    event_name: eventName,                         <span class="c">// "InitiateCheckout" | "Purchase"</span>
+    event_time: toUnixSeconds(eventName === "Purchase" ? order.paid_at : order.created_at),
+    event_id:   `${eventName.toLowerCase()}_${order.id}`,
+    user_data: {
+      external_id: [sha256(normalize(order.user_id))],
+      em: order.email ? [sha256(normalize(order.email))] : undefined,
+      ph: order.phone ? [sha256(normalizePhone(order.phone))] : undefined,
+      client_ip_address: ctx.client_ip,          <span class="c">// IP pembeli, bukan IP server</span>
+      client_user_agent: ctx.user_agent
+    },
+    custom_data: {
+      currency: "IDR",
+      value: order.items_total,
+      content_type: "product",
+      content_ids: items.map(i =&gt; i.id),          <span class="c">// UUID listings.id</span>
+      contents: items,
+      num_items: items.reduce((n, i) =&gt; n + i.quantity, 0),
+      order_id: order.id
+    }
+  };
+
+  if (ctx.platform === "web") {
+    event.action_source = "website";
+    event.event_source_url = ctx.page_url || "https://toco.id/checkout";
+    event.user_data.fbp = ctx.fbp;
+    event.user_data.fbc = ctx.fbc;
+  } else {                                       <span class="c">// app_android | app_ios</span>
+    event.action_source = "app";
+    event.user_data.anon_id = ctx.anon_id;
+    if (ctx.tracking_enabled &amp;&amp; ctx.madid) event.user_data.madid = ctx.madid;
+    event.app_data = {
+      advertiser_tracking_enabled: ctx.tracking_enabled ? 1 : 0,
+      application_tracking_enabled: 1,
+      extinfo: buildExtinfo(ctx)                 <span class="c">// 16 elemen, format resmi Meta</span>
+    };
+  }
+  return event;
+}</pre>
+      </div>
+    </section>
+
+    <section id="field">
+      <h2>Spesifikasi field</h2>
+      <p>Untuk Purchase dan InitiateCheckout. "Wajib" berarti harus ada supaya event bisa dicocokkan; "disarankan" menaikkan kualitas pencocokan.</p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Field</th><th>Order dari app</th><th>Order dari web</th><th>Ambil dari mana</th><th>Kenapa perlu</th></tr></thead>
+          <tbody>
+            <tr class="group"><td colspan="5">Identitas event</td></tr>
+            <tr><td class="f"><code>action_source</code></td><td><span class="good">"app"</span></td><td>"website"</td><td>Kolom platform dari langkah 1</td><td>Inti fix. Sekarang semuanya "website".</td></tr>
+            <tr><td class="f"><code>event_time</code></td><td colspan="2">Wajib, unix detik</td><td><code>paid_at</code> (Purchase), <code>created_at</code> (IC)</td><td>Waktu kejadian asli</td></tr>
+            <tr><td class="f"><code>event_id</code></td><td colspan="2">Wajib, unik per order</td><td><code>purchase_&lt;order_id&gt;</code></td><td>Mencegah hitung dobel saat retry</td></tr>
+            <tr><td class="f"><code>event_source_url</code></td><td>Jangan diisi</td><td><span class="bad">Wajib</span></td><td>URL halaman checkout / sukses</td><td>Sekarang 95% kosong</td></tr>
+            <tr class="group"><td colspan="5">Identitas pembeli (user_data)</td></tr>
+            <tr><td class="f"><code>client_ip_address</code></td><td colspan="2"><span class="bad">Wajib</span>, IP pembeli</td><td>Header request checkout</td><td>Sekarang IP server, 55% event kena "hot IP"</td></tr>
+            <tr><td class="f"><code>client_user_agent</code></td><td>Disarankan</td><td><span class="bad">Wajib</span></td><td>Header <code>User-Agent</code> checkout</td><td>Wajib untuk event website</td></tr>
+            <tr><td class="f"><code>external_id</code></td><td colspan="2">Disarankan, SHA-256</td><td>User id Toco (sama dengan <code>setUserID</code> di app)</td><td>Menyambungkan event di app, web dan server</td></tr>
+            <tr><td class="f"><code>em</code> / <code>ph</code></td><td colspan="2">Disarankan, SHA-256</td><td>Email / HP pembeli, dinormalisasi</td><td>Menjaga kualitas pencocokan (sekarang 8,1/10)</td></tr>
+            <tr><td class="f"><code>fbp</code> / <code>fbc</code></td><td>Tidak ada</td><td><span class="bad">Wajib kalau ada</span></td><td>Cookie <code>_fbp</code> / <code>_fbc</code></td><td>Menyambungkan ke klik iklan dan AddToCart web</td></tr>
+            <tr><td class="f"><code>anon_id</code></td><td><span class="bad">Wajib</span></td><td>Tidak ada</td><td>Facebook SDK di app (langkah 2)</td><td>Menyambungkan ke AddToCart app</td></tr>
+            <tr><td class="f"><code>madid</code></td><td>Kalau diizinkan</td><td>Tidak ada</td><td>GAID / IDFA dari app</td><td>Pencocokan perangkat</td></tr>
+            <tr class="group"><td colspan="5">Data aplikasi (app_data), hanya order app</td></tr>
+            <tr><td class="f"><code>advertiser_tracking_enabled</code></td><td><span class="bad">Wajib</span></td><td>Tidak ada</td><td>Status izin tracking (iOS: ATT)</td><td>Syarat event app</td></tr>
+            <tr><td class="f"><code>application_tracking_enabled</code></td><td><span class="bad">Wajib</span></td><td>Tidak ada</td><td>Pengaturan app (biasanya 1)</td><td>Syarat event app</td></tr>
+            <tr><td class="f"><code>extinfo</code></td><td><span class="bad">Wajib</span></td><td>Tidak ada</td><td>Data perangkat dari app; elemen pertama <code>"a2"</code> Android, <code>"i2"</code> iOS</td><td>Syarat event app, 16 elemen urutan tetap</td></tr>
+            <tr class="group"><td colspan="5">Data produk (custom_data)</td></tr>
+            <tr><td class="f"><code>content_ids</code></td><td colspan="2"><span class="bad">Wajib</span></td><td>UUID <code>listings.id</code> tiap item</td><td>Harus sama dengan katalog dan AddToCart</td></tr>
+            <tr><td class="f"><code>content_type</code></td><td colspan="2">"product"</td><td>Tetap</td><td>Menandai ID level produk</td></tr>
+            <tr><td class="f"><code>contents</code></td><td colspan="2">Disarankan</td><td><code>id</code>, <code>quantity</code>, <code>item_price</code></td><td>Detail per item</td></tr>
+            <tr><td class="f"><code>value</code> / <code>currency</code></td><td colspan="2"><span class="bad">Wajib</span> untuk Purchase</td><td>Total nilai barang, "IDR"</td><td>Optimasi dan laporan nilai</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="contoh">
+      <h2>Contoh payload Purchase</h2>
+      <p>Dikirim ke Conversions API dataset 2044906276042075. Semua nilai dalam kurung sudut adalah placeholder.</p>
+      <div class="tabs" role="tablist" aria-label="Contoh payload">
+        <button role="tab" id="tab-app" aria-selected="true" aria-controls="panel-app">Order dari app</button>
+        <button role="tab" id="tab-web" aria-selected="false" aria-controls="panel-web" tabindex="-1">Order dari web</button>
+      </div>
+      <div class="code tabbed" role="tabpanel" id="panel-app" aria-labelledby="tab-app">
+        <button class="copy" type="button" data-target="code-app">Salin</button>
+<pre id="code-app">{
+  <span class="k">"event_name"</span>: <span class="s">"Purchase"</span>,
+  <span class="k">"event_time"</span>: 1793577600,
+  <span class="k">"event_id"</span>: <span class="s">"purchase_ORD123456"</span>,
+  <span class="k">"action_source"</span>: <span class="s">"app"</span>,
+  <span class="k">"user_data"</span>: {
+    <span class="k">"external_id"</span>: [<span class="s">"&lt;sha256 user id Toco&gt;"</span>],
+    <span class="k">"em"</span>: [<span class="s">"&lt;sha256 email&gt;"</span>],
+    <span class="k">"ph"</span>: [<span class="s">"&lt;sha256 nomor HP&gt;"</span>],
+    <span class="k">"anon_id"</span>: <span class="s">"&lt;anon id dari Facebook SDK&gt;"</span>,
+    <span class="k">"madid"</span>: <span class="s">"&lt;GAID atau IDFA, kalau diizinkan&gt;"</span>,
+    <span class="k">"client_ip_address"</span>: <span class="s">"&lt;IP pembeli&gt;"</span>,
+    <span class="k">"client_user_agent"</span>: <span class="s">"&lt;user agent app&gt;"</span>
+  },
+  <span class="k">"app_data"</span>: {
+    <span class="k">"advertiser_tracking_enabled"</span>: 1,
+    <span class="k">"application_tracking_enabled"</span>: 1,
+    <span class="k">"extinfo"</span>: [<span class="s">"a2"</span>, <span class="s">"&lt;package name&gt;"</span>, <span class="s">"&lt;versi&gt;"</span>, <span class="s">"&lt;versi lengkap&gt;"</span>, <span class="s">"&lt;versi OS&gt;"</span>, <span class="s">"&lt;model&gt;"</span>, <span class="s">"id_ID"</span>, <span class="s">"WIB"</span>, <span class="s">"&lt;operator&gt;"</span>, <span class="s">"&lt;lebar layar&gt;"</span>, <span class="s">"&lt;tinggi layar&gt;"</span>, <span class="s">"&lt;density&gt;"</span>, <span class="s">"&lt;jumlah core&gt;"</span>, <span class="s">"&lt;storage GB&gt;"</span>, <span class="s">"&lt;sisa storage GB&gt;"</span>, <span class="s">"Asia/Jakarta"</span>]
+  },
+  <span class="k">"custom_data"</span>: {
+    <span class="k">"currency"</span>: <span class="s">"IDR"</span>,
+    <span class="k">"value"</span>: 94000,
+    <span class="k">"content_type"</span>: <span class="s">"product"</span>,
+    <span class="k">"content_ids"</span>: [<span class="s">"a3d27fe9-b226-4412-921f-02954404aad9"</span>],
+    <span class="k">"contents"</span>: [{ <span class="k">"id"</span>: <span class="s">"a3d27fe9-b226-4412-921f-02954404aad9"</span>, <span class="k">"quantity"</span>: 1, <span class="k">"item_price"</span>: 94000 }],
+    <span class="k">"num_items"</span>: 1,
+    <span class="k">"order_id"</span>: <span class="s">"ORD123456"</span>
+  }
+}</pre>
+      </div>
+      <div class="code tabbed" role="tabpanel" id="panel-web" aria-labelledby="tab-web" hidden>
+        <button class="copy" type="button" data-target="code-web">Salin</button>
+<pre id="code-web">{
+  <span class="k">"event_name"</span>: <span class="s">"Purchase"</span>,
+  <span class="k">"event_time"</span>: 1793577600,
+  <span class="k">"event_id"</span>: <span class="s">"purchase_ORD123457"</span>,
+  <span class="k">"action_source"</span>: <span class="s">"website"</span>,
+  <span class="k">"event_source_url"</span>: <span class="s">"https://toco.id/checkout"</span>,
+  <span class="k">"user_data"</span>: {
+    <span class="k">"external_id"</span>: [<span class="s">"&lt;sha256 user id Toco&gt;"</span>],
+    <span class="k">"em"</span>: [<span class="s">"&lt;sha256 email&gt;"</span>],
+    <span class="k">"ph"</span>: [<span class="s">"&lt;sha256 nomor HP&gt;"</span>],
+    <span class="k">"client_ip_address"</span>: <span class="s">"&lt;IP pembeli&gt;"</span>,
+    <span class="k">"client_user_agent"</span>: <span class="s">"&lt;user agent browser&gt;"</span>,
+    <span class="k">"fbp"</span>: <span class="s">"&lt;cookie _fbp&gt;"</span>,
+    <span class="k">"fbc"</span>: <span class="s">"&lt;cookie _fbc, kalau ada&gt;"</span>
+  },
+  <span class="k">"custom_data"</span>: {
+    <span class="k">"currency"</span>: <span class="s">"IDR"</span>,
+    <span class="k">"value"</span>: 94000,
+    <span class="k">"content_type"</span>: <span class="s">"product"</span>,
+    <span class="k">"content_ids"</span>: [<span class="s">"a3d27fe9-b226-4412-921f-02954404aad9"</span>],
+    <span class="k">"contents"</span>: [{ <span class="k">"id"</span>: <span class="s">"a3d27fe9-b226-4412-921f-02954404aad9"</span>, <span class="k">"quantity"</span>: 1, <span class="k">"item_price"</span>: 94000 }],
+    <span class="k">"num_items"</span>: 1,
+    <span class="k">"order_id"</span>: <span class="s">"ORD123457"</span>
+  }
+}</pre>
+      </div>
+      <p class="note">Format <code>extinfo</code> (16 elemen, urutan tetap) dan aturan normalisasi sebelum hashing ikuti dokumentasi resmi Meta untuk Conversions API dan App Events. Cek di sana sebelum implementasi.</p>
+    </section>
+
+    <section id="tes">
+      <h2>Cara tes dan verifikasi</h2>
+      <p>Saat tes, tambahkan parameter <code>test_event_code</code> (diambil dari tab Test events di Events Manager) di request ke Conversions API, supaya event uji muncul terpisah dan tidak tercampur data asli.</p>
+      <ul class="checks" data-group="ver">
+        <li><input type="checkbox" id="ver-1"><label for="ver-1"><b>Test events <span class="when">hari yang sama</span></b>Buat satu order uji dari app (Android dan iOS kalau bisa) dan satu dari web. Di Events Manager &gt; Toco's Pixel &gt; Test events, Purchase dari app tampil dengan source App, dari web dengan source Web plus URL. Keduanya membawa <code>content_ids</code> UUID listing.</label></li>
+        <li><input type="checkbox" id="ver-2"><label for="ver-2"><b>Event source Purchase <span class="when">1-2 hari</span></b>Di detail event Purchase &gt; Event source, grafik App mulai terisi. Grafik Website turun ke jumlah order web saja.</label></li>
+        <li><input type="checkbox" id="ver-3"><label for="ver-3"><b>Rasio masuk akal <span class="when">1-2 hari</span></b>Di web, Purchase jauh lebih sedikit dari AddToCart (tidak lagi ~1:1). Di app, Purchase muncul di samping ~7K AddToCart per hari.</label></li>
+        <li><input type="checkbox" id="ver-4"><label for="ver-4"><b>Diagnostics bersih <span class="when">3-7 hari</span></b>"Send missing event source URL" dan "client IP addresses associated with multiple users" hilang dari Active errors.</label></li>
+        <li><input type="checkbox" id="ver-5"><label for="ver-5"><b>Collaboration Center</b>Setup &gt; Online sales &gt; Event source: Toco's Pixel tidak lagi berstatus Fix now. Tim marketing lalu klik Finish.</label></li>
+      </ul>
+      <p class="progress" id="ver-progress" aria-live="polite"></p>
+    </section>
+
+    <section id="faq">
+      <h2>Pertanyaan umum</h2>
+      <details class="faq"><summary>Checkout dan Purchase hanya dari backend. Apakah itu masalah?</summary><div><p>Tidak. Event server-only lewat Conversions API adalah setup yang didukung dan umum. Tidak perlu menambah event Checkout atau Purchase di front end. Yang perlu diperbaiki hanya label <code>action_source</code> dan kelengkapan data pembeli.</p></div></details>
+      <details class="faq"><summary>Kenapa tidak semua order dilabeli "website" saja, karena dikirim dari server?</summary><div><p><code>action_source</code> menunjukkan tempat konversi terjadi, bukan sistem yang mengirim event. Order yang dibuat di app harus berlabel "app", meskipun dikirim dari server. Kalau tetap "website", Meta tidak bisa memasangkannya dengan AddToCart app dan issue di Collaboration Center tidak akan hilang.</p></div></details>
+      <details class="faq"><summary>Bagaimana kalau user iOS menolak izin tracking (ATT)?</summary><div><p>Event tetap dikirim. Isi <code>advertiser_tracking_enabled = 0</code> dan jangan kirim <code>madid</code>. <code>anon_id</code>, <code>external_id</code>, <code>em</code> dan <code>ph</code> tetap dikirim.</p></div></details>
+      <details class="faq"><summary>Satu order berisi produk dari beberapa toko. Bagaimana?</summary><div><p>Masukkan semua <code>listings.id</code> ke <code>content_ids</code> dan <code>contents</code>, dengan <code>value</code> = total nilai semua barang di order itu. Kalau sistem memecah satu checkout jadi beberapa order per toko, kirim satu Purchase per order dengan <code>event_id</code> masing-masing.</p></div></details>
+      <details class="faq"><summary>Apakah AddToCart perlu diubah?</summary><div><p>Tidak, kecuali hasil cek menunjukkan <code>content_ids</code>-nya bukan UUID listing, atau alur "Beli Sekarang" tidak mengirim AddToCart.</p></div></details>
+      <details class="faq"><summary>Setelah fix, apakah match rate katalog akan di atas 90%?</summary><div><p>Kemungkinan tidak, dan itu wajar. Katalog hanya berisi produk Official Store, sedangkan sebagian besar order datang dari toko non-official. Match rate katalog tidak termasuk syarat yang sedang dikejar di sini.</p></div></details>
+    </section>
+
+    <footer>Sumber: Meta Events Manager dan Collaboration Center (Business ID 471770590506121) serta database Toco (tabel <code>orders</code>), dicek 2 November 2026.</footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  // Per-viewer checklist memory; the page works without it.
+  var KEY = 'toco-cpas-checks';
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
+
+  function updateProgress(group) {
+    var boxes = document.querySelectorAll('.checks[data-group="' + group + '"] input');
+    var done = 0;
+    boxes.forEach(function (b) { if (b.checked) done++; });
+    var out = document.getElementById(group + '-progress');
+    if (out) out.textContent = done + ' dari ' + boxes.length + ' selesai';
+  }
+  document.querySelectorAll('.checks input').forEach(function (box) {
+    if (saved[box.id]) box.checked = true;
+    box.addEventListener('change', function () {
+      saved[box.id] = box.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+      updateProgress(box.closest('.checks').dataset.group);
+    });
+  });
+  updateProgress('cek');
+  updateProgress('ver');
+
+  // Payload tabs
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tabs [role="tab"]'));
+  function select(tab) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { select(t); });
+    t.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        var next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+        select(next); next.focus();
+      }
+    });
+  });
+
+  // Copy buttons
+  document.querySelectorAll('.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var pre = document.getElementById(btn.dataset.target);
+      var text = pre.textContent;
+      function done(msg) { btn.textContent = msg; setTimeout(function () { btn.textContent = 'Salin'; }, 1600); }
+      function fallback() {
+        var r = document.createRange(); r.selectNodeContents(pre);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        done('Teks terpilih, tekan Ctrl+C');
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done('Tersalin'); }, fallback);
+      } else { fallback(); }
+    });
+  });
+})();
+</script>
+</body>
+</html>
