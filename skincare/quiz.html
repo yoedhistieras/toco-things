@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kuis Skincare Toco</title>
+<meta name="description" content="Jawab 7 pertanyaan singkat, dapat rutinitas skincare yang cocok dari berbagai brand di Toco.">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --yellow:#FFD400; --yellow-tint:#FFF8D6; --yellow-text:#6B5800;
+  --ink:#1B1916; --ink-2:#4A4640; --muted:#7A756D;
+  --bg:#FBF8F2; --card:#FFFFFF; --line:#ECE7DD; --green:#1E7A3C;
+  --gut:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:Mulish,system-ui,sans-serif;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+img{display:block;max-width:100%}
+h1,h2,h3,.f-o{font-family:Outfit,system-ui,sans-serif;letter-spacing:-.01em}
+.wrap{max-width:640px;margin:0 auto;padding:0 var(--gut)}
+.wrap-wide{max-width:1080px}
+
+.top{position:sticky;top:0;z-index:20;background:rgba(251,248,242,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:10px;height:52px;max-width:1080px}
+.top svg{height:20px;width:auto}
+.top .sep{width:1px;height:18px;background:var(--line)}
+.top .lbl{font-family:Outfit;font-weight:600;font-size:15px}
+.top .sp{flex:1}
+.top .back{font-size:13px;font-weight:700;color:var(--ink-2)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:Outfit;font-weight:600;font-size:16px;border-radius:14px;padding:14px 18px;min-height:50px}
+.btn-ink{background:var(--ink);color:#fff}
+.btn-yel{background:var(--yellow);color:var(--ink)}
+.btn-line{background:var(--card);border:1px solid var(--line)}
+.btn[disabled]{opacity:.35;pointer-events:none}
+
+/* intro */
+.intro{padding-top:28px;padding-bottom:32px}
+.intro .card{background:var(--yellow);border-radius:26px;padding:28px 22px 22px;position:relative;overflow:hidden}
+.intro .card:after{content:"";position:absolute;right:-70px;bottom:-70px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.3)}
+.intro .pill{display:inline-block;background:var(--ink);color:var(--yellow);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
+.intro h1{position:relative;z-index:1;font-size:clamp(32px,9vw,48px);line-height:1.02;font-weight:800;margin:14px 0 10px}
+.intro p{position:relative;z-index:1;color:var(--ink-2);max-width:34ch}
+.intro .btn{position:relative;z-index:1;margin-top:22px;width:100%}
+.intro .meta{display:flex;gap:16px;margin-top:16px;font-size:13px;color:var(--muted);font-weight:600}
+.brands{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+.brands span{font-size:12px;font-weight:700;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:var(--ink-2)}
+
+/* question */
+.q{padding-top:18px;padding-bottom:120px}
+.prog{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+.prog .bar{flex:1;height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.prog .bar i{display:block;height:100%;background:var(--ink);border-radius:99px;transition:width .3s ease}
+.prog span{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.q h2{font-size:26px;line-height:1.12;font-weight:700}
+.q .hint{font-size:14px;color:var(--muted);margin-top:6px}
+.opts{display:grid;gap:10px;margin-top:20px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:14px;transition:border-color .15s,background .15s}
+.opt .em{width:44px;height:44px;border-radius:12px;background:var(--bg);display:grid;place-items:center;font-size:22px;flex:none}
+.opt b{display:block;font-family:Outfit;font-size:16px;font-weight:600}
+.opt small{display:block;font-size:13px;color:var(--muted);margin-top:1px}
+.opt.on{border-color:var(--ink);background:var(--yellow-tint)}
+.opt.on .em{background:var(--yellow)}
+.qnav{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(to top,var(--bg) 70%,rgba(251,248,242,0));padding:20px 0 calc(14px + env(safe-area-inset-bottom))}
+.qnav .wrap{display:flex;gap:10px}
+.qnav .btn-line{flex:none;width:56px;padding:0}
+.qnav .btn-ink{flex:1}
+
+/* result */
+.res{padding-top:20px;padding-bottom:40px}
+.res-head{background:var(--ink);color:#fff;border-radius:24px;padding:22px 20px}
+.res-head .pill{display:inline-block;background:var(--yellow);color:var(--ink);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
+.res-head h1{font-size:clamp(26px,7vw,38px);line-height:1.06;margin:12px 0 8px}
+.res-head p{color:#CFC9BE;font-size:14.5px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tags span{font-size:12px;font-weight:700;border:1px solid #3A3631;color:#E9E4DA;border-radius:999px;padding:4px 10px}
+.tip{display:flex;gap:10px;background:var(--yellow-tint);border:1px solid #F2E3A0;border-radius:16px;padding:14px;margin-top:12px;font-size:14px;color:var(--ink-2)}
+.tip b{color:var(--ink)}
+
+.step{margin-top:22px}
+.step-h{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.step-h .num{font-family:Outfit;font-weight:800;font-size:13px;background:var(--yellow);border-radius:8px;padding:3px 8px}
+.step-h h3{font-size:19px;font-weight:700}
+.step-h small{font-size:13px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.main{display:flex;gap:12px;background:var(--card);border:1.5px solid var(--ink);border-radius:18px;padding:12px;position:relative}
+.main .im{width:108px;height:108px;border-radius:12px;overflow:hidden;background:#F4F1EA;flex:none}
+.main .im img{width:100%;height:100%;object-fit:cover}
+.main .bd{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.why{font-size:11.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--green)}
+.brand{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--muted)}
+.brand img{width:14px;height:14px}
+.nm{font-size:14.5px;font-weight:700;line-height:1.28}
+.pr{display:flex;align-items:baseline;gap:6px;margin-top:auto}
+.pr b{font-family:Outfit;font-size:18px}
+.pr s{font-size:12px;color:var(--muted)}
+.alts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.alt{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px}
+.alt img{width:44px;height:44px;border-radius:8px;object-fit:cover;background:#F4F1EA;flex:none}
+.alt .t{min-width:0}
+.alt .b2{font-size:11px;font-weight:700;color:var(--muted)}
+.alt .n2{font-size:12.5px;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.alt .p2{font-family:Outfit;font-weight:700;font-size:13px}
+.alts-l{font-size:12px;font-weight:700;color:var(--muted);margin-top:10px}
+
+.total{position:sticky;bottom:0;margin-top:24px;background:var(--bg);padding:12px 0 calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);z-index:5}
+.total .row{display:flex;align-items:center;gap:12px}
+.total .l{flex:1}
+.total .l span{display:block;font-size:12.5px;color:var(--muted);font-weight:600}
+.total .l b{font-family:Outfit;font-size:22px}
+.after{display:grid;gap:10px;margin-top:18px}
+.note{font-size:12px;color:var(--muted);margin-top:18px;line-height:1.5}
+footer{padding:10px 0 30px;font-size:12px;color:var(--muted);text-align:center}
+[hidden]{display:none!important}
+
+@media (min-width:720px){
+  :root{--gut:24px}
+  .alts{grid-template-columns:repeat(2,1fr)}
+  .main .im{width:132px;height:132px}
+  .opts.two{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a href="https://toco.id/" aria-label="Toco">
+      <svg viewBox="0 0 80 33" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.88866 21.7128V12.7328H10.3982V9.83545H2.88866V0.856323H0V21.7128C0.0168943 27.4651 4.66255 32.1241 10.3982 32.1409V29.2443C6.25821 29.2264 2.90647 25.8649 2.88866 21.7128ZM30.8324 21.7149C30.8279 25.8727 27.4683 29.2421 23.3228 29.2469V29.2465C19.1753 29.2465 15.8133 25.8744 15.8133 21.7149C15.8133 17.5554 19.1753 14.1835 23.3228 14.1835C27.4703 14.1835 30.8324 17.5554 30.8324 21.7149ZM23.3232 32.1431C29.0656 32.143 33.7207 27.4741 33.7207 21.7149C33.7206 15.9558 29.0652 11.287 23.3226 11.287C17.5801 11.2872 12.9252 15.9562 12.9253 21.7152C12.9254 27.4745 17.5808 32.1431 23.3232 32.1431ZM53.6714 24.3219H56.6965C55.3876 29.4063 50.5131 32.7214 45.319 32.0598C40.1247 31.3981 36.2314 26.966 36.2314 21.7148C36.2314 16.4635 40.1247 12.0315 45.319 11.3699C50.5131 10.7082 55.3876 14.0232 56.6965 19.1078H53.6714C52.3539 15.5266 48.5736 13.5002 44.8728 14.3914C41.172 15.2827 38.7212 18.8097 39.1687 22.6005C39.6163 26.3911 42.8206 29.2465 46.6265 29.2463C49.7702 29.2425 52.5798 27.2785 53.6714 24.3219ZM77.1118 21.7149C77.1072 25.8727 73.7478 29.2421 69.6021 29.2469V29.2465C65.4548 29.2465 62.0926 25.8744 62.0926 21.7149C62.0926 17.5554 65.4548 14.1835 69.6021 14.1835C73.7496 14.1835 77.1118 17.5554 77.1118 21.7149ZM69.6025 32.1431C75.345 32.143 80 27.4741 80 21.7149C79.9998 15.9558 75.3445 11.287 69.6019 11.287C63.8594 11.2872 59.2045 15.9562 59.2046 21.7152C59.2049 27.4745 63.8601 32.1431 69.6025 32.1431Z" fill="#1B1916"/></svg>
+    </a>
+    <span class="sep"></span><span class="lbl">Kuis Skincare</span>
+    <span class="sp"></span>
+    <a class="back" href="index.html">Semua skincare</a>
+  </div>
+</header>
+
+<main>
+  <!-- INTRO -->
+  <section id="intro" class="wrap intro">
+    <div class="card">
+      <span class="pill">Kuis 1 menit</span>
+      <h1>Kulitmu butuh apa?</h1>
+      <p>Jawab 7 pertanyaan singkat. Kami susun rutinitas dari berbagai brand, sesuai kulit dan budget kamu.</p>
+      <button class="btn btn-ink" type="button" id="start">Mulai kuis</button>
+    </div>
+    <div class="meta"><span>7 pertanyaan</span><span>Gratis</span><span>Langsung ke produk</span></div>
+    <div class="brands"><span>Wardah</span><span>Emina</span><span>Cetaphil</span><span>Kahf</span><span>Nivea</span><span>Kojie.san</span><span>Bromen</span><span>Prettywell</span><span>Deorex</span></div>
+  </section>
+
+  <!-- QUESTION -->
+  <section id="quiz" class="wrap q" hidden>
+    <div class="prog"><div class="bar"><i id="bar"></i></div><span id="count"></span></div>
+    <h2 id="qt"></h2>
+    <p class="hint" id="qh"></p>
+    <div class="opts" id="opts"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="wrap wrap-wide res" hidden>
+    <div class="wrap" style="padding:0">
+      <div class="res-head">
+        <span class="pill">Rutinitas kamu</span>
+        <h1 id="rTitle"></h1>
+        <p id="rSub"></p>
+        <div class="tags" id="rTags"></div>
+      </div>
+      <div class="tip" id="rTip"></div>
+      <div id="steps"></div>
+      <div class="total">
+        <div class="row">
+          <div class="l"><span id="tLbl"></span><b id="tVal"></b></div>
+          <a class="btn btn-yel" id="tCta" href="#">Lihat produk</a>
+        </div>
+      </div>
+      <div class="after">
+        <button class="btn btn-line" type="button" id="again">Ulangi kuis</button>
+        <a class="btn btn-line" href="index.html">Lihat semua skincare</a>
+      </div>
+      <p class="note">Rekomendasi ini panduan umum berdasarkan jawabanmu, bukan diagnosis. Untuk jerawat meradang, iritasi berat, atau masalah kulit yang tidak membaik, konsultasikan ke dokter kulit. Coba produk baru di area kecil kulit dulu.</p>
+    </div>
+  </section>
+</main>
+
+<div class="qnav" id="qnav" hidden>
+  <div class="wrap">
+    <button class="btn btn-line" type="button" id="prev" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+    <button class="btn btn-ink" type="button" id="next" disabled>Lanjut</button>
+  </div>
+</div>
+
+<footer>Toco · Kuis Skincare</footer>
+
+<script>
+const BADGE = "data:image/png;base64,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";
+const UTM = "utm_source=toco&utm_medium=quiz&utm_campaign=skincare_quiz";
+const L = s => `https://toco.id/listing/${s}?${UTM}`;
+const rp = n => "Rp" + Math.round(n).toLocaleString("id-ID");
+const POOL = [{"n":"Kahf Face Wash Oil & Acne Care 100 ml","br":"Kahf","o":1,"st":"cleanser","g":"m","sk":"oily combo","cn":"acne","x":"","p":41325,"b":53000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/1dd5a76d-b2b3-49f6-8bc3-0ddad39472cd-20260508-141927-0.webp","slug":"kahf-face-wash-oil-and-acne-care-100-ml-sabun-cuci-muka-pria-untuk-membantu-lawan-jerawat-dan-kontrol-minyak-suitable-for-daily-use-1762504908763-dcf2"},{"n":"Kahf Face Wash Energizing & Brightening 100 ml","br":"Kahf","o":1,"st":"cleanser","g":"m","sk":"normal combo oily","cn":"dull","x":"","p":41325,"b":53000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/a88af61f-aea1-4754-9a29-abf09305e91f-20260508-141659-0.webp","slug":"kahf-face-wash-skin-energizing-and-brightening-100-ml-sabun-cuci-muka-pria-untuk-membantu-mencerahkan-wajah-suitable-for-daily-use-1762505187455-b333"},{"n":"Kahf Acne Relief Amino Gel Face Wash 100 ml","br":"Kahf","o":1,"st":"cleanser","g":"m","sk":"oily sensitive combo","cn":"acne sensitive","x":"","p":43680,"b":55500,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/db33f509-6624-401c-864d-1ac01666d7c2-20251108-113624-0.webp","slug":"kahf-acne-relief-amino-gel-face-wash-100-ml-1762576620386-deb9"},{"n":"Bromen Acne Facial Wash 100 ml","br":"Bromen","o":0,"st":"cleanser","g":"m","sk":"oily combo","cn":"acne","x":"","p":45000,"b":85000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/74fc90d3-b604-4d35-a157-fdc9e1245af2-20260511-141901-4.webp","slug":"bromen-acne-facial-wash-100-ml-untuk-menghilangkan-jerawat-kurangi-minyak-berlebih-gentle-low-ph-1778484677824-1001"},{"n":"Bromen Everest Cool Facial Wash 100 ml","br":"Bromen","o":0,"st":"cleanser","g":"m","sk":"dry normal","cn":"dull dry","x":"","p":45000,"b":85000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/80c64ad4-d0fa-4710-9b54-2400fe068429-20260511-143854-4.webp","slug":"bromen-everest-cool-sensation-facial-wash-100ml-cocok-untuk-kulit-kering-mencerahkan-kulit-wajah-1778485350487-23d0"},{"n":"Bromen Meteorite Brightening Facial Wash 100 ml","br":"Bromen","o":0,"st":"cleanser","g":"m","sk":"normal combo","cn":"dull spots","x":"","p":45000,"b":85000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/51af1726-0c5a-4edb-a654-cdec2623feb4-20260511-134127-0.webp","slug":"bromen-meteorite-brightening-facial-wash-pria-5x-brightening-sabun-muka-anti-kusam-melembapkan-tanpa-kering-100ml-1778483199633-6755"},{"n":"Nivea Men Oil Clear Acne Defense Foam 50 ml","br":"Nivea","o":1,"st":"cleanser","g":"m","sk":"oily","cn":"acne","x":"","p":28930,"b":0,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/c6f1848a-7c79-4293-91b4-f3c5583f7ef2-20251231-210110-0.webp","slug":"nivea-men-facial-foam-oil-clear-acne-defense-50ml-1767189778719-2b41"},{"n":"Wardah Acnederm Salicylic Acid Foaming Cleanser","br":"Wardah","o":1,"st":"cleanser","g":"u","sk":"oily combo","cn":"acne","x":"","p":28000,"b":36400,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/d4b6b156-d5a5-4fbc-8ab0-40a4d1a238bd-20251107-085414-0.webp","slug":"wardah-acnederm-salicylic-acid-zinc-acne-clearing-low-ph-foaming-cleanser-skincare-1762480641644-7bd7"},{"n":"Wardah Cica Aloe Low pH Hydramild Facial Wash","br":"Wardah","o":1,"st":"cleanser","g":"u","sk":"sensitive dry normal","cn":"sensitive none","x":"","p":36000,"b":99000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/7d6e2416-18dd-4708-8bb3-61a5fa7420a1-20251107-101804-0.webp","slug":"wardah-cica-aloe-low-ph-hydramild-facial-wash-nature-daily-sabun-cuci-muka-membersihkan-secara-lembut-dan-menghidrasi-kulit-dengan-kandungan-aloe-vera-centella-asiatica-for-all-skin-types-non-comedogenic-non-acnegenic-skincare-1762485570912-3c93"},{"n":"Wardah Lightening Niacinamide Whip Facial Foam","br":"Wardah","o":1,"st":"cleanser","g":"u","sk":"normal combo oily","cn":"dull spots","x":"","p":39500,"b":56250,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/b7f23d52-2168-4064-8a9a-14994addd95e-20251107-094750-0.webp","slug":"wardah-lightening-niacinamide-whip-facial-foam-facial-wash-dengan-advanced-niacinamide-untuk-mencerahkan-pembersih-wajah-0-alkohol-bersihkan-pori-dan-minyak-busa-lembut-untuk-kulit-normal-cenderung-berminyak-skincare-100-1762483740642-5699"},{"n":"Wardah Hydra Rose Barrier Gel Cleanser","br":"Wardah","o":1,"st":"cleanser","g":"u","sk":"dry sensitive","cn":"dry sensitive","x":"","p":43500,"b":58100,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/b9a37afa-c528-452f-8753-72493a9a1f78-20251107-101232-0.webp","slug":"wardah-hydra-rose-nmf-amino-pentavitin-barrier-replenish-ph-55-gel-cleanser-100-ml-sabun-cuci-muka-gentle-acid-mantle-expert-hydrating-foam-yang-membersihkan-dengan-gentle-kulit-sehat-dan-skin-barrier-terlindungi-skincare-1762485279875-38dc"},{"n":"Emina Prebiotic Tranexamic Acid Face Wash (Acne)","br":"Emina","o":1,"st":"cleanser","g":"u","sk":"oily combo","cn":"acne spots","x":"","p":35000,"b":51000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/9f9b9cc3-12ff-41cb-9535-2d56ea83fe79-20251107-094143-0.webp","slug":"new-emina-prebiotic-tranexamic-acid-brightening-face-wash-for-acne-prone-skin-50ml-100ml-sabun-muka-kulit-berjerawat-dan-sensitif-perbaiki-skin-barrier-mengontrol-minyak-lembab-tanpa-ketarik-cocok-untuk-semua-jenis-kulit-100-ml-1762483358080-e9e7"},{"n":"Emina Niacinamide Oxy Ceramide Face Wash","br":"Emina","o":1,"st":"cleanser","g":"u","sk":"normal dry combo","cn":"dull none","x":"","p":35000,"b":48000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/cbeb8eb8-0ab8-4fc3-8068-8773fbf07540-20251106-155001-1.webp","slug":"new-emina-niacinamide-oxy-ceramide-brightening-face-wash-50ml-100ml-sabun-muka-cerah-glowing-perbaiki-skin-barrier-mengontrol-minyak-sebum-lembab-tanpa-ketarik-anti-kusam-cocok-untuk-semua-jenis-kulit-bright-stuff-1762419314533-014d"},{"n":"Cetaphil Gentle Skin Cleanser 59 ml","br":"Cetaphil","o":1,"st":"cleanser","g":"u","sk":"sensitive dry normal","cn":"sensitive dry none","x":"","p":53900,"b":57900,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/c5b7e2f2-2c50-444a-9839-5d68d4125a20-20260224-222450-5.webp","slug":"cetaphil-gentle-skin-cleanser-59ml-dengan-niacinamide-glycerin-dan-panthenol-sabun-pembersih-muka-untuk-segala-jenis-kulit-1755512594984"},{"n":"Cetaphil Daily Facial Cleanser 236 ml","br":"Cetaphil","o":1,"st":"cleanser","g":"u","sk":"oily combo sensitive","cn":"sensitive acne","x":"","p":191900,"b":211900,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/6dcf359b-72de-41d3-9738-ca464aac3438-20260224-222948-5.webp","slug":"cetaphil-daily-facial-cleanser-236ml-dengan-hydrating-glycerin-panthenol-niacinamide-untuk-meminimalkan-tampilan-pori-pori-pada-kulit-berminyak-dan-sensitif-1755512578144"},{"n":"Prettywell Oat Away Bright Cleanser","br":"Prettywell","o":0,"st":"cleanser","g":"u","sk":"sensitive dry","cn":"dull sensitive","x":"","p":34500,"b":69000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/07820784-a850-4e5e-b7c1-e0a190c70ac9-20261001-094644-0.webp","slug":"prettywell-oat-away-bright-cleanser-1790822865488-f7b2"},{"n":"Nivea Facial Foam Sparkling Bright 100 ml","br":"Nivea","o":1,"st":"cleanser","g":"w","sk":"normal combo","cn":"dull","x":"","p":37485,"b":0,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/a31707f2-011a-4c01-bfaf-38993db6cc6f-20251231-225508-0.webp","slug":"nivea-facial-foam-sparkling-bright-100ml-1767197890532-c634"},{"n":"Emina Toner Complete Series 100 ml","br":"Emina","o":1,"st":"toner","g":"u","sk":"oily combo dry sensitive normal","cn":"acne dull sensitive dry","x":"","p":37000,"b":56000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/1a854aaa-b5ec-4537-b050-7ed7d7e30951-Salinan%20EMINA%20TONER%201.png3c2d9b9e-3b4a-4c1d-9ad9-67a2065bef78.webp","slug":"emina-cicapro-bha-acne-soothing-toner-100-ml-1777022662645-d607"},{"n":"Wardah Glycolic Acid Niacinamide Brightening Toner 125 ml","br":"Wardah","o":1,"st":"toner","g":"u","sk":"normal combo oily","cn":"dull spots","x":"","p":35000,"b":43400,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/3bf8667a-38b5-46d4-a85f-82e64b256e84-20251107-081936-0.webp","slug":"wardah-glycolic-acid-niacinamide-adv-brightening-hydrating-toner-125-ml-skincare-1762478434087-f5ee"},{"n":"Prettywell 2% PHA + BHA Exfoliating Toner 40 ml","br":"Prettywell","o":0,"st":"toner","g":"u","sk":"oily combo","cn":"acne","x":"","p":45999,"b":49999,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/937a261a-6cfe-4fd9-ae15-a78d6121a7ea-1%20EXFO%20TIK-1749713597276.png","slug":"prettywell-2-pha-bha-gentle-exfoliating-toner-40ml-multifunctional-ton"},{"n":"Kahf Face Spray All-in-One Toning 100 ml","br":"Kahf","o":1,"st":"toner","g":"m","sk":"oily combo normal dry","cn":"dull none","x":"","p":81600,"b":85000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/cdc7afd5-b3bc-4d31-8261-3be534519627-20251107-152902-0.webp","slug":"kahf-face-spray-all-in-one-power-toning-100-ml-toner-perawatan-wajah-pria-1762504228026-1b8a"},{"n":"Kojie.san Dreamwhite Facial Toner 60 ml","br":"Kojie.san","o":1,"st":"toner","g":"u","sk":"normal dry","cn":"dull","x":"","p":41000,"b":49000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/img/image-1771836050321.webp","slug":"kojie-san-dreamwhite-anti-aging-facial-toner-with-collagen-60ml-1771836081121-76cd"},{"n":"Wardah Acnederm 5% Azeclair Acne Serum 15 ml","br":"Wardah","o":1,"st":"serum","g":"u","sk":"oily combo","cn":"acne","x":"","p":75000,"b":105000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/fdccff5f-157c-4dce-9064-26b95f3f576a-20251106-210123-0.webp","slug":"wardah-5-azeclair-salicylic-acid-acnederm-acne-care-serum-15-ml-serum-dengan-tea-tree-oil-serum-jerawat-dan-mencerahkan-kulit-menyamarkan-noda-bekas-mengurangi-minyak-berlebih-skincare-1762437777359-f3cb"},{"n":"Wardah 3% Tranexamic Acid Dark Spot Serum 20 ml","br":"Wardah","o":1,"st":"serum","g":"u","sk":"oily combo dry normal","cn":"spots","x":"","p":113000,"b":145600,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/5a60e24b-a50c-434b-8fe5-311ccc262c21-20251107-093554-0.webp","slug":"wardah-3-tranexamic-acid-alpha-arbutin-crystal-secret-dark-spot-brightening-serum-20-ml-serum-dengan-ekstrak-edelweiss-mencerahkan-dan-menyamarkan-flek-hitam-untuk-semua-jenis-kulit-skincare-1762483049539-bbf2"},{"n":"Wardah 5% Niacinamide Serum Ampoule","br":"Wardah","o":1,"st":"serum","g":"u","sk":"normal combo oily","cn":"dull spots","x":"","p":90000,"b":124600,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/dbb57db0-caac-4f06-956a-b3ce1b532145-20251107-052811-0.webp","slug":"wardah-lightening-5-niacinamide-serum-ampoule-dengan-10x-advanced-niacinamide-bisabolol-dan-0-alkohol-mencerahkan-kulit-kusam-bekas-jerawat-belang-tidak-merata-mencegah-hiperpigmentasi-bright-glow-white-semua-jenis-kulit-skincare-1762468461685-6f08"},{"n":"Emina Serum Series 17 ml","br":"Emina","o":1,"st":"serum","g":"u","sk":"oily combo normal","cn":"acne dull","x":"","p":43000,"b":67500,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/838bc0b2-5b37-47eb-9f43-27f58dc5d1ab-emina%20serum%201.png4de5695d-f2bc-4646-acc1-d82492a877d2.webp","slug":"new-emina-serum-series-17-ml-peeling-1777023147975-262d"},{"n":"Bromen Acne Fight Expert Serum","br":"Bromen","o":0,"st":"serum","g":"m","sk":"oily combo","cn":"acne","x":"","p":85000,"b":145000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/b4a4e57b-3581-47b9-9ca9-a1705c26c817-20260513-111528-2.webp","slug":"bromen-acne-serum-acne-fight-expert-serum-jerawat-untuk-perawatan-wajah-pria-1778646184390-64d4"},{"n":"Bromen Brightening Serum 20 ml","br":"Bromen","o":0,"st":"serum","g":"m","sk":"normal combo oily","cn":"dull","x":"","p":75000,"b":135000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/c6b53fc4-2489-48df-ae14-d0615e4b4a5a-20260513-110552-0.webp","slug":"bromen-brightening-serum-serum-pemutih-wajah-pria-20ml-1778645558264-cb59"},{"n":"Kahf Acne Clear & Post-acne Repair Serum 25 ml (refill)","br":"Kahf","o":1,"st":"serum","g":"m","sk":"oily combo","cn":"acne spots","x":"","p":113500,"b":241592,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/3a90ff58-c09e-4e5e-94b6-07c89606a825-20251209-100525-0.webp","slug":"kahf-refill-acne-clear-post-acne-repair-niosome-serum-25-ml-1765249594656-571c"},{"n":"Kahf Bright Pigment Corrector Serum 25 ml (refill)","br":"Kahf","o":1,"st":"serum","g":"m","sk":"normal combo dry","cn":"dull spots","x":"","p":113500,"b":241592,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/99079148-ea58-4982-a534-7a5e371afff2-20251209-100853-1.webp","slug":"kahf-refill-bright-intensifying-pigment-corrector-niosome-serum-25-ml-1765249819886-e940"},{"n":"Emina Water Gel Moisturizer 30 g","br":"Emina","o":1,"st":"moisturizer","g":"u","sk":"oily combo normal","cn":"dull spots acne","x":"","p":43000,"b":63000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/3f6f18cf-e043-45c7-b574-9e3b00cc1dd0-20251107-095300-0.webp","slug":"emina-water-gel-moisturizer-30g-mencerahkan-mengurangi-flek-hitam-48h-menjaga-kelembapan-memperkuat-skin-barrier-mengurangi-jerawat-dan-meredakan-kemerahan-kulit-glowing-mengandung-niacinamide-dan-vitamin-c-1762484109598-7a73"},{"n":"Emina Bright Stuff Moisturizing Cream 20 ml","br":"Emina","o":1,"st":"moisturizer","g":"u","sk":"normal dry","cn":"dull none","x":"","p":27500,"b":39750,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/06e94232-834b-4884-ba7b-d41e6feb1fa4-20251107-093605-0.webp","slug":"new-emina-bright-stuff-moisturizing-cream-20-ml-pelembab-wajah-mencerahkan-1762483012850-3095"},{"n":"Bromen Moisturizer 7x Ceramide","br":"Bromen","o":0,"st":"moisturizer","g":"m","sk":"oily combo normal dry sensitive","cn":"dry sensitive acne none","x":"","p":55000,"b":130000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/1888fb60-aa76-43c6-86c8-ba38a164c2c4-20260630-101447-5.webp","slug":"bromen-moisturizer-7x-ceramide-pelembab-wajah-pria-menghidrasi-kulit-secara-maksimal-1778644510775-9658"},{"n":"Prettywell CeraMON Barrier Moistfull Gel 50 ml","br":"Prettywell","o":0,"st":"moisturizer","g":"u","sk":"sensitive dry combo","cn":"sensitive dry","x":"","p":62999,"b":69999,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/5eed6ef8-bc16-4cb0-a16d-5529bdcee9c2-IMG-20250725-WA0019-1753428712994.jpg","slug":"prettywell-ceramon-barrier-moistfull-gell-50ml"},{"n":"Wardah Derma Sensitive Skin Rescue Moisturizer 50 g","br":"Wardah","o":1,"st":"moisturizer","g":"u","sk":"sensitive dry","cn":"sensitive","x":"","p":139000,"b":208500,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/ad0f1289-1751-49a1-91de-1c5f54f60bf3-20260418-200648-0.webp","slug":"wardah-derma-sensitive-skin-rescue-moisturizer-neutrazen-madecassoside-50g-meredakan-dan-menenangkan-jerawat-serta-kemerahan-improve-skin-barrier-soothing-skin-deep-hydration-mengunci-kelembapan-kulit-skincare-1776517966485-9451"},{"n":"Cetaphil Moisturizing Cream 100 g","br":"Cetaphil","o":1,"st":"moisturizer","g":"u","sk":"dry sensitive","cn":"dry","x":"","p":147900,"b":258900,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/98337e07-d227-4c7c-9c50-826320b1f32c-20260224-223255-4.webp","slug":"cetaphil-moisturizing-cream-100g-dengan-minyak-biji-bunga-matahari-vitamin-e-dan-almond-oil-pelembab-wajah-kulit-untuk-segala-jenis-kulit-1755512630245"},{"n":"Nivea Creme Moisturizer 100 ml","br":"Nivea","o":1,"st":"moisturizer","g":"u","sk":"dry normal","cn":"dry none","x":"","p":35360,"b":0,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/ecaa10b8-64aa-4e33-830c-ac41c7f9b073-20251231-155744-0.webp","slug":"nivea-cream-moisturizer-soft-creme-jar-100ml-1767171527701-aa2f"},{"n":"Wardah Crystal Secret Niacinamide Night Moisturizer","br":"Wardah","o":1,"st":"moisturizer","g":"u","sk":"normal combo dry","cn":"spots dull","x":"","p":61000,"b":75400,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/4c5381e4-399a-4a43-90ec-f6561d651e3b-20260511-143648-0.webp","slug":"wardah-crystal-secret-bright-peptide-5-niacinamide-hyperpigmentation-expert-night-moisturizer-crystal-secret-night-cream-untuk-kulit-cerah-bercahaya-skincare-1762480956299-9377"},{"n":"Kojie.san Sunprotect SPF 50+ PA+++ 15 g","br":"Kojie.san","o":1,"st":"sunscreen","g":"u","sk":"normal dry combo","cn":"dull spots none","x":"spf50","p":33000,"b":51000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/img/image-1771836050524.webp","slug":"kojie-san-sunprotect-spf-50-pa-face-15g-ed-februari-2027-1771836081122-fa60"},{"n":"Emina Sun Battle Bright Glow SPF 35","br":"Emina","o":1,"st":"sunscreen","g":"u","sk":"normal dry combo","cn":"dull none","x":"","p":20500,"b":29250,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/fb792e28-dec1-4ef0-b8c1-8a3de0e2f1ce-20251107-095806-0.webp","slug":"emina-sun-battle-bright-glow-spf-35-pa-sunscreen-serum-amino-vitamin-c-cerah-ringan-hydrating-teruji-in-vivo-non-acnegenic-non-comedogenic-cocok-semua-jenis-kulit-1762484429939-200a"},{"n":"Emina UV Gel Sunscreen SPF 50 PA++++","br":"Emina","o":1,"st":"sunscreen","g":"u","sk":"oily combo","cn":"acne none","x":"spf50","p":40500,"b":60000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/f578ef21-b5f0-4c71-b11c-f033a9527e01-20251107-094750-0.webp","slug":"new-emina-uv-gel-sunscreen-spf-50-pa-series-sunscreen-wajah-sunscreen-gel-melindungi-dari-sinar-uv-no-whitecast-no-comedogenic-cepat-menyerap-lembut-mencerahkan-melembapkan-mengandung-symwhite-377-cica-oat-water-uv-gel-1762483727388-2f8f"},{"n":"Wardah UV Shield Acne Calming Sunscreen Moisturizer","br":"Wardah","o":1,"st":"sunscreen","g":"u","sk":"oily sensitive combo","cn":"acne sensitive","x":"","p":41000,"b":55300,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/7e90f1e3-46f8-4a0c-8433-40e9cbb7352a-20251107-135344-6.webp","slug":"wardah-uv-shield-acne-calming-sunscreen-moisturizer-spf-35-pa-1762427219315-b238"},{"n":"Wardah UV Shield Airy Smooth Sunscreen SPF 50","br":"Wardah","o":1,"st":"sunscreen","g":"u","sk":"oily combo","cn":"acne dull none","x":"spf50","p":41000,"b":55300,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/fa46f275-1a85-4e23-880c-d2b8128f78a3-20251106-205619-0.webp","slug":"wardah-uv-shield-airy-smooth-sunscreen-serum-spf-50-pa-sunscreen-matte-dan-ringan-skincare-1762437501395-aa76"},{"n":"Wardah UV Shield Aqua Fresh Sunscreen SPF 50","br":"Wardah","o":1,"st":"sunscreen","g":"u","sk":"dry normal","cn":"dry none","x":"spf50","p":62000,"b":80600,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/1ec8d350-d775-4e05-b142-70eb2be2ffed-20251107-080802-0.webp","slug":"wardah-uv-shield-aqua-fresh-sunscreen-serum-spf-50-pa-30-ml-melembabkan-kulit-kering-memperbaiki-skin-barrier-melindungi-kulit-secara-maksimal-ringan-cepat-meresap-tidak-lengket-no-whitecast-non-comedogenic-0-alkohol-skincare-1762477744706-3b34"},{"n":"Kahf Sunscreen Moisturizer SPF 30 PA+++ 30 ml","br":"Kahf","o":1,"st":"sunscreen","g":"m","sk":"oily combo normal dry","cn":"none dull acne","x":"","p":42750,"b":47500,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/bc576b88-73fe-4e4c-b851-5fb9cbfe3a3d-20260508-141339-0.webp","slug":"kahf-sunscreen-moisturizer-triple-protection-spf-30-pa-30-ml-sunscreen-perawatan-wajah-pria-suitablefordailyuse-1762504714274-c0b5"},{"n":"Bromen Armor Shield Sunscreen Spray SPF 45","br":"Bromen","o":0,"st":"sunscreen","g":"m","sk":"oily combo normal","cn":"none","x":"outdoor","p":85000,"b":199000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/6bb7ae48-d23a-423f-b779-4fb4299e6536-20260513-105707-0.webp","slug":"bromen-sunscreen-spray-armor-shield-spf-45-pa-60ml-sun-protection-anti-uv-untuk-wajah-pria-1778644991232-179e"},{"n":"Nivea Sun Face Serum Oil Control SPF 50+","br":"Nivea","o":1,"st":"sunscreen","g":"u","sk":"oily combo","cn":"acne none","x":"spf50 outdoor","p":79308,"b":0,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/b56f9afc-b14e-4931-b95b-2820b52e363b-20251216-162830-1.webp","slug":"nivea-sun-face-serum-extra-protect-oil-control-spf50-pa-30ml-1764572300695-a404"},{"n":"Cetaphil Hybrid Sunscreen SPF 50+ Light Gel","br":"Cetaphil","o":1,"st":"sunscreen","g":"u","sk":"sensitive dry","cn":"sensitive","x":"spf50","p":293900,"b":362400,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/5698a281-fb44-4374-87d2-bcaaad658364-20260130-221027-5.webp","slug":"cetaphil-hybrid-sunscreen-spf50-light-gel-50ml-untuk-kulit-sensitif-dengan-titanium-dioxide-1755512601302"},{"n":"Kahf Deodorant Roll On 45 ml","br":"Kahf","o":1,"st":"body","g":"m","sk":"","cn":"","x":"","p":21850,"b":25500,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/8635e842-ccc6-4815-8414-83d5ad13ecb5-20251107-143854-3.webp","slug":"kahf-deodorant-roll-on-antiperspirant-45-ml-deodoran-pria-suitable-for-daily-use-1762501476475-b8d8"},{"n":"Nivea Men Deodorant Cool Kick 50 ml","br":"Nivea","o":1,"st":"body","g":"m","sk":"","cn":"","x":"","p":20938,"b":24400,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/35fca818-b1e4-4527-b2bc-f28da13eddfc-20251231-233216-0.webp","slug":"nivea-men-deodorant-roll-on-cool-kick-blue-50ml-1767198801359-9759"},{"n":"Deorex For Men Amber Woods Spray 60 ml","br":"Deorex","o":0,"st":"body","g":"m","sk":"","cn":"","x":"outdoor","p":79000,"b":89800,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/cef8d1d2-80a7-4a75-9954-4a9e18fdb3a8-20260506-142530-0.webp","slug":"deorex-body-odorizer-for-men-amber-woods-spray-60ml-pengganti-deodorant-antiperspirant-pria-solusi-bau-badan-dan-keringat-berlebih-1778053344116-d936"},{"n":"Nivea Deodorant Dry Comfort 50 ml","br":"Nivea","o":1,"st":"body","g":"u","sk":"","cn":"","x":"","p":25001,"b":0,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/b4e5835e-d3b1-49ee-b417-89e8eb77d68b-20251212-153237-1.webp","slug":"nivea-deodorant-roll-on-dry-comfort-50ml-1764815141609-6b2b"},{"n":"Nivea Brightening Hijab Cool Deodorant 50 ml","br":"Nivea","o":1,"st":"body","g":"w","sk":"","cn":"","x":"","p":21608,"b":26000,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/40dd3695-b241-46b5-baa0-a85c197197ae-20251223-165031-1.webp","slug":"nivea-brightening-hijab-cool-deodorant-roll-on-50ml-1764537485818-bc05"},{"n":"Deorex Hijab Perfection Jasmine Spray 60 ml","br":"Deorex","o":0,"st":"body","g":"w","sk":"","cn":"","x":"outdoor","p":79000,"b":89800,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/5c3f44fc-aa6b-408d-b7b6-8b79dd61f03c-20260506-150526-0.webp","slug":"deorex-body-odorizer-extra-bright-hijab-perfection-jasmine-scent-spray-60ml-pengganti-deodorant-antiperspirant-solusi-bau-badan-dan-keringat-berlebih-1778054795847-8bfd"},{"n":"Deorex Non Fragrance Spray 60 ml","br":"Deorex","o":0,"st":"body","g":"u","sk":"sensitive","cn":"sensitive","x":"","p":65000,"b":75800,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/995967af-37c5-43df-856e-34f599d0d9d2-20260506-145325-0.webp","slug":"deorex-body-odorizer-non-fragrance-spray-60ml-pengganti-deodorant-antiperspirant-solusi-bau-badan-dan-keringat-berlebih-1778054343994-2451"},{"n":"Nivea Body Lotion Daily Protection SPF 33 100 ml","br":"Nivea","o":1,"st":"body","g":"u","sk":"","cn":"","x":"outdoor","p":46013,"b":0,"img":"https://d13eru2cpf9i9v.cloudfront.net/toco/c0bcfb93-bff5-4b9a-820e-22e4671a0976-20261005-090820-0.webp","slug":"nivea-body-lotion-daily-protection-sun-spf33-100ml-sunscreen-badan-lotion-sunblock-sunblok-spf-uv-body-care-mencerahkan-1791166275294-65ea"}];
+
+const Q = [
+  {k:"g",t:"Rekomendasinya untuk siapa?",h:"Supaya kami bisa pilihkan produk yang pas.",o:[
+    ["m","🧔","Pria","Termasuk produk khusus grooming pria"],
+    ["w","👩","Wanita",""],
+    ["u","🙂","Tidak perlu dibedakan","Produk unisex saja"]]},
+  {k:"sk",t:"Tipe kulit wajahmu?",h:"Lihat kondisi kulit sekitar 2 jam setelah cuci muka.",o:[
+    ["oily","💧","Berminyak","Mengilap di seluruh wajah"],
+    ["combo","🌗","Kombinasi","Berminyak di dahi dan hidung saja"],
+    ["dry","🍂","Kering","Terasa ketarik, kadang mengelupas"],
+    ["sensitive","🌸","Sensitif","Gampang merah, gatal, atau perih"],
+    ["normal","✨","Normal atau tidak yakin","Jarang ada keluhan"]]},
+  {k:"cn",t:"Masalah utama yang mau diatasi?",h:"Pilih satu yang paling mengganggu.",o:[
+    ["acne","🎯","Jerawat dan komedo",""],
+    ["dull","🌤️","Kulit kusam","Wajah terlihat lelah dan tidak segar"],
+    ["spots","🔘","Bekas jerawat dan noda hitam",""],
+    ["sensitive","🩹","Kemerahan dan iritasi",""],
+    ["dry","🏜️","Kulit kering dan dehidrasi",""],
+    ["none","👌","Belum ada, mau rawat saja",""]]},
+  {k:"out",t:"Sehari-hari lebih sering di mana?",h:"Ini menentukan perlindungan matahari yang kamu butuhkan.",o:[
+    ["1","☀️","Di luar ruangan","Lapangan, motoran, sering kena matahari"],
+    ["0","🏢","Di dalam ruangan","Kantor, rumah, kampus"]]},
+  {k:"body",t:"Bau badan atau keringat berlebih jadi masalah?",h:"",o:[
+    ["1","💦","Iya, butuh deodoran yang ampuh",""],
+    ["0","🙅","Tidak, fokus ke wajah saja",""]]},
+  {k:"lv",t:"Rutinitas seperti apa yang kamu mau?",h:"",o:[
+    ["s","⚡","Simpel, 3 langkah","Cuci muka, pelembab, sunscreen"],
+    ["f","🧴","Lengkap, 5 langkah","Ditambah toner dan serum"]]},
+  {k:"bud",t:"Budget per produk?",h:"Kami cari yang paling cocok di kisaran ini.",o:[
+    ["50000","🪙","Hemat","Sampai Rp50 ribu"],
+    ["100000","💳","Sedang","Sampai Rp100 ribu"],
+    ["999999999","💎","Bebas","Yang paling cocok saja"]]}
+];
+
+const LBL = {
+  sk:{oily:"Kulit berminyak",combo:"Kulit kombinasi",dry:"Kulit kering",sensitive:"Kulit sensitif",normal:"Kulit normal"},
+  cn:{acne:"jerawat dan komedo",dull:"kulit kusam",spots:"bekas jerawat dan noda",sensitive:"kemerahan dan iritasi",dry:"hidrasi",none:"perawatan dasar"},
+  why:{acne:"jerawat",dull:"kulit kusam",spots:"noda hitam",sensitive:"kemerahan",dry:"dehidrasi",none:""},
+  step:{cleanser:["Cuci muka","Pagi dan malam"],toner:["Toner","Setelah cuci muka"],serum:["Serum","Malam hari"],moisturizer:["Pelembab","Pagi dan malam"],sunscreen:["Sunscreen","Pagi, ulangi tiap 3 jam di luar"],body:["Badan","Setelah mandi"]}
+};
+const TIPS = {
+  acne:"<b>Untuk jerawat:</b> pakai satu produk aktif dulu (asam salisilat atau azelaic) selama 2 sampai 4 minggu sebelum menambah yang lain, dan jangan skip pelembab.",
+  dull:"<b>Untuk kulit kusam:</b> kunci utamanya sunscreen setiap pagi. Niacinamide dan vitamin C bekerja bertahap, biasanya terlihat setelah 4 minggu.",
+  spots:"<b>Untuk noda hitam:</b> tanpa sunscreen, serum pencerah bekerja sia-sia. Pakai sunscreen tiap pagi, termasuk di dalam ruangan.",
+  sensitive:"<b>Untuk kulit sensitif:</b> pilih produk tanpa pewangi dan coba satu produk baru per minggu supaya ketahuan mana yang cocok.",
+  dry:"<b>Untuk kulit kering:</b> pakai pelembab saat kulit masih sedikit lembap setelah cuci muka, dan hindari air terlalu panas.",
+  none:"<b>Perawatan dasar:</b> cuci muka yang lembut, pelembab, dan sunscreen sudah cukup untuk menjaga kulit tetap sehat."
+};
+
+let A = {}, i = 0;
+const $ = id => document.getElementById(id);
+
+function show(id){["intro","quiz","result"].forEach(s => $(s).hidden = s !== id); $("qnav").hidden = id !== "quiz"; document.querySelector("footer").hidden = id === "quiz"; window.scrollTo(0,0);}
+
+function renderQ(){
+  const q = Q[i];
+  $("bar").style.width = ((i) / Q.length * 100 + 100 / Q.length) + "%";
+  $("count").textContent = `${i + 1} dari ${Q.length}`;
+  $("qt").textContent = q.t; $("qh").textContent = q.h; $("qh").hidden = !q.h;
+  $("opts").className = "opts" + (q.o.length === 2 ? " two" : "");
+  $("opts").innerHTML = q.o.map(([v, em, b, s]) =>
+    `<button type="button" class="opt${A[q.k] === v ? " on" : ""}" data-v="${v}"><span class="em">${em}</span><span><b>${b}</b>${s ? `<small>${s}</small>` : ""}</span></button>`).join("");
+  $("next").disabled = !(q.k in A);
+  $("next").textContent = i === Q.length - 1 ? "Lihat hasil" : "Lanjut";
+  $("prev").style.visibility = i === 0 ? "hidden" : "visible";
+}
+
+$("opts").addEventListener("click", e => {
+  const b = e.target.closest(".opt"); if (!b) return;
+  A[Q[i].k] = b.dataset.v;
+  [...$("opts").children].forEach(x => x.classList.toggle("on", x === b));
+  $("next").disabled = false;
+  setTimeout(() => { if (A[Q[i].k] === b.dataset.v) go(1); }, 220);
+});
+$("next").onclick = () => go(1);
+$("prev").onclick = () => go(-1);
+$("start").onclick = () => { i = 0; show("quiz"); renderQ(); };
+$("again").onclick = () => { A = {}; i = 0; history.replaceState(null, "", location.pathname); show("quiz"); renderQ(); };
+
+function go(d){
+  if (d > 0 && !(Q[i].k in A)) return;
+  if (d > 0 && i === Q.length - 1) return finish();
+  i = Math.max(0, i + d); renderQ(); window.scrollTo(0,0);
+}
+
+function pick(step, used){
+  const bud = +A.bud, has = (s, w) => (" " + s + " ").includes(" " + w + " ");
+  let c = POOL.filter(p => p.st === step);
+  const byG = A.g === "m" ? c.filter(p => p.g !== "w") : A.g === "w" ? c.filter(p => p.g !== "m") : c.filter(p => p.g === "u");
+  if (byG.length) c = byG;
+  const sc = c.map(p => {
+    let s = 0, why = [];
+    if (step !== "body") {
+      if (has(p.sk, A.sk)) { s += 3; why.push(LBL.sk[A.sk].replace("Kulit ", "kulit ")); }
+      if (has(p.cn, A.cn)) { s += 4; if (LBL.why[A.cn]) why.push(LBL.why[A.cn]); }
+      if (A.sk === "sensitive" && has(p.cn, "sensitive")) s += 1;
+    } else {
+      if (/deodor|odorizer/i.test(p.n)) s += 3;
+      if (A.sk === "sensitive" && has(p.sk, "sensitive")) { s += 2; why.push("kulit sensitif, tanpa pewangi"); }
+    }
+    if (A.out === "1" && has(p.x, "outdoor")) { s += 2; why.push("aktivitas luar ruangan"); }
+    if (A.out === "1" && has(p.x, "spf50")) { s += 1.5; if (!why.includes("aktivitas luar ruangan")) why.push("SPF 50 untuk di luar"); }
+    if (A.g === "m" && p.g === "m") s += 1;
+    if (A.g === "w" && p.g === "w") s += 1;
+    const fit = s;
+    s -= (used[p.br] || 0) * 1.5;
+    s += p.o * 0.3 - p.p / 2e6;
+    return {p, s, fit, why, over: p.p > bud};
+  }).sort((a, b) => b.s - a.s);
+  const inB = sc.filter(x => !x.over);
+  const main = (inB.length ? inB : sc)[0];
+  const overBud = !inB.length;
+  const rest = sc.filter(x => x !== main), alts = [], seen = new Set([main.p.br]);
+  const take = f => { for (const x of rest) { if (alts.length === 2) return; if (!alts.includes(x) && f(x)) { alts.push(x); seen.add(x.p.br); } } };
+  take(x => !x.over && x.fit >= 3 && !seen.has(x.p.br));
+  take(x => x.over && x.fit >= 3 && !seen.has(x.p.br));
+  take(x => !x.over && x.fit >= 3);
+  return {main, alts, overBud};
+}
+
+function finish(){
+  const steps = A.lv === "f" ? ["cleanser","toner","serum","moisturizer","sunscreen"] : ["cleanser","moisturizer","sunscreen"];
+  if (A.lv === "f" && A.cn === "none") steps.splice(steps.indexOf("serum"), 1);
+  if (A.body === "1") steps.push("body");
+  const used = {}; const res = [];
+  for (const st of steps) {
+    const r = pick(st, used);
+    if (st === "serum" && r.main.fit < 4) continue;
+    used[r.main.p.br] = (used[r.main.p.br] || 0) + 1; res.push([st, r]);
+  }
+  const total = res.reduce((t, [, r]) => t + r.main.p.p, 0);
+  const brands = [...new Set(res.map(([, r]) => r.main.p.br))];
+
+  $("rTitle").textContent = `${LBL.sk[A.sk]}, fokus ${LBL.cn[A.cn]}`;
+  $("rSub").textContent = `${res.length} langkah dari ${brands.length} brand: ${brands.join(", ")}.`;
+  const bLbl = {"50000":"Budget hemat","100000":"Budget sedang","999999999":"Budget bebas"}[A.bud];
+  $("rTags").innerHTML = [A.g === "m" ? "Pria" : A.g === "w" ? "Wanita" : "Unisex", A.out === "1" ? "Banyak di luar" : "Di dalam ruangan", A.lv === "f" ? "Rutinitas lengkap" : "Rutinitas simpel", bLbl].map(t => `<span>${t}</span>`).join("");
+  $("rTip").innerHTML = `<span>💡</span><span>${TIPS[A.cn]}</span>`;
+
+  $("steps").innerHTML = res.map(([st, r], n) => {
+    const m = r.main.p, off = m.b ? Math.round((1 - m.p / m.b) * 100) : 0;
+    const why = r.main.why.length ? "Cocok untuk " + r.main.why.slice(0, 2).join(" dan ") : (st === "body" ? "Pilihan andalan" : "Pilihan paling seimbang");
+    return `<div class="step">
+      <div class="step-h"><span class="num">${n + 1}</span><h3>${LBL.step[st][0]}</h3><small>${LBL.step[st][1]}</small></div>
+      <a class="main" href="${L(m.slug)}" data-listing="${m.slug}" data-step="${st}">
+        <span class="im"><img loading="lazy" src="${m.img}" alt="${m.n}"></span>
+        <span class="bd"><span class="why">${why}</span>
+          <span class="brand">${m.o ? `<img src="${BADGE}" alt="">` : ""}${m.br}${m.o ? " Official" : ""}</span>
+          <span class="nm">${m.n}</span>
+          <span class="pr"><b>${rp(m.p)}</b>${off >= 5 ? `<s>${rp(m.b)}</s>` : ""}</span></span>
+      </a>
+      ${r.overBud ? `<p class="alts-l">Belum ada pilihan di bawah budget, ini yang paling mendekati.</p>` : ""}
+      ${r.alts.length ? `<p class="alts-l">Pilihan lain</p><div class="alts">${r.alts.map(a => `<a class="alt" href="${L(a.p.slug)}" data-listing="${a.p.slug}"><img loading="lazy" src="${a.p.img}" alt=""><span class="t"><span class="b2">${a.p.br}</span><span class="n2">${a.p.n}</span><span class="p2">${rp(a.p.p)}${a.over ? " · di atas budget" : ""}</span></span></a>`).join("")}</div>` : ""}
+    </div>`;
+  }).join("");
+
+  $("tLbl").textContent = `Total ${res.length} produk utama`;
+  $("tVal").textContent = rp(total);
+  // Dev: replace with a single "add all to cart" action using data-listings.
+  $("tCta").href = L(res[0][1].main.p.slug);
+  $("tCta").textContent = "Mulai dari " + LBL.step[res[0][0]][0].toLowerCase();
+  $("tCta").dataset.listings = res.map(([, r]) => r.main.p.slug).join(",");
+
+  // In app: send Customer.io event "skincare_quiz_completed" with A + listing slugs,
+  // so the 30-day refill reminder and cart nudges can reference this routine.
+  history.replaceState(null, "", "#" + new URLSearchParams(A).toString());
+  show("result");
+}
+
+// Shared/deep-linked result: quiz.html#g=m&sk=oily&cn=acne&out=1&body=1&lv=s&bud=50000
+(() => {
+  const h = new URLSearchParams(location.hash.slice(1));
+  if (Q.every(q => h.has(q.k) && q.o.some(o => o[0] === h.get(q.k)))) { Q.forEach(q => A[q.k] = h.get(q.k)); finish(); }
+})();
+</script>
+</body>
+</html>
