@@ -11,6 +11,9 @@ Susunan tiap email mengikuti email skincare asli, lalu diganti ke warna dan gaya
 | 2. Hasil kuis | [Origins, What does your skin need this fall?](https://www.sequenzy.com/email-examples/brands/origins/emails/what-does-your-skin-need-this-fall-ucfuvk) | Event `skincare_quiz_completed`, kirim langsung | Rutinitas skincare kamu sudah siap | Rutinitas dari beberapa brand, sesuai kulit dan budget kamu. |
 | 3. Beli lagi | [Dermstore, Auto-Replenishment](https://www.sequenzy.com/email-examples/brands/dermstore/emails/hsa-fsa-eligible-auto-replenishment) | 30 hari setelah order skincare selesai, keluarkan yang sudah beli ulang | Waktunya isi ulang? | Sudah sebulan sejak terakhir beli. Beli lagi dalam satu ketuk. |
 | 4. Sudah cari, belum beli | [Dermstore, Something Caught Your Eye?](https://www.sequenzy.com/email-examples/brands/dermstore/emails/something-caught-your-eye-save-up-to-25) | Event `products searched` dengan kata kunci skincare, tanpa pembelian dalam 2 hari | Masih cari skincare? | Pilihannya masih ada, langsung dari toko resmi. |
+| 5. Promo kategori | [Dermstore, Best of Dermstore Kits](https://www.sequenzy.com/email-examples/brands/dermstore/emails/up-to-40-off-shop-our-best-of-dermstore-kits) | Broadcast saat ada promo kategori skincare | {{promo_name}}: {{discount}} skincare | Promo skincare dari toko resmi di Toco. |
+
+Email 5: ganti nama promo, diskon, kode, tanggal, dan syarat di baris `assign` paling atas. Nilai bawaannya hanya contoh, belum ada vouchernya.
 
 ## Data event yang dibutuhkan
 
