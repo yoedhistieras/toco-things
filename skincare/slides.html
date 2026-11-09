@@ -164,6 +164,20 @@ h1 mark{background:var(--yellow);color:var(--ink);padding:0 .1em;border-radius:5
 </head>
 <body>
 <style>
+.uds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:4px 0 22px}
+.ud{border:1px solid var(--rule);border-radius:14px;padding:18px 22px;box-shadow:var(--shadow);min-width:0}
+.ud h3{font-family:Outfit,sans-serif;font-weight:800;font-size:26px;color:var(--ink);letter-spacing:-.02em;margin:0;line-height:1.1}
+.ud .ty{font-size:15px;color:var(--muted);margin:2px 0 14px}
+.ud .row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ud .row div{min-width:0}
+.ud b{display:block;font-family:Outfit,sans-serif;font-weight:800;font-size:30px;color:var(--ink);letter-spacing:-.03em;line-height:1.05}
+.ud .row div:nth-child(2) b{color:var(--win)}
+.ud small{display:block;font-size:13.5px;color:var(--muted);line-height:1.3;margin-top:4px}
+.minis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.mini{background:var(--quiet);border-radius:10px;padding:11px 14px;min-width:0}
+.mini b{display:block;font-family:Outfit,sans-serif;font-weight:700;font-size:16px;color:var(--ink)}
+.mini span{font-size:14px;color:var(--muted)}
+@media(max-width:1000px){.uds{grid-template-columns:1fr}.minis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .demo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .dc{border:1px solid var(--rule);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);min-width:0}
 .dc .lab{font-family:Outfit,sans-serif;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
@@ -451,7 +465,42 @@ body{display:flex;flex-direction:column;overflow:hidden;padding-top:0!important;
 </section>
 
 <section class="slide">
-  <p class="eyebrow"><span>11</span><span>Quick fixes</span></p>
+  <p class="eyebrow"><span>11</span><span>Brands to bring in</span><span>Underdogs</span></p>
+  <h1>Two brands sell well, but <mark>few people know them</mark>.</h1>
+  <div class="uds">
+    <div class="ud">
+      <h3>Sombong</h3>
+      <p class="ty">Men's face wash</p>
+      <div class="row">
+        <div><b>#4</b><small>on Shopee, 10.17% share</small></div>
+        <div><b>160K</b><small>TikTok followers, 1.7M likes</small></div>
+        <div><b>6</b><small>searches on Toco</small></div>
+      </div>
+    </div>
+    <div class="ud">
+      <h3>Skinflair</h3>
+      <p class="ty">Body lotion</p>
+      <div class="row">
+        <div><b>#7</b><small>on Shopee, above Scarlett</small></div>
+        <div><b>41K</b><small>TikTok followers, 212.9K likes</small></div>
+        <div><b>7</b><small>searches on Toco</small></div>
+      </div>
+    </div>
+  </div>
+  <p class="lbl2">Also selling well</p>
+  <div class="minis">
+    <div class="mini"><b>This Is Yours</b><span>#1 facial mist on Shopee</span></div>
+    <div class="mini"><b>Sonik Scents</b><span>#2 toner on Shopee, new in Q2</span></div>
+    <div class="mini"><b>Autumn</b><span>#3 toner on Shopee</span></div>
+    <div class="mini"><b>Deoxide</b><span>#4 deodorant on Shopee</span></div>
+    <div class="mini"><b>Noera by Reisha</b><span>#2 local body lotion on Tokopedia</span></div>
+    <div class="mini"><b>Finally Found You</b><span>#7 toner on Shopee</span></div>
+  </div>
+  <p class="fine">Sales ranks: Compas, Q1 and Q2 2026. TikTok: 9 Nov 2026. Toco searches: Apr 2025 to Jul 2026. Every brand gets a BPOM check before it joins.</p>
+</section>
+
+<section class="slide">
+  <p class="eyebrow"><span>12</span><span>Quick fixes</span></p>
   <h1>Fix the leaks <mark>before</mark> we bring more people.</h1>
   <div class="reads">
     <div class="rd hl"><span class="n">1</span><h3>Cart reminder</h3><p>Remind people 1 hour and 1 day after they leave a cart. Start with Kahf: 291 carts, 12 paid.</p></div>
@@ -464,7 +513,7 @@ body{display:flex;flex-direction:column;overflow:hidden;padding-top:0!important;
 </section>
 
 <section class="slide">
-  <p class="eyebrow"><span>12</span><span>Goals</span></p>
+  <p class="eyebrow"><span>13</span><span>Goals</span></p>
   <h1>Double skincare orders <mark>by December</mark>.</h1>
   <div class="deal">
     <div><b>39 <span>&rarr;</span> 80</b><small>skincare orders a month</small></div>
