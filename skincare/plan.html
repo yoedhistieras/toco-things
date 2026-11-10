@@ -312,64 +312,55 @@ body{display:flex;flex-direction:column;overflow:hidden;padding-top:0!important;
 @media(max-width:1000px){.steps5,.fix3,.facts,.facts.two2,.ai{grid-template-columns:1fr}.vs3{grid-template-columns:1fr}.flow3{grid-template-columns:1fr}.flow3 .ar{transform:rotate(90deg)}.brandg{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .acts.dense .act>p{margin-bottom:6px}.acts.dense ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px}.acts.dense li{font-size:14.5px;padding:5px 0}.acts.dense li small{font-size:12.5px}
 .acts.inv .act>p{margin-bottom:6px}.acts.inv li{font-size:15px;padding:5px 0}.acts.inv li small{font-size:12.5px}
+.kpi{display:grid;grid-template-columns:minmax(0,1fr) 40px minmax(0,1fr);gap:8px;align-items:stretch;margin:4px 0 14px}
+.kpi>div{background:var(--quiet);border-radius:14px;padding:12px 22px;min-width:0}
+.kpi>div.hi{background:var(--yellow-soft)}
+.kpi small{display:block;font-size:14px;color:var(--muted);font-weight:600}
+.kpi b{display:inline-block;font-family:Outfit,sans-serif;font-weight:800;font-size:48px;color:var(--ink);letter-spacing:-.03em;line-height:1.05;margin-right:10px}
+.kpi span{font-size:16px;color:var(--body)}
+.kpi .ar{background:none;display:grid;place-items:center;font-family:Outfit,sans-serif;font-weight:800;font-size:26px;color:var(--muted);padding:0}
+.exp.kp th{font-family:Outfit,sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 14px 8px;border-bottom:1px solid var(--rule)}
+.exp.kp td{padding:11px 14px;font-size:16px}
+.exp.kp td.s{width:24%;font-size:17px}
+.exp.kp .n{text-align:right;white-space:nowrap}
+.exp.kp td.n b{font-family:Outfit,sans-serif;font-weight:800;color:var(--ink)}
+.exp.kp th.p,.exp.kp td.p{width:120px;text-align:right}
+.tag2.b{background:var(--blue-soft);color:var(--blue)}
+@media(max-width:1000px){.kpi{grid-template-columns:1fr}.kpi .ar{transform:rotate(90deg)}}
+.wkt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:2px 0 14px}
+.wkt>div{background:var(--quiet);border-radius:12px;padding:10px 18px;min-width:0}
+.wkt>div.hi{background:var(--yellow-soft)}
+.wkt small{display:block;font-size:13.5px;color:var(--muted);font-weight:600}
+.wkt b{font-family:Outfit,sans-serif;font-weight:800;font-size:34px;color:var(--ink);letter-spacing:-.03em;line-height:1.1;margin-right:8px}
+.wkt span{font-size:15px;color:var(--body)}
+.wkw{overflow-x:auto}
+.wks{display:grid;grid-template-columns:repeat(13,minmax(56px,1fr));gap:6px;min-width:760px;align-items:end;height:266px;padding-top:4px}
+.wk{display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;height:100%;min-width:0;text-align:center;cursor:default}
+.wk b{font-family:Outfit,sans-serif;font-weight:800;font-size:18px;color:var(--ink);margin-bottom:4px}
+.wk i{display:block;background:var(--yellow);border-radius:4px 4px 0 0;margin:0 9px}
+.wk:hover i{background:#E6BF00}
+.wk span{font-size:12.5px;color:var(--body);font-weight:700;border-top:1px solid var(--ink);padding-top:6px;white-space:nowrap}
+.wk em{font-style:normal;font-size:11.5px;line-height:1.2;color:var(--muted);margin-top:3px;height:28px}
+.wk:not(:has(em))::after{content:"";height:31px}
+.steps5.four{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.steps5 small{display:block;font-size:14.5px;color:var(--body);line-height:1.35;margin-top:6px}
 </style>
 
 <section class="slide on">
   <div class="cover">
     <p class="eyebrow"><span>Toco</span><span>Skincare</span></p>
     <h1>Skincare <mark>Action Plan</mark></h1>
-    <p class="sub">Five things we will do to sell more skincare, with no ad budget.</p>
-    <div class="steps5">
-      <div><b>1</b><span>Clean the category</span></div>
-      <div><b>2</b><span>Introduce skincare</span></div>
-      <div><b>3</b><span>Partner with brands</span></div>
-      <div><b>4</b><span>Page and quiz</span></div>
-      <div><b>5</b><span>Sell the next product</span></div>
+    <p class="sub">Four steps to sell more skincare, with no ad budget.</p>
+    <div class="steps5 four">
+      <div><b>1</b><span>The right brands</span><small>Big names bring traffic. Trending names keep us current.</small></div>
+      <div><b>2</b><span>A home for skincare</span><small>One page and a quiz that turn visits into orders.</small></div>
+      <div><b>3</b><span>The right shoppers</span><small>Start with people who already shop on Toco.</small></div>
+      <div><b>4</b><span>Repeat orders</span><small>Sell the next product, then remind them to restock.</small></div>
     </div>
   </div>
 </section>
 
 <section class="slide">
-  <p class="eyebrow"><span>Step 1</span><span>Clean the category</span></p>
-  <h1>Some items in skincare <mark>are not skincare</mark>.</h1>
-  <div class="vs3">
-    <div class="bad"><b>224</b><span>orders in the skincare category were cigarettes, vapes, drugs or adult items</span></div>
-    <div><b>208</b><span>orders were real skincare</span></div>
-  </div>
-  <div class="fix3">
-    <div><h3>Cigarettes and vape</h3><small>170 orders, at least 36 products still live</small><p>Move to the cigarette category</p></div>
-    <div><h3>Prescription drugs</h3><small>49 orders, at least 30 products still live</small><p>Take down</p></div>
-    <div><h3>Adult products</h3><small>5 orders, at least 26 products still live</small><p>Move to the adult category</p></div>
-  </div>
-  <p class="take"><b>Why first?</b> When people open skincare, they should see skincare.</p>
-  <p class="fine">Paid orders, 1 Jan to 8 Nov 2026. Live products: checked 9 Nov 2026. Source: Toco database, matched by product name. Product counts are minimums, because disguised names can be missed.</p>
-</section>
-
-<section class="slide">
-  <p class="eyebrow"><span>Step 2</span><span>Introduce skincare</span><span class="tool">Customer.io</span></p>
-  <h1>Introduce skincare <mark>to people who already shop here</mark>.</h1>
-  <div class="acts">
-    <div class="act"><h3>Looked for skincare, did not buy</h3><p>Start here. They already told us what they want.</p><em class="big">7,350 <small>people searched skincare</small></em><ul>
-      <li>Viewed skincare last month <small>2,386</small></li>
-      <li>Search data in messages <small>Not used yet</small></li>
-    </ul></div>
-    <div class="act"><h3>Win the buyers of nearby categories</h3><p>Next, a smaller group that is close to skincare.</p><em class="big">8,464 <small>people never bought skincare</small></em><ul>
-      <li>Sport and cycling <small>4,541</small></li>
-      <li>Men's fashion <small>2,420</small></li>
-      <li>Vitamins and perfume <small>1,602</small></li>
-    </ul></div>
-    <div class="act"><h3>Tell Toco shoppers we sell skincare</h3><p>Show big brands, then send people to the skincare page and quiz.</p><em class="big">68,365 <small>people have bought on Toco</small></em><ul>
-      <li>Have bought skincare <small>347 people</small></li>
-      <li>Skincare push so far <small>Brand vouchers only</small></li>
-    </ul></div>
-  </div>
-  <p class="take"><b>Why in-app first?</b> In October, a Kahf voucher push went to 42,024 people. Only 164 opened it.</p>
-  <p class="fine">7,350: Toco database, searches 24 Apr 2025 to 6 Jul 2026, people who never bought skincare, without buyers of restricted items. 2,386: Toco database, views 8 Oct to 8 Nov 2026. 68,365: Customer.io Buyers segment, Nov 2026, before removing buyers of restricted items. 347: Toco database, paid orders since Jan 2025. 8,464: Toco database, paid orders 1 Jan to 8 Nov 2026, without buyers of cigarettes, vapes, airsoft, adult items and drugs; a person can be in more than one group. Push: Customer.io, sent 11 Oct 2026.</p>
-</section>
-
-
-<section class="slide">
-  <p class="eyebrow"><span>Step 3</span><span>Partner with brands</span><span>Big brands</span></p>
+  <p class="eyebrow"><span>Step 1</span><span>The right brands</span><span>Big brands</span></p>
   <h1>Big brands people search for, <mark>but none is official yet</mark>.</h1>
   <p class="sub" style="margin-bottom:14px">Some already have a store on Toco.</p>
   <p class="lbl2">Make official</p>
@@ -386,7 +377,7 @@ body{display:flex;flex-direction:column;overflow:hidden;padding-top:0!important;
 </section>
 
 <section class="slide">
-  <p class="eyebrow"><span>Step 3</span><span>Partner with brands</span><span>Brands already on Toco</span></p>
+  <p class="eyebrow"><span>Step 1</span><span>The right brands</span><span>Brands already on Toco</span></p>
   <h1>44 brands <mark>already have a store on Toco</mark>.</h1>
   <div class="acts dense">
     <div class="act"><h3>Official, ready for more traffic</h3><p>15 brands. Feature them on the skincare page.</p><ul>
@@ -444,9 +435,8 @@ body{display:flex;flex-direction:column;overflow:hidden;padding-top:0!important;
   <p class="fine">Orders: paid, Toco database, 1 Jan 2025 to 8 Nov 2026, counted per brand store. Items: live products, checked 10 Nov 2026. Badge only after we confirm the store owner. Every brand gets a BPOM and claim check first. Resellers and non-beauty stores left out.</p>
 </section>
 
-
 <section class="slide">
-  <p class="eyebrow"><span>Step 3</span><span>Partner with brands</span><span>Invite</span></p>
+  <p class="eyebrow"><span>Step 1</span><span>The right brands</span><span>Invite</span></p>
   <h1>Brands to invite, <mark>by how well they sell elsewhere</mark>.</h1>
   <div class="acts inv">
     <div class="act"><h3>Deodorant</h3><p>7 brands</p><ul>
@@ -485,7 +475,7 @@ body{display:flex;flex-direction:column;overflow:hidden;padding-top:0!important;
 </section>
 
 <section class="slide">
-  <p class="eyebrow"><span>Step 3</span><span>Partner with brands</span><span>Invite</span></p>
+  <p class="eyebrow"><span>Step 1</span><span>The right brands</span><span>Invite</span></p>
   <h1>More brands to invite: <mark>face, body and kids</mark>.</h1>
   <div class="acts inv">
     <div class="act"><h3>Face and sunscreen</h3><p>8 brands</p><ul>
@@ -528,7 +518,7 @@ body{display:flex;flex-direction:column;overflow:hidden;padding-top:0!important;
 </section>
 
 <section class="slide">
-  <p class="eyebrow"><span>Step 3</span><span>Partner with brands</span><span>Brand funnel</span></p>
+  <p class="eyebrow"><span>Step 1</span><span>The right brands</span><span>Brand funnel</span></p>
   <h1>Every brand group <mark>has one job</mark>.</h1>
   <div class="fnl">
     <div class="fr"><div class="fs a"><b>Big brands</b><span>Bring in lots of traffic</span></div><div class="ft"><b>Wardah, Hanasui, Skintific, Glad2Glow, Kahf, N'Pure, Deoxide, Deorex, Sombong, Sonik Scents, This Is Your</b><small>Top 3 in its category on Shopee or Tokopedia and TikTok, or searched 150+ times on Toco.</small></div></div>
@@ -539,9 +529,8 @@ body{display:flex;flex-direction:column;overflow:hidden;padding-top:0!important;
   <p class="fine">A brand goes to the first layer it qualifies for. Ranks: Compas via GoodStats and Databoks, 2026. Toco searches: Toco database, 24 Apr 2025 to 6 Jul 2026. Toco orders: paid, 1 Jan 2025 to 8 Nov 2026. Ads: Meta Ad Library, brand pages, 9 Nov 2026. Erhir, Blovaire and Alwayeseen not placed: no public data found.</p>
 </section>
 
-
 <section class="slide">
-  <p class="eyebrow"><span>Step 4</span><span>Page and quiz</span><span class="tool">Built with AI</span></p>
+  <p class="eyebrow"><span>Step 2</span><span>A home for skincare</span><span class="tool">Built with AI</span></p>
   <h1>A skincare page, quiz and emails, <mark>made with AI</mark>.</h1>
   <p class="cl"><span>Click</span> any image to open the live preview.</p>
   <div class="ai">
@@ -559,7 +548,29 @@ body{display:flex;flex-direction:column;overflow:hidden;padding-top:0!important;
 </section>
 
 <section class="slide">
-  <p class="eyebrow"><span>Step 5</span><span>Sell the next product</span><span class="tool">Customer.io</span></p>
+  <p class="eyebrow"><span>Step 3</span><span>The right shoppers</span><span class="tool">Customer.io</span></p>
+  <h1>Introduce skincare <mark>to people who already shop here</mark>.</h1>
+  <div class="acts">
+    <div class="act"><h3>Looked for skincare, did not buy</h3><p>Start here. They already told us what they want.</p><em class="big">7,350 <small>people searched skincare</small></em><ul>
+      <li>Viewed skincare last month <small>2,386</small></li>
+      <li>Search data in messages <small>Not used yet</small></li>
+    </ul></div>
+    <div class="act"><h3>Win the buyers of nearby categories</h3><p>Next, a smaller group that is close to skincare.</p><em class="big">8,464 <small>people never bought skincare</small></em><ul>
+      <li>Sport and cycling <small>4,541</small></li>
+      <li>Men's fashion <small>2,420</small></li>
+      <li>Vitamins and perfume <small>1,602</small></li>
+    </ul></div>
+    <div class="act"><h3>Tell Toco shoppers we sell skincare</h3><p>Show big brands, then send people to the skincare page and quiz.</p><em class="big">68,365 <small>people have bought on Toco</small></em><ul>
+      <li>Have bought skincare <small>347 people</small></li>
+      <li>Skincare push so far <small>Brand vouchers only</small></li>
+    </ul></div>
+  </div>
+  <p class="take"><b>Why in-app first?</b> In October, a Kahf voucher push went to 42,024 people. Only 164 opened it.</p>
+  <p class="fine">7,350: Toco database, searches 24 Apr 2025 to 6 Jul 2026, people who never bought skincare, without buyers of restricted items. 2,386: Toco database, views 8 Oct to 8 Nov 2026. 68,365: Customer.io Buyers segment, Nov 2026, before removing buyers of restricted items. 347: Toco database, paid orders since Jan 2025. 8,464: Toco database, paid orders 1 Jan to 8 Nov 2026, without buyers of cigarettes, vapes, airsoft, adult items and drugs; a person can be in more than one group. Push: Customer.io, sent 11 Oct 2026.</p>
+</section>
+
+<section class="slide">
+  <p class="eyebrow"><span>Step 4</span><span>Repeat orders</span><span class="tool">Customer.io</span></p>
   <h1>Sell the next product, then <mark>remind them to restock</mark>.</h1>
   <div class="flow3">
     <div class="box"><b>Buys a Kahf deodorant</b><small>The skincare item most people buy.</small></div>
@@ -581,11 +592,10 @@ body{display:flex;flex-direction:column;overflow:hidden;padding-top:0!important;
   <h1>Small wins first, <mark>bigger wins later</mark>.</h1>
   <div class="exptw"><table class="exp">
     <tbody>
-      <tr><td class="s">1. Clean the category</td><td>Skincare numbers will look smaller at first. That is normal.</td><td class="p"><span class="tag2 q">Quick</span></td></tr>
-      <tr><td class="s">2. Introduce skincare</td><td>Small numbers at first. In-app only reaches people who open the app.</td><td class="p"><span class="tag2 q">Quick</span></td></tr>
-      <tr><td class="s">3. Partner with brands</td><td>Depends on each brand saying yes.</td><td class="p"><span class="tag2">Slower</span></td></tr>
-      <tr><td class="s">4. Page and quiz</td><td>The biggest reach, once it is inside the app.</td><td class="p"><span class="tag2 s">Biggest</span></td></tr>
-      <tr><td class="s">5. Sell the next product</td><td>We will only see results after people run out, about 30 days.</td><td class="p"><span class="tag2">Slower</span></td></tr>
+      <tr><td class="s">1. The right brands</td><td>Depends on each brand saying yes. Brands already on Toco can move first.</td><td class="p"><span class="tag2">Slower</span></td></tr>
+      <tr><td class="s">2. A home for skincare</td><td>The biggest reach, once it has a place inside the app.</td><td class="p"><span class="tag2 s">Biggest</span></td></tr>
+      <tr><td class="s">3. The right shoppers</td><td>Small numbers at first. In-app only reaches people who open the app.</td><td class="p"><span class="tag2 q">Quick</span></td></tr>
+      <tr><td class="s">4. Repeat orders</td><td>We will only see results after people run out, about 30 days.</td><td class="p"><span class="tag2">Slower</span></td></tr>
     </tbody>
   </table></div>
   <p class="take"><b>Where we start:</b> 39 skincare orders in October, out of more than 50,000 on Toco.</p>
@@ -594,15 +604,14 @@ body{display:flex;flex-direction:column;overflow:hidden;padding-top:0!important;
 
 <section class="slide">
   <p class="eyebrow"><span>Problems to solve</span><span>Covered by the plan</span></p>
-  <h1>Six problems <mark>the plan fixes</mark>.</h1>
+  <h1>Five problems <mark>the plan fixes</mark>.</h1>
   <div class="pbh"><span></span><span>Problem</span><span>Proof</span><span>Fixed in</span></div>
-  <div class="pb"><i>1</i><b>Non-skincare items fill the category</b><span>224 wrong orders vs 208 real skincare orders</span><em>Step 1</em></div>
-  <div class="pb"><i>2</i><b>Most shoppers never bought skincare</b><span>347 skincare buyers out of 68,365 Toco buyers</span><em>Step 2</em></div>
-  <div class="pb"><i>3</i><b>Wanted brands are not official here</b><span>Skintific: 792 searches, 1 order</span><em>Step 3</em></div>
-  <div class="pb"><i>4</i><b>Product pages need more trust signals</b><span>BPOM empty on 244 official items. Hanasui has 0 reviews</span><em>Step 3</em></div>
-  <div class="pb"><i>5</i><b>No skincare place inside the app</b><span>Page and quiz are built, but not in the app yet</span><em>Step 4</em></div>
-  <div class="pb"><i>6</i><b>People buy once and stop</b><span>41 of 47 deodorant buyers bought no other skincare</span><em>Step 5</em></div>
-  <p class="fine">Orders and buyers: Toco database, paid orders. 224 vs 208 and 41 of 47: 1 Jan to 8 Nov 2026. 347 and Skintific orders: since Jan 2025. 68,365: Customer.io Buyers segment, Nov 2026. Searches: 24 Apr 2025 to 6 Jul 2026. BPOM and reviews: checked 9 Nov 2026.</p>
+  <div class="pb"><i>1</i><b>Wanted brands are not official here</b><span>Skintific: 792 searches, 1 order</span><em>Step 1</em></div>
+  <div class="pb"><i>2</i><b>Product pages need more trust signals</b><span>BPOM empty on 244 official items. Hanasui has 0 reviews</span><em>Step 1</em></div>
+  <div class="pb"><i>3</i><b>No skincare place inside the app</b><span>Page and quiz are built, but not in the app yet</span><em>Step 2</em></div>
+  <div class="pb"><i>4</i><b>Most shoppers never bought skincare</b><span>347 skincare buyers out of 68,365 Toco buyers</span><em>Step 3</em></div>
+  <div class="pb"><i>5</i><b>People buy once and stop</b><span>41 of 47 deodorant buyers bought no other skincare</span><em>Step 4</em></div>
+  <p class="fine">Orders and buyers: Toco database, paid orders. 41 of 47: 1 Jan to 8 Nov 2026. 347 and Skintific orders: since Jan 2025. 68,365: Customer.io Buyers segment, Nov 2026. Searches: 24 Apr 2025 to 6 Jul 2026. BPOM and reviews: checked 9 Nov 2026.</p>
 </section>
 
 <section class="slide">
@@ -615,7 +624,6 @@ body{display:flex;flex-direction:column;overflow:hidden;padding-top:0!important;
   <div class="pb"><i>4</i><b>Search log has stopped</b><span>No searches in the database after 6 Jul 2026</span><em>Restart the search log</em></div>
   <p class="fine">Kahf carts: Toco database, 1 Aug to 31 Oct 2026. Cigarette and skincare buyers: paid orders, 1 Jan to 8 Nov 2026. Stores: paid orders since Jan 2025, checked 9 Nov 2026. Search log: Toco database, checked 9 Nov 2026.</p>
 </section>
-
 </div>
 <nav class="nav" aria-label="Slides">
   <button class="prev" aria-label="Previous slide">&#8592;</button>
