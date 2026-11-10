@@ -5,12 +5,10 @@
 - Gambar di-host di GitHub Pages: https://yoedhistieras.github.io/toco-things/email/1111-super-dad/img/
 - Semua link memakai UTM `utm_source=customerio&utm_medium=email&utm_campaign=1111_superdad&utm_content=<slot>`.
 
-## Subject (A/B)
-A: Pak, sepatunya udah mangap tuh 👀
-B: Kopi boleh pahit, harga jangan ☕ (diskon sampai 78%)
-C: Bapak-bapak dilarang skip email ini
+## Subject
+Bapak-bapak dilarang skip email ini
 
-Preheader: Tenang, 11.11 lagi diskon sampai 78% plus gratis ongkir.
+Preheader: Soalnya 11.11 lagi diskon hingga 78%, ongkos kirim gratis.
 
 ## Kirim
 - Rabu 11 Nov 2026, 10:00 WIB (slot email weekend), timezone Etc/GMT-7
