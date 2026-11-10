@@ -6,11 +6,11 @@
 - Semua link memakai UTM `utm_source=customerio&utm_medium=email&utm_campaign=1111_superdad&utm_content=<slot>`.
 
 ## Subject (A/B)
-A: 11.11 Super Dad: diskon sampai 78% + gratis ongkir 🔥
-B: {% if customer.name != blank %}{{ customer.name | split: " " | first }}{% else %}Kak{% endif %}, hemat sampai Rp1 juta khusus 11.11
-C: Tas, sepatu, gadget Bapak diskon sampai 78% + gratis ongkir
+A: Pak, sepatunya udah mangap tuh 👀
+B: Kopi boleh pahit, harga jangan ☕ (diskon sampai 78%)
+C: Bapak-bapak dilarang skip email ini
 
-Preheader: Hemat sampai Rp1 juta plus gratis ongkir. Cuma di 11.11.
+Preheader: Tenang, 11.11 lagi diskon sampai 78% plus gratis ongkir.
 
 ## Kirim
 - Rabu 11 Nov 2026, 10:00 WIB (slot email weekend), timezone Etc/GMT-7
